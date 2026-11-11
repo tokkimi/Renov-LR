@@ -2,7 +2,7 @@
 
 import {useMemo, useRef, useState} from 'react';
 import {useMotionValueEvent, useScroll} from 'motion/react';
-import {ArrowLeft, ArrowRight, ArrowUpRight} from 'lucide-react';
+import {ArrowLeft, ArrowRight} from 'lucide-react';
 import {WarpCarousel} from './warp-carousel';
 import ServiceDetails from '../service-details';
 import type {RenovationService} from '../renovation-services';
@@ -10,9 +10,8 @@ import type {RenovationService} from '../renovation-services';
 const pinTop = 108;
 const stageStyle = {height: '100%', minHeight: 0, aspectRatio: 'auto'};
 
-export default function ServiceWarpCarousel({cards, whatsapp, onSelect}: {
+export default function ServiceWarpCarousel({cards, onSelect}: {
   cards: readonly RenovationService[];
-  whatsapp: string;
   onSelect: (quoteType: string) => void;
 }) {
   const [index, setIndex] = useState(0);
@@ -31,7 +30,6 @@ export default function ServiceWarpCarousel({cards, whatsapp, onSelect}: {
     value: '',
   })), [cards]);
   const active = cards[index];
-  const ActiveIcon = active.icon;
   const select = (position: number) => {
     setIndex(position);
     const region = sequence.current;
@@ -54,7 +52,7 @@ export default function ServiceWarpCarousel({cards, whatsapp, onSelect}: {
       <div className="rl-warp" ref={panel}>
         <div className="rl-warp-stage">
           <WarpCarousel cards={textures} index={index} onIndexChange={select}
-            autoplay={false} flatDesktop onCardActivate={position => onSelect(cards[position].quoteType)} background="#f3f6f8"
+            autoplay={false} flatDesktop onCardActivate={position => setDetail(cards[position])} background="#f3f6f8"
             ariaLabel="Carrousel des prestations" style={stageStyle}/>
         </div>
         <div className="rl-warp-controls">
@@ -62,21 +60,19 @@ export default function ServiceWarpCarousel({cards, whatsapp, onSelect}: {
           <div className="rl-warp-tabs" aria-label="Choisir une prestation">
             {cards.map((card, position) => (
               <button key={card.title} type="button" className="rl-btn glass"
-                aria-pressed={index === position} onClick={() => select(position)}>{card.title}</button>
+                aria-pressed={index === position} aria-haspopup={card.quoteType === 'Réparation' ? 'dialog' : undefined}
+                onClick={() => { select(position); if (card.quoteType === 'Réparation') setDetail(card); }}>{card.title}</button>
             ))}
           </div>
           <button type="button" className="rl-btn glass" aria-label="Prestation suivante" onClick={() => move(1)}><ArrowRight size={18}/></button>
         </div>
         <div className="rl-warp-details">
           <p>{active.description}</p>
-          <div className="rl-warp-actions">
-            <button type="button" className="rl-btn arch-outline" aria-haspopup="dialog"
-              aria-label={`Voir la fiche ${active.title}`} onClick={() => setDetail(active)}><ActiveIcon size={18} aria-hidden="true"/>Voir la fiche</button>
-            <button type="button" className="rl-btn red" onClick={() => onSelect(active.quoteType)}>Demander un devis<ArrowUpRight size={18}/></button>
-          </div>
+          <button type="button" className="rl-warp-open" aria-haspopup="dialog"
+            aria-label={`Voir la prestation ${active.title}`} onClick={() => setDetail(active)}>Voir la prestation</button>
         </div>
       </div>
-      {detail && <ServiceDetails service={detail} whatsapp={whatsapp} onClose={() => setDetail(null)}
+      {detail && <ServiceDetails service={detail} onClose={() => setDetail(null)}
         onQuote={() => { setDetail(null); onSelect(detail.quoteType); }}/>}
     </div>
   );

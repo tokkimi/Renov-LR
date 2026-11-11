@@ -1,14 +1,11 @@
-import {Bath, CookingPot, Hammer, Layers, PaintRoller, PanelsTopLeft, type LucideIcon} from 'lucide-react';
-
 type Work = {title: string; text: string};
 export type RenovationService = {
   title: string;
   quoteType: string;
   description: string;
   image: string;
-  secondImage?: {src: string; alt: string};
+  secondImage?: {src: string; alt: string; preparation?: boolean};
   imageAlt: string;
-  icon: LucideIcon;
   intro: string;
   works: Work[];
   steps: Work[];
@@ -24,7 +21,6 @@ export const services: readonly RenovationService[] = [
     image: '/images/prestation-cuisine.jpg',
     imageAlt: 'Cuisine avec îlot et rangements sur mesure',
     secondImage: {src: '/images/accueil-cuisine.webp', alt: 'Cuisine ouverte avec îlot en chêne et meubles anthracite'},
-    icon: CookingPot,
     intro: 'Un plan de travail à remplacer, des rangements à repenser ou une cuisine à refaire entièrement. Le projet part de vos usages, de l’espace disponible et de ce que vous souhaitez garder.',
     works: [
       {title: 'Rafraîchir ou remplacer', text: 'Plan de travail, crédence, façades ou meubles, selon l’état de l’existant.'},
@@ -45,7 +41,7 @@ export const services: readonly RenovationService[] = [
     description: 'Douche à l’italienne, faïence, plomberie et étanchéité.',
     image: '/images/prestation-salle-de-bain.jpg',
     imageAlt: 'Salle de bain avec meuble vasque en bois, miroir rond et paroi de douche',
-    icon: Bath,
+    secondImage: {src: '/images/salle-de-bain-preparation.webp', alt: 'Préparation de l’étanchéité et pose du carrelage de la douche', preparation: true},
     intro: 'Remplacer une baignoire, remettre en état les revêtements ou reprendre la pièce entière. La visite permet de vérifier ce qui peut être conservé et comment adapter la salle de bain à vos usages.',
     works: [
       {title: 'Remplacer des équipements', text: 'Douche, receveur, meuble vasque et accessoires, avec vérification des raccordements existants.'},
@@ -66,7 +62,7 @@ export const services: readonly RenovationService[] = [
     description: 'Parquet, carrelage, vinyle : dépose, préparation et pose.',
     image: '/images/prestation-pose-parquet.jpg',
     imageAlt: 'Pose de lames de parquet dans une pièce lumineuse',
-    icon: Layers,
+    secondImage: {src: '/images/parquet-apres.jpg', alt: 'Exemple de parquet après la pose'},
     intro: 'Réparer ou rénover un sol que vous aimez, ou repartir sur un nouveau revêtement. Le choix dépend de l’état du support, du passage et de l’usage de la pièce.',
     works: [
       {title: 'Rénover l’existant', text: 'Reprise localisée ou remise en état du parquet lorsque son état et son épaisseur le permettent.'},
@@ -87,7 +83,7 @@ export const services: readonly RenovationService[] = [
     description: 'Préparation des supports, enduits, peinture et revêtements.',
     image: '/images/prestation-peinture.jpg',
     imageAlt: 'Application de peinture au rouleau sur un mur intérieur',
-    icon: PaintRoller,
+    secondImage: {src: '/images/reparation-enduit.webp', alt: 'Préparation du mur à l’enduit avant peinture', preparation: true},
     intro: 'Un mur à remettre en état, une pièce à rafraîchir ou plusieurs espaces à repeindre. On commence par regarder le support et la finition recherchée.',
     works: [
       {title: 'Reprendre les supports', text: 'Dépose du papier peint si nécessaire, rebouchage des trous et reprise des fissures superficielles.'},
@@ -106,9 +102,9 @@ export const services: readonly RenovationService[] = [
     title: 'Aménagement',
     quoteType: 'Aménagement et cloisons',
     description: 'Cloisons, doublages, portes et rangements sur mesure.',
-    image: '/images/prestation-amenagement.jpg',
-    imageAlt: 'Aménagement intérieur avec rangements intégrés',
-    icon: PanelsTopLeft,
+    image: '/images/amenagement-rangements.webp',
+    imageAlt: 'Bibliothèque et placards intégrés en chêne',
+    secondImage: {src: '/images/amenagement-pose.webp', alt: 'Ajustement des placards pendant la pose', preparation: true},
     intro: 'Redistribuer une pièce, mieux utiliser un renfoncement ou intégrer du rangement. Le projet se dessine à partir des dimensions, des circulations et de ce que vous utilisez au quotidien.',
     works: [
       {title: 'Redistribuer l’espace', text: 'Création de cloisons ou de doublages, selon la configuration et la nature des murs.'},
@@ -130,7 +126,6 @@ export const services: readonly RenovationService[] = [
     image: '/images/prestation-renovation-complete.jpg',
     imageAlt: 'Pièce de vie lumineuse avec parquet et mobilier clair',
     secondImage: {src: '/images/salon-apres-travaux.webp', alt: 'Exemple d’aménagement de salon avec parquet et canapé crème'},
-    icon: Hammer,
     intro: 'Quand plusieurs pièces ou plusieurs métiers se croisent, on définit les priorités et l’ordre du chantier dès la visite. Vous savez quels postes sont repris et lesquels sont conservés.',
     works: [
       {title: 'Repenser les pièces', text: 'Distribution, cuisine, salle de bain et aménagements selon le projet.'},
@@ -144,5 +139,26 @@ export const services: readonly RenovationService[] = [
     ],
     duration: 'De plusieurs semaines à plusieurs mois selon la surface et les postes concernés.',
     timing: 'Le calendrier se précise après la visite, selon l’état du logement, l’ampleur du chantier et les fournitures.',
+  },
+  {
+    title: 'Réparation',
+    quoteType: 'Réparation',
+    description: 'Reprises de murs, réglages de portes et petites réparations intérieures.',
+    image: '/images/reparation-charniere.webp',
+    imageAlt: 'Réglage d’une charnière de placard en chêne',
+    secondImage: {src: '/images/reparation-enduit.webp', alt: 'Reprise localisée à l’enduit sur un mur intérieur'},
+    intro: 'Une porte de placard qui ferme mal, un mur abîmé ou une finition à reprendre ? Décrivez le problème et joignez une photo pour préparer l’intervention.',
+    works: [
+      {title: 'Menuiserie intérieure', text: 'Réglage d’une porte, remplacement d’une poignée ou remise en état d’une charnière.'},
+      {title: 'Murs et finitions', text: 'Rebouchage d’un trou, reprise d’un éclat et préparation pour une retouche.'},
+      {title: 'Petites reprises de sol', text: 'Réfection d’une plinthe ou d’un seuil, et remplacement localisé lorsque le matériau le permet.'},
+    ],
+    steps: [
+      {title: 'Diagnostic', text: 'Identification de la cause et des éléments à conserver ou remplacer.'},
+      {title: 'Intervention', text: 'Protection de la zone et réparation selon le support et les pièces disponibles.'},
+      {title: 'Vérification', text: 'Contrôle du fonctionnement et des finitions avec vous.'},
+    ],
+    duration: 'Une intervention simple peut prendre quelques heures.',
+    timing: 'Une pièce à commander ou un temps de séchage peut nécessiter un second passage.',
   },
 ];

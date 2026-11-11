@@ -1,20 +1,24 @@
 'use client';
 
-import {useEffect, useId, useRef} from 'react';
+import {useEffect, useId, useRef, useState} from 'react';
 import Image from 'next/image';
-import {ArrowUpRight, Check, Clock, X} from 'lucide-react';
+import {ArrowUpRight, ChevronLeft, ChevronRight, Clock, X} from 'lucide-react';
 import type {RenovationService} from './renovation-services';
-import {WhatsAppIcon} from './whatsapp-contact';
 
-export default function ServiceDetails({service, whatsapp, onClose, onQuote}: {
+export default function ServiceDetails({service, onClose, onQuote}: {
   service: RenovationService;
-  whatsapp: string;
   onClose: () => void;
   onQuote: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const touch = useRef<{x: number; y: number} | null>(null);
   const heading = useId();
-  const Icon = service.icon;
+  const [slide, setSlide] = useState(0);
+  const images = [{src: service.image, alt: service.imageAlt}];
+  if (service.secondImage?.preparation) images.unshift(service.secondImage);
+  else if (service.secondImage) images.push(service.secondImage);
+  const move = (step: number) => setSlide(index => (index + step + images.length) % images.length);
+  const photo = images[slide];
 
   useEffect(() => {
     const element = dialog.current;
@@ -34,47 +38,56 @@ export default function ServiceDetails({service, whatsapp, onClose, onQuote}: {
       onCancel={event => { event.preventDefault(); onClose(); }}
       onClick={event => { if (event.target === event.currentTarget) onClose(); }}>
       <div className="service-sheet-surface">
-        <header className="service-sheet-header">
-          <div className="service-sheet-title">
-            <span className="service-sheet-icon"><Icon size={24} aria-hidden="true"/></span>
-            <h2 id={heading}>{service.title}</h2>
-          </div>
-          <button type="button" className="service-sheet-close" onClick={onClose} aria-label="Fermer la fiche">
-            <X size={22} aria-hidden="true"/>
-          </button>
-        </header>
         <div className="service-sheet-body">
-          <div className="service-sheet-photos" data-pair={Boolean(service.secondImage)}>
-            <div><Image src={service.image} alt={service.imageAlt} fill sizes="(max-width: 580px) 92vw, 700px"/></div>
-            {service.secondImage && <div><Image src={service.secondImage.src} alt={service.secondImage.alt} fill sizes="(max-width: 580px) 42vw, 320px"/></div>}
+          <figure className="service-sheet-gallery" aria-label="Exemples de travaux"
+            onKeyDown={event => {
+              if (images.length < 2 || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+              event.preventDefault();
+              move(event.key === 'ArrowLeft' ? -1 : 1);
+            }}
+            onTouchStart={event => {
+              const point = event.touches[0];
+              touch.current = {x: point.clientX, y: point.clientY};
+            }}
+            onTouchCancel={() => { touch.current = null; }}
+            onTouchEnd={event => {
+              const start = touch.current;
+              touch.current = null;
+              if (!start || images.length < 2) return;
+              const point = event.changedTouches[0];
+              const dx = point.clientX - start.x;
+              if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(point.clientY - start.y)) move(dx < 0 ? 1 : -1);
+            }}>
+            <Image key={photo.src} src={photo.src} alt={photo.alt} fill
+              sizes="(max-width: 760px) 94vw, 740px" loading="eager" draggable={false}/>
+            <button type="button" className="service-sheet-control service-sheet-close" onClick={onClose}
+              aria-label="Fermer la fiche"><X size={21} aria-hidden="true"/></button>
+            {images.length > 1 && <div className="service-sheet-gallery-controls">
+              <button type="button" className="service-sheet-control" onClick={() => move(-1)} aria-label="Photo précédente"><ChevronLeft size={19}/></button>
+              <button type="button" className="service-sheet-control" onClick={() => move(1)} aria-label="Photo suivante"><ChevronRight size={19}/></button>
+            </div>}
+            <figcaption aria-live="polite">Exemple {slide + 1}/{images.length}<span className="service-photo-description"> · {photo.alt}</span></figcaption>
+          </figure>
+          <div className="service-sheet-copy">
+            <h2 id={heading}>{service.title}</h2>
+            <p className="service-sheet-intro">{service.intro}</p>
+            <div className="service-sheet-columns">
+              <section>
+                <h3>Travaux possibles</h3>
+                <ul>{service.works.map(work => <li key={work.title}><strong>{work.title}</strong><p>{work.text}</p></li>)}</ul>
+              </section>
+              <section>
+                <h3>Comment ça se passe</h3>
+                <ol>{service.steps.map(step => <li key={step.title}><strong>{step.title}</strong><p>{step.text}</p></li>)}</ol>
+              </section>
+            </div>
+            <p className="service-sheet-duration"><Clock size={18} aria-hidden="true"/><span>
+              <strong>Durée indicative</strong> {service.duration} {service.timing}
+            </span></p>
           </div>
-          <p className="service-sheet-intro">{service.intro}</p>
-          <section>
-            <h3>Les travaux possibles</h3>
-            <ul className="service-sheet-works">
-              {service.works.map(work => <li key={work.title}><Check size={17} aria-hidden="true"/>
-                <div><strong>{work.title}</strong><p>{work.text}</p></div>
-              </li>)}
-            </ul>
-          </section>
-          <section>
-            <h3>De la conception aux finitions</h3>
-            <ol className="service-sheet-steps">
-              {service.steps.map((step, index) => <li key={step.title}><span aria-hidden="true">0{index + 1}</span>
-                <div><strong>{step.title}</strong><p>{step.text}</p></div>
-              </li>)}
-            </ol>
-          </section>
-          <section className="service-sheet-duration">
-            <Clock size={21} aria-hidden="true"/>
-            <div><h3>Durée indicative des travaux</h3><p>{service.duration}</p><p>{service.timing} Le délai de votre projet se précise après la visite.</p></div>
-          </section>
         </div>
         <footer className="service-sheet-footer">
-          {whatsapp && <a className="rl-btn arch-outline" href={whatsapp} target="_blank" rel="noopener noreferrer">
-            <WhatsAppIcon/>Écrire sur WhatsApp
-          </a>}
-          <button type="button" className="rl-btn arch-primary" onClick={onQuote}>Demander un devis<ArrowUpRight size={18} aria-hidden="true"/></button>
+          <button type="button" className="rl-btn arch-primary" onClick={onQuote}>Réserver<ArrowUpRight size={18} aria-hidden="true"/></button>
         </footer>
       </div>
     </dialog>

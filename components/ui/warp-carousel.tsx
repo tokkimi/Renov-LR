@@ -1460,7 +1460,7 @@ export function WarpCarousel({
       role="region"
       aria-roledescription="carousel"
       aria-label={ariaLabel}
-      aria-description={onCardActivate ? "Appuyez sur Entrée pour demander un devis pour cette prestation." : undefined}
+      aria-description={onCardActivate ? "Appuyez sur Entrée pour voir cette prestation." : undefined}
       tabIndex={0}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}

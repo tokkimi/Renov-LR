@@ -134,7 +134,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <section className="arch-section arch-services" id="prestations">
     <div className="rl-wrap">
      <header className="arch-heading"><p className="arch-eyebrow">Nos prestations</p><h2>Chaque pièce, un projet.</h2></header>
-     <ServiceWarpCarousel cards={services} whatsapp={whatsapp} onSelect={setQuote}/>
+     <ServiceWarpCarousel cards={services} onSelect={setQuote}/>
     </div>
    </section>
 
@@ -188,6 +188,6 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <small>© {new Date().getFullYear()} Rénov LR</small>
   </div></footer>
   {!quote&&<ContactBubble settings={settings} whatsapp={whatsapp} onQuote={()=>setQuote(true)}/>}
-  {quote&&<QuoteRequest close={()=>setQuote(false)} initialService={typeof quote==='string' ? quote : undefined}/>}
+  {quote&&<QuoteRequest close={()=>setQuote(false)} initialService={typeof quote==='string' ? quote : undefined} booking={typeof quote==='string'}/>}
  </div>;
 }

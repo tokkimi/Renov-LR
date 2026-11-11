@@ -11,7 +11,7 @@ type Answers=Record<string,string|string[]>;
 async function preparePhoto(file:File){if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error('format');if(file.size>20*1024*1024)throw Error('size');const image=await createImageBitmap(file);try{const ratio=Math.min(1,1400/Math.max(image.width,image.height));const canvas=document.createElement('canvas');canvas.width=Math.round(image.width*ratio);canvas.height=Math.round(image.height*ratio);const ctx=canvas.getContext('2d')!;ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('format')),'image/jpeg',.78));return new File([blob],file.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg'})}finally{image.close()}}
 
 const yesNo=['Oui','Non','Je ne sais pas'];
-const works=['Cuisine','Salle de bain','Sols et parquet','Peinture et murs','Aménagement et cloisons','Électricité','Plomberie et chauffage','Portes et fenêtres','Isolation','Rénovation complète','Autre'];
+const works=['Cuisine','Salle de bain','Sols et parquet','Peinture et murs','Aménagement et cloisons','Électricité','Plomberie et chauffage','Portes et fenêtres','Isolation','Rénovation complète','Réparation','Autre'];
 const home:Question[]=[
  {key:'home_type',label:'Type de bien',type:'choice',options:['Appartement','Maison','Local professionnel']},
  {key:'home_status',label:'Vous êtes',type:'choice',options:['Propriétaire occupant','Propriétaire bailleur','Locataire','Futur acquéreur']},
@@ -26,6 +26,10 @@ const home:Question[]=[
  {key:'home_access',label:'Accès et stationnement',type:'text',hint:'Digicode, rue étroite, place pour un utilitaire…'}
 ];
 const sections:Record<string,Question[]>={
+ 'Réparation':[
+  {key:'repair_area',label:'Que faut-il réparer ?',type:'multi',options:['Porte ou placard','Mur ou plafond','Sol ou plinthe','Autre']},
+  {key:'repair_issue',label:'Quel problème rencontrez-vous ?',type:'text',hint:'Décrivez le défaut, la pièce et ce qui a déjà été tenté.'},
+ ],
  'Cuisine':[
   {key:'k_scope',label:'Vous souhaitez',type:'choice',options:['Une cuisine entièrement neuve','Changer les meubles et le plan de travail','Rafraîchir l’existant']},
   {key:'k_layout',label:'Implantation souhaitée',type:'choice',options:['Linéaire','En L','En U','Avec îlot','À définir ensemble']},
@@ -102,7 +106,7 @@ function Ask({q,answers,set}:{q:Question;answers:Answers;set:(key:string,value:s
 }
 
 /** Questionnaire de demande de devis : six étapes, avec des précisions adaptées à chaque type de travaux choisi. */
-export default function RequestForm({close,initialService}:{close:()=>void;locale?:'fr'|'en';initialService?:string}){
+export default function RequestForm({close,initialService,booking=false}:{close:()=>void;locale?:'fr'|'en';initialService?:string;booking?:boolean}){
  const [step,setStep]=useState(0);
  const [data,setData]=useState<Data>({budget:'À définir',timeline:'Dans les 3 mois',name:'',email:'',phone:'',address:'',description:'',consent:false,website:''});
  const [types,setTypes]=useState<string[]>(()=>initialService && works.includes(initialService) ? [initialService] : []),[answers,setAnswers]=useState<Answers>({});
@@ -118,6 +122,7 @@ export default function RequestForm({close,initialService}:{close:()=>void;local
  function details(){
   const rows:{section:string;label:string;value:string}[]=[];
   const push=(section:string,list:Question[])=>list.forEach(q=>{if(q.when&&!q.when(answers))return;const value=text(answers[q.key]);if(value)rows.push({section,label:q.label,value:q.unit?`${value} ${q.unit}`:value})});
+  if(booking)rows.push({section:'Rendez-vous',label:'Type de demande',value:'Visite sur place'});
   if(text(answers.nature))rows.push({section:'Projet',label:'Contexte',value:text(answers.nature)});
   push('Logement',home);detailed.forEach(type=>push(type,sections[type]));push('Finitions et budget',finish);push('Contact',contact);
   return rows;
@@ -125,38 +130,42 @@ export default function RequestForm({close,initialService}:{close:()=>void;local
  async function submit(e:React.FormEvent){
   e.preventDefault();setError('');
   if(step===0&&!types.length){setError('Choisissez au moins un type de travaux.');return}
-  if(step<5){setStep(step+1);return}
+  if(!booking&&step<5){setStep(step+1);return}
   setBusy(true);
   try{const form=new FormData();form.set('data',JSON.stringify({...data,service:types.join(', '),details:details(),locale:'fr'}));photos.forEach(p=>form.append('photos',p.file));const res=await fetch('/api/requests',{method:'POST',body:form});const result=await res.json();if(!res.ok)throw Error(result.error);setDone(true)}catch(e){setError((e as Error).message)}finally{setBusy(false)}
  }
  return <dialog ref={dialog} className="request-dialog request-modal rq" lang="fr-FR" onCancel={e=>{if(busy||processing)e.preventDefault();else close()}} onClick={e=>{if(e.target===dialog.current&&!busy&&!processing)close()}} aria-labelledby="request-title">
-  <header className="request-modal-header"><div><p className="eyebrow">DEMANDE DE DEVIS</p><h2 id="request-title">Parlez-nous de votre projet.</h2></div><button className="icon-button" aria-label="Fermer la demande" disabled={busy||processing} onClick={close}><X/></button></header>
+  <header className="request-modal-header"><div><p className="eyebrow">{booking ? 'DEMANDE DE RENDEZ-VOUS' : 'DEMANDE DE DEVIS'}</p><h2 id="request-title">{booking ? 'Réserver une visite' : 'Parlez-nous de votre projet.'}</h2></div><button className="icon-button" aria-label="Fermer la demande" disabled={busy||processing} onClick={close}><X/></button></header>
   <div ref={content} className="request-modal-content">{done?<div className="success-panel"><span className="success-icon"><Check/></span><h3>Votre demande est enregistrée.</h3><p>Nous vous recontactons pour en parler et organiser la visite.</p>{photos.length>0&&<p>Vos photos sont bien jointes au dossier.</p>}<button className="btn primary" onClick={close}>Fermer</button></div>:<>
-   <div className="rq-progress" role="progressbar" aria-valuemin={1} aria-valuemax={6} aria-valuenow={step+1} aria-label={`Étape ${step+1} sur 6 : ${stepNames[step]}`}><span style={{width:`${(step+1)/6*100}%`}}/></div>
-   <p className="rq-step">Étape {step+1} sur 6 · <b>{stepNames[step]}</b></p>
+   {!booking&&<><div className="rq-progress" role="progressbar" aria-valuemin={1} aria-valuemax={6} aria-valuenow={step+1} aria-label={`Étape ${step+1} sur 6 : ${stepNames[step]}`}><span style={{width:`${(step+1)/6*100}%`}}/></div>
+   <p className="rq-step">Étape {step+1} sur 6 · <b>{stepNames[step]}</b></p></>}
    <form onSubmit={submit}>
-    {step===0&&<>
+    {booking&&<>
+     <p className="notice"><b>{types.join(' · ')}</b><br/>Indiquez où et quand vous joindre. Nous vous recontactons pour convenir du rendez-vous.</p>
+     <AddressInput locale="fr" value={data.address} onChange={v=>field('address',v)}/>
+    </>}
+    {!booking&&step===0&&<>
      <fieldset className="rq-ask"><legend>Quels travaux souhaitez-vous réaliser ?<small> · plusieurs choix possibles</small></legend><div className="service-choices">{works.map(work=>{const on=types.includes(work);return <button type="button" key={work} aria-pressed={on} className={on?'chosen':''} onClick={()=>setTypes(on?types.filter(x=>x!==work):[...types,work])}>{work}{on&&<Check size={16}/>}</button>})}</div></fieldset>
      <Ask q={{key:'nature',label:'Dans quel contexte ?',type:'choice',options:['Amélioration de mon logement','Achat à rénover','Avant mise en location ou vente','Après un sinistre','Local professionnel']}} answers={answers} set={answer}/>
     </>}
     {step===1&&<><AddressInput locale="fr" value={data.address} onChange={v=>field('address',v)}/><div className="rq-grid">{home.filter(q=>!q.when||q.when(answers)).map(q=><Ask key={q.key} q={q} answers={answers} set={answer}/>)}</div></>}
     {step===2&&(detailed.length?detailed.map(type=><section className="rq-section" key={type}><h3>{type}</h3><div className="rq-grid">{sections[type].map(q=><Ask key={q.key} q={q} answers={answers} set={answer}/>)}</div></section>):<p className="notice">Pas de question supplémentaire pour ces travaux : décrivez-les librement à l’étape « Photos ».</p>)}
     {step===3&&<><div className="form-grid"><label>Budget envisagé<select value={data.budget} onChange={e=>field('budget',e.target.value)}>{budgets.map(b=><option key={b}>{b}</option>)}</select></label><label>Démarrage souhaité<select value={data.timeline} onChange={e=>field('timeline',e.target.value)}>{timelines.map(t=><option key={t}>{t}</option>)}</select></label></div><div className="rq-grid">{finish.map(q=><Ask key={q.key} q={q} answers={answers} set={answer}/>)}</div></>}
-    {step===4&&<>
+    {(booking||step===4)&&<>
      <label>Décrivez votre projet avec vos mots<textarea required minLength={10} maxLength={10000} rows={5} placeholder="Ce que vous voulez changer, ce qui vous gêne aujourd’hui, vos envies, vos contraintes…" value={data.description} onChange={e=>field('description',e.target.value)}/></label>
      <section className={`request-photo-drop ${drag?'dragging':''}`} onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);void addFiles(Array.from(e.dataTransfer.files))}}><ImagePlus size={25}/><h3>Ajoutez des photos des pièces</h3><p>Glissez-les ici ou choisissez-les. Jusqu’à 10 photos : vue d’ensemble, détails, plans éventuels.</p><div className="button-row"><button type="button" className="btn secondary" disabled={processing} onClick={()=>files.current?.click()}><ImagePlus size={17}/>Choisir des photos</button><button type="button" className="btn secondary" disabled={processing} onClick={()=>camera.current?.click()}><Camera size={17}/>Prendre une photo</button></div><input ref={files} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={e=>{void addFiles(Array.from(e.target.files||[]));e.target.value=''}}/><input ref={camera} type="file" accept="image/*" capture="environment" hidden onChange={e=>{void addFiles(Array.from(e.target.files||[]));e.target.value=''}}/>{processing&&<p role="status">Préparation des photos…</p>}</section>
      <div className="request-photo-previews">{photos.map((p,i)=><figure key={p.url}><img src={p.url} alt="Photo du projet"/><button type="button" className="icon-button" aria-label={`Retirer la photo ${i+1}`} onClick={()=>{URL.revokeObjectURL(p.url);setPhotos(rows=>rows.filter(x=>x!==p))}}><Trash2 size={16}/></button><figcaption>{p.file.name}</figcaption></figure>)}</div>
     </>}
-    {step===5&&<>
+    {(booking||step===5)&&<>
      <label>Nom complet<input required minLength={2} maxLength={150} autoComplete="name" value={data.name} onChange={e=>field('name',e.target.value)}/></label>
      <div className="form-grid"><label>E-mail<input type="email" required autoComplete="email" autoCapitalize="none" value={data.email} onChange={e=>field('email',e.target.value)}/></label><label>Téléphone<input type="tel" required minLength={7} autoComplete="tel" value={data.phone} onChange={e=>field('phone',e.target.value)}/></label></div>
-     <div className="rq-grid">{contact.map(q=><Ask key={q.key} q={q} answers={answers} set={answer}/>)}</div>
+     <div className="rq-grid">{contact.filter(q=>!booking||q.key==='visit_slots').map(q=><Ask key={q.key} q={q} answers={answers} set={answer}/>)}</div>
      <input className="honeypot" tabIndex={-1} autoComplete="off" aria-hidden="true" value={data.website} onChange={e=>field('website',e.target.value)}/>
-     <div className="request-summary"><p><b>{types.join(' · ')}</b></p><p>{data.address}</p><p>{details().length} précision(s) · {photos.length} photo(s) jointe(s)</p></div>
+     {!booking&&<div className="request-summary"><p><b>{types.join(' · ')}</b></p><p>{data.address}</p><p>{details().length} précision(s) · {photos.length} photo(s) jointe(s)</p></div>}
      <label className="request-consent"><input type="checkbox" required checked={data.consent} onChange={e=>field('consent',e.target.checked)}/><span>J’accepte que Rénov LR utilise ces informations et photos pour répondre à ma demande. <Link href="/confidentialite" target="_blank">Confidentialité</Link></span></label>
     </>}
     {error&&<p role="alert" className="error">{error}</p>}
-    <div className="form-actions">{step>0?<button type="button" className="btn ghost" disabled={busy||processing} onClick={()=>{setError('');setStep(step-1)}}><ChevronLeft size={17}/>Retour</button>:<span className="muted">Sans engagement</span>}<button className="btn primary" disabled={busy||processing}>{busy?'Envoi…':step===5?'Envoyer ma demande':'Continuer'}<ArrowRight size={17}/></button></div>
+    <div className="form-actions">{step>0?<button type="button" className="btn ghost" disabled={busy||processing} onClick={()=>{setError('');setStep(step-1)}}><ChevronLeft size={17}/>Retour</button>:<span className="muted">Sans engagement</span>}<button className="btn primary" disabled={busy||processing}>{busy?'Envoi…':booking||step===5?'Envoyer ma demande':'Continuer'}<ArrowRight size={17}/></button></div>
    </form>
   </>}</div>
  </dialog>;

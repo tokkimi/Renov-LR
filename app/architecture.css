@@ -320,88 +320,83 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
   .rl-warp-sequence .rl-warp-details { padding-block: 12px 0; }
 }
 
-.rl-warp-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.rl-warp-actions .rl-btn { min-height: 44px; padding-inline: 16px; white-space: nowrap; }
-
+.rl-warp-open {
+  border: 0;
+  background: none;
+  color: #314b62;
+  padding: 8px 0;
+  min-height: 40px;
+  font-weight: 600;
+  text-underline-offset: 4px;
+  text-decoration: underline;
+  white-space: nowrap;
+}
 .service-sheet {
-  width: min(850px, calc(100% - 32px));
-  max-height: min(820px, calc(100dvh - 38px));
+  width: min(740px, calc(100% - 24px));
+  max-height: calc(100dvh - 34px);
   padding: 0;
   overflow: hidden;
-  border: 1px solid #fff;
-  border-radius: 26px;
-  background: rgba(248, 251, 253, .96);
+  border: 1px solid #ffffffba;
+  border-radius: 21px;
+  background: #f8fbfde0;
   color: var(--ink);
   font: inherit;
-  box-shadow: 0 24px 90px #0e243e45;
-  backdrop-filter: blur(22px);
+  box-shadow: 0 18px 70px #0e243e32;
+  backdrop-filter: blur(15px);
 }
 .service-sheet[open] { animation: service-sheet-in .24s ease-out both; }
-.service-sheet::backdrop { background: #1426347a; backdrop-filter: blur(7px); }
-@keyframes service-sheet-in {
-  from { opacity: 0; transform: translateY(8px) scale(.99); }
-}
+.service-sheet::backdrop { background: #14263438; backdrop-filter: blur(3px); }
+@keyframes service-sheet-in { from { opacity: 0; transform: translateY(8px) scale(.99); } }
 .service-sheet-surface {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  max-height: min(818px, calc(100dvh - 40px));
+  grid-template-rows: minmax(0, 1fr) auto;
+  max-height: calc(100dvh - 36px);
 }
-.service-sheet-header, .service-sheet-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 14px clamp(14px, 4vw, 30px);
-  background: #f8fbfdd9;
+.service-sheet-body { overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.service-sheet-gallery {
+  position: relative;
+  isolation: isolate;
+  height: clamp(200px, 42svh, 360px);
+  margin: 0;
+  background: #dbe2e8;
+  touch-action: pan-y;
 }
-.service-sheet-title { display: flex; align-items: center; gap: 12px; }
-.service-sheet-title h2 { font-size: clamp(25px, 4vw, 38px); margin: 0; }
-.service-sheet-icon, .service-sheet-close {
+.service-sheet-gallery img { object-fit: cover; }
+.service-sheet-gallery figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 22px 108px 12px 16px;
+  background: linear-gradient(transparent, #102030bd);
+  color: white;
+  font-size: 13px;
+}
+.service-sheet-control {
   display: grid;
   place-items: center;
-  flex: none;
-  width: 44px;
-  height: 44px;
-  border: 1px solid #cbd9e4;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ffffff91;
   border-radius: 50%;
-  background: #edf4f9;
-  color: #314b62;
+  background: #f7fbfee8;
+  color: #142634;
+  padding: 0;
 }
-.service-sheet-close { background: #fff; }
-.service-sheet-close:hover { background: #edf4f9; }
-.service-sheet-body {
-  overflow: auto;
-  overscroll-behavior: contain;
-  padding: 0 clamp(14px, 4vw, 30px) 24px;
-  scrollbar-width: thin;
-}
-.service-sheet-photos { display: grid; gap: 7px; }
-.service-sheet-photos[data-pair=true] { grid-template-columns: 1fr 1fr; }
-.service-sheet-photos > div { position: relative; height: clamp(136px, 28svh, 235px); overflow: hidden; border-radius: 13px; background: #dbe2e8; }
-.service-sheet-photos img { object-fit: cover; }
-.service-sheet-intro { margin: 18px 0 0; font-size: clamp(16px, 2vw, 19px); }
-.service-sheet-body section { margin-top: 22px; }
-.service-sheet-body h3 { margin: 0 0 12px; font-size: 21px; line-height: 1.2; }
-.service-sheet-works, .service-sheet-steps { display: grid; gap: 11px; margin: 0; padding: 0; list-style: none; }
-.service-sheet-works li, .service-sheet-steps li { display: flex; align-items: flex-start; gap: 10px; }
-.service-sheet-works svg { margin-top: 4px; flex: none; color: #466883; }
-.service-sheet-works p, .service-sheet-steps p, .service-sheet-duration p { margin: 2px 0 0; color: var(--muted); line-height: 1.45; }
-.service-sheet-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.service-sheet-steps li {
-  padding: 11px;
-  background: #fff;
-  border: 1px solid #dbe5ee;
-  border-radius: 12px;
-}
-.service-sheet-steps li > span { color: #466883; font-size: 13px; font-weight: 650; }
-.service-sheet-duration { display: flex; gap: 12px; padding: 14px; background: #eaf2f7; border-radius: 13px; }
-.service-sheet-duration > svg { flex: none; color: #466883; }
-.service-sheet-duration h3 { margin-bottom: 5px; }
-.service-sheet-duration p + p { margin-top: 6px; }
-.service-sheet-footer { justify-content: flex-end; flex-wrap: wrap; border-top: 1px solid #dbe5ee; }
-.service-sheet-footer .rl-btn { min-height: 44px; padding-inline: 15px; flex: none; }
-@media (max-width: 580px) {
-  .service-sheet { width: calc(100% - 16px); border-radius: 20px; }
-  .service-sheet-steps { grid-template-columns: 1fr; }
-  .service-sheet-footer { justify-content: center; }
+.service-sheet-control:hover { background: #fff; }
+.service-sheet-close { position: absolute; top: 12px; right: 12px; }
+.service-sheet-gallery-controls { position: absolute; bottom: 8px; right: 10px; z-index: 1; display: flex; gap: 5px; }
+.service-sheet-copy { padding: 19px clamp(16px, 4vw, 32px) 22px; }
+.service-sheet-copy h2 { margin: 0; font-size: clamp(29px, 5vw, 42px); }
+.service-sheet-intro { margin: 8px 0 16px; color: #314657; }
+.service-sheet-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-block: 16px; border-block: 1px solid #dbe5ee; }
+.service-sheet-columns h3 { margin: 0 0 8px; font-size: 19px; }
+.service-sheet-columns ul, .service-sheet-columns ol { margin: 0; padding: 0; list-style: none; }
+.service-sheet-columns li + li { margin-top: 10px; }
+.service-sheet-columns li p { margin: 1px 0 0; color: #3c5264; font-size: 14px; line-height: 1.35; }
+.service-sheet-duration { display: flex; gap: 8px; margin: 14px 0 0; color: #314b62; font-size: 14px; }
+.service-sheet-duration svg { flex: none; margin-top: 2px; }
+.service-sheet-footer { display: flex; justify-content: flex-end; padding: 9px clamp(16px, 4vw, 32px); border-top: 1px solid #dbe5ee; }
+.service-sheet-footer .rl-btn { min-height: 43px; flex: none; }
+@media (max-width: 560px) {
+  .service-sheet-columns { grid-template-columns: 1fr; gap: 16px; }
+  .service-photo-description { display: none; }
 }
