@@ -71,6 +71,14 @@ function ContactBubble({settings,onQuote}:{settings:Data;onQuote:()=>void}){
 export default function HomeSite({settings=defaults}:{settings?:Data}){
  const [quote,setQuote]=useState(false),[section,setSection]=useState(0);
  const root=useRef<HTMLDivElement>(null);
+ // Arrivée sur le site : écran d’accueil avec le seul monogramme LR, puis la bannière monte et se déploie.
+ const [stage,setStage]=useState<'intro'|'leaving'|'animating'|'done'>('intro');
+ useEffect(()=>{
+  let seen=false;try{seen=sessionStorage.getItem('renovlr-intro')==='1'}catch{}
+  if(seen||window.matchMedia('(prefers-reduced-motion: reduce)').matches){setStage('done');return}
+  const timers=[window.setTimeout(()=>setStage('leaving'),1500),window.setTimeout(()=>setStage('animating'),1750),window.setTimeout(()=>{setStage('done');try{sessionStorage.setItem('renovlr-intro','1')}catch{}},3150)];
+  return()=>timers.forEach(window.clearTimeout);
+ },[]);
  const tone=tracked[Math.min(section,tracked.length-1)][1];
  const phone=String(settings.phone||'').replace(/[^+\d]/g,'');
  useEffect(()=>{
@@ -89,7 +97,8 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
   window.addEventListener('scroll',onScroll,{passive:true});if(!calm)window.addEventListener('pointermove',onMove,{passive:true});
   return()=>{observer.disconnect();el.removeEventListener('pointermove',onLight);window.removeEventListener('scroll',onScroll);window.removeEventListener('pointermove',onMove)};
  },[]);
- return <div className="rl-site" ref={root}>
+ return <div className="rl-site" ref={root} data-stage={stage}>
+  {stage!=='done'&&<div className="rl-intro" aria-hidden="true"><LogoMark size={96}/></div>}
   <div className="rl-orbs" aria-hidden="true"><i/><i/><i/></div>
   <header className="rlr-header liquid" data-tone={tone}>
    <Wordmark/>
@@ -99,7 +108,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
   <div className="rl-progress" aria-hidden="true"/>
   <main>
    <section className="rl-hero" id="top">
-    <div className="rl-hero-bg" aria-hidden="true"><Image src="/images/interieur.png" alt="" fill priority sizes="100vw"/></div>
+    <div className="rl-hero-bg" aria-hidden="true"><Image src="/images/hero.jpg" alt="" fill priority sizes="100vw"/></div>
     <div className="rl-wrap rl-hero-grid">
      <div className="rl-hero-copy">
       <p className="rl-pill"><i/>Entreprise de rénovation intérieure</p>
