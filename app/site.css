@@ -313,6 +313,26 @@ html:has(.rl-site){scroll-behavior:smooth}
 .rl-site:not([data-stage=done]) .rlr-header,.rl-site:not([data-stage=done]) .rl-bubble,.rl-site:not([data-stage=done]) .rl-progress,.rl-site:not([data-stage=done]) .rl-orbs{opacity:0;pointer-events:none}
 .rl-site .rlr-header,.rl-site .rl-bubble{transition:opacity .7s .1s,top .25s}
 .rl-site:not([data-stage=done]){height:100svh;overflow:hidden}
+/* Finition commune des actions : liseré irisé uniquement au passage du pointeur. */
+.rl-btn,.rl-services button,.rl-bubble-btn,.rl-bubble-panel a,.rl-bubble-panel button{isolation:isolate}
+.rl-btn::before,.rl-services button::after,.rl-bubble-btn::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;opacity:.22;background:linear-gradient(120deg,rgba(255,255,255,.9),rgba(255,255,255,.1) 42%,rgba(255,255,255,.62));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;transition:opacity .25s,filter .25s}
+.rl-btn:hover::before,.rl-btn:focus-visible::before,.rl-services button:hover::after,.rl-services button:focus-visible::after,.rl-bubble-btn:hover::before{opacity:1;filter:drop-shadow(0 0 6px rgba(117,215,255,.8)) drop-shadow(0 0 10px rgba(255,89,110,.55));background:conic-gradient(from 210deg at var(--gx,50%) var(--gy,50%),#fff,#7bdfff,#c798ff,#ff8075,#fff)}
+.rl-btn:active,.rl-services button:active,.rl-bubble-btn:active{transform:translateY(0) scale(.975);box-shadow:0 0 0 2px rgba(255,255,255,.8),0 0 26px rgba(255,92,84,.8),0 0 42px rgba(105,214,255,.42)}
+
+/* Prestations : une vraie matière visuelle par métier, sans pictogramme géant en arrière-plan. */
+.rl-services button{min-height:350px;padding:0 26px 24px;justify-items:start;align-content:end;background:#121214;color:#fff;border-color:rgba(255,255,255,.28)}
+.rl-service-photo{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.82;transition:transform .7s cubic-bezier(.2,.7,.2,1),opacity .35s;z-index:-1}
+.rl-service-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,10,.06) 22%,rgba(8,8,10,.92) 88%)}
+.rl-services button:hover .rl-service-photo{transform:scale(1.08);opacity:1}
+.rl-services .ic{width:44px;height:44px;border-radius:14px;background:rgba(12,12,13,.64);border:1px solid rgba(255,255,255,.34);backdrop-filter:blur(10px)}
+.rl-services button:hover .ic{background:rgba(229,32,43,.86);transform:translateY(-3px)}
+.rl-services .n{color:rgba(255,255,255,.72)}
+.rl-services h3,.rl-services p,.rl-services .go{position:relative;color:#fff}.rl-services p{color:rgba(255,255,255,.8)}.rl-services .go{opacity:1;transform:none}
+
+/* Contact : composition éditoriale, avec promesse et point de contact visibles. */
+.rl-cta{grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);align-items:end;justify-items:stretch;text-align:left;gap:clamp(28px,7vw,90px);padding:clamp(42px,7vw,84px)}
+.rl-cta-copy{position:relative;z-index:1;display:grid;justify-items:start;gap:16px}.rl-cta-copy>.rlr-mark{margin-bottom:8px}.rl-cta-copy h2{max-width:10ch}.rl-cta-copy>p:not(.rl-kicker){max-width:42ch;font-size:17px}.rl-cta-note{position:relative;z-index:1;display:grid;gap:15px;padding:24px;border:1px solid rgba(255,255,255,.72);border-radius:24px;background:rgba(255,255,255,.58);box-shadow:inset 0 1px 0 #fff;backdrop-filter:blur(18px)}.rl-cta-note b{display:flex;align-items:center;gap:9px;font-size:15px}.rl-cta-note b svg{color:var(--red)}.rl-cta-note span{color:#555;line-height:1.55}.rl-cta-note a{display:inline-flex;align-items:center;gap:8px;color:var(--ink);font-weight:650;text-decoration:none}
+@media(max-width:700px){.rl-cta{grid-template-columns:1fr;padding:38px 24px}.rl-cta-note{padding:19px}.rl-services button{min-height:280px}}
 /* Photo de la bannière : façade claire, voile plus soutenu à gauche pour le texte */
 .rl-hero-bg img{object-position:62% 40%}
 .rl-hero-bg::after{background:linear-gradient(100deg,rgba(8,8,9,.88) 0%,rgba(8,8,9,.66) 44%,rgba(8,8,9,.22) 100%),radial-gradient(700px 420px at 10% 100%,rgba(229,32,43,.4),transparent 70%)}

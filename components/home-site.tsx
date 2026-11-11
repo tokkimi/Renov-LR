@@ -9,12 +9,12 @@ import QuoteRequest from './request-form';
 import {Data,defaults} from '@/lib/model';
 
 const services=[
- [CookingPot,'Cuisine','Implantation, plans de travail, crédence, électricité et finitions.'],
- [Bath,'Salle de bain','Douche à l’italienne, faïence, plomberie et étanchéité.'],
- [Layers,'Sols & parquet','Parquet, carrelage, vinyle : dépose, préparation et pose.'],
- [Brush,'Peinture & murs','Préparation des supports, enduits, peinture et revêtements.'],
- [Hammer,'Aménagement','Cloisons, doublages, portes et rangements sur mesure.'],
- [Sparkles,'Rénovation complète','Un seul interlocuteur pour coordonner tous les corps de métier.']
+ [CookingPot,'Cuisine','Implantation, plans de travail, crédence, électricité et finitions.','https://images.unsplash.com/photo-1556912167-f556f1f39fdf?auto=format&fit=crop&w=1100&q=85'],
+ [Bath,'Salle de bain','Douche à l’italienne, faïence, plomberie et étanchéité.','https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1100&q=85'],
+ [Layers,'Sols & parquet','Parquet, carrelage, vinyle : dépose, préparation et pose.','https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1100&q=85'],
+ [Brush,'Peinture & murs','Préparation des supports, enduits, peinture et revêtements.','https://images.unsplash.com/photo-1562259949-a4c93b3f2c1b?auto=format&fit=crop&w=1100&q=85'],
+ [Hammer,'Aménagement','Cloisons, doublages, portes et rangements sur mesure.','https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1100&q=85'],
+ [Sparkles,'Rénovation complète','Un seul interlocuteur pour coordonner tous les corps de métier.','https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1100&q=85']
 ] as const;
 const steps=[
  ['Vous nous contactez','Décrivez votre projet en quelques minutes, avec des photos si vous en avez. Nous vous rappelons.'],
@@ -39,7 +39,6 @@ const navItems:LiquidNavItem[]=[
 ];
 /** Sections suivies par la barre : identifiant et ton du fond qu’elles affichent sous la barre. */
 const tracked:[string,'light'|'dark'][]=[['top','dark'],['prestations','light'],['engagements','dark'],['methode','dark'],['contact','light']];
-const words=['Cuisine','Salle de bain','Parquet','Carrelage','Peinture','Cloisons','Électricité','Plomberie','Menuiserie'];
 
 /** Bulle de contact de l’accueil : le monogramme LR en transparence, qui ouvre les moyens de joindre l’entreprise. */
 function ContactBubble({settings,onQuote}:{settings:Data;onQuote:()=>void}){
@@ -123,16 +122,13 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
       <button type="button" className="rl-btn white" onClick={()=>setQuote(true)}>Décrire mon projet<ArrowUpRight size={18}/></button>
      </aside>
     </div>
-    <div className="rl-tags" aria-hidden="true">{['Salle de bain','Cuisine','Parquet','Peinture'].map((tag,i)=><span key={tag} style={{'--i':i} as React.CSSProperties}>{tag}</span>)}</div>
     <a className="rl-scroll" href="#prestations" aria-label="Découvrir les prestations"><span/></a>
    </section>
-
-   <div className="rl-strip" aria-hidden="true"><div>{[0,1].map(n=><span key={n}>{words.map(word=><b key={word}>{word}<i/></b>)}</span>)}</div></div>
 
    <section className="rl-section" id="prestations">
     <div className="rl-wrap">
      <header className="rl-head" data-reveal><p className="rl-kicker">Nos prestations</p><h2>Chaque pièce<br/><em>mérite mieux.</em></h2><p>De la pièce unique à la rénovation complète, nous prenons en charge les travaux de A à Z.</p></header>
-     <div className="rl-services">{services.map(([Icon,title,text],i)=><button type="button" key={title} className={`v${i%3}`} data-reveal style={{'--d':`${i*80}ms`} as React.CSSProperties} onClick={()=>setQuote(true)}><Icon className="bg" size={170} strokeWidth={.7} aria-hidden="true"/><span className="ic"><Icon size={24} strokeWidth={1.5}/></span><span className="n">{String(i+1).padStart(2,'0')}</span><h3>{title}</h3><p>{text}</p><span className="go">Demander un devis<ArrowUpRight size={16}/></span></button>)}</div>
+     <div className="rl-services">{services.map(([Icon,title,text,image],i)=><button type="button" key={title} className={`v${i%3}`} data-reveal style={{'--d':`${i*80}ms`} as React.CSSProperties} onClick={()=>setQuote(true)}><span className="rl-service-photo" style={{backgroundImage:`url(${image})`}} aria-hidden="true"/><span className="ic"><Icon size={22} strokeWidth={1.5}/></span><span className="n">{String(i+1).padStart(2,'0')}</span><h3>{title}</h3><p>{text}</p><span className="go">Demander un devis<ArrowUpRight size={16}/></span></button>)}</div>
     </div>
    </section>
 
@@ -155,10 +151,8 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <section className="rl-section rl-cta-wrap" id="contact">
     <div className="rl-wrap"><div className="rl-cta" data-reveal>
      <div className="rl-cta-bg" aria-hidden="true"><Image src="/images/interieur.png" alt="" fill sizes="100vw"/></div>
-     <LogoMark size={64}/>
-     <h2>Parlons de votre projet.</h2>
-     <p>Décrivez vos travaux en quelques minutes et joignez des photos : nous vous rappelons pour organiser la visite.</p>
-     <div className="rl-actions"><button type="button" className="rl-btn red" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button>{phone&&<a className="rl-btn glass" href={`tel:${phone}`}><Phone size={17}/>{settings.phone}</a>}{settings.email&&!String(settings.email).endsWith('.example')&&<a className="rl-btn glass" href={`mailto:${settings.email}`}><Mail size={17}/>{settings.email}</a>}</div>
+     <div className="rl-cta-copy"><LogoMark size={64}/><p className="rl-kicker">Votre projet, simplement</p><h2>Parlons de<br/><em>votre projet.</em></h2><p>Quelques lignes, quelques photos si vous en avez — nous vous rappelons pour organiser une visite.</p><div className="rl-actions"><button type="button" className="rl-btn red" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button></div></div>
+     <aside className="rl-cta-note"><b><Check size={18}/>Réponse sous 24 h ouvrées</b><span>Visite, conseils sur place et devis détaillé, sans engagement.</span>{phone&&<a href={`tel:${phone}`}><Phone size={16}/>{settings.phone}</a>}</aside>
     </div></div>
    </section>
   </main>
