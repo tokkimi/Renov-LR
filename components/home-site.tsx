@@ -81,14 +81,19 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
   const onScroll=()=>{let index=0;tracked.forEach(([id],i)=>{const node=document.getElementById(id);if(node&&node.getBoundingClientRect().top<=140)index=i});setSection(index);const max=document.documentElement.scrollHeight-window.innerHeight;el.style.setProperty('--p',String(max>0?window.scrollY/max:0));el.style.setProperty('--sy',String(Math.min(window.scrollY,1200)))};onScroll();
   const calm=window.matchMedia('(prefers-reduced-motion: reduce)').matches||!window.matchMedia('(pointer: fine)').matches;
   const onMove=(e:PointerEvent)=>{el.style.setProperty('--mx',String(e.clientX/window.innerWidth-.5));el.style.setProperty('--my',String(e.clientY/window.innerHeight-.5))};
+  // Reflet de verre : une lumière suit le pointeur sur le logo, les boutons et les cartes.
+  const glassy=Array.from(el.querySelectorAll<HTMLElement>('.rlr-header .rlr-wordmark,.rl-btn,.rl-pill,.rl-contact-card,.rl-tags span,.rl-services button,.rl-promises article,.rl-steps li,.rl-cta'));
+  glassy.forEach(node=>{node.classList.add('lq');if(!node.querySelector(':scope > .lq-light')){const light=document.createElement('span');light.className='lq-light';light.setAttribute('aria-hidden','true');node.appendChild(light)}});
+  const onLight=(e:PointerEvent)=>{const node=(e.target as Element|null)?.closest?.('.lq') as HTMLElement|null;if(!node)return;const box=node.getBoundingClientRect();node.style.setProperty('--gx',`${e.clientX-box.left}px`);node.style.setProperty('--gy',`${e.clientY-box.top}px`)};
+  el.addEventListener('pointermove',onLight,{passive:true});
   window.addEventListener('scroll',onScroll,{passive:true});if(!calm)window.addEventListener('pointermove',onMove,{passive:true});
-  return()=>{observer.disconnect();window.removeEventListener('scroll',onScroll);window.removeEventListener('pointermove',onMove)};
+  return()=>{observer.disconnect();el.removeEventListener('pointermove',onLight);window.removeEventListener('scroll',onScroll);window.removeEventListener('pointermove',onMove)};
  },[]);
  return <div className="rl-site" ref={root}>
   <div className="rl-orbs" aria-hidden="true"><i/><i/><i/></div>
   <header className="rlr-header liquid" data-tone={tone}>
    <Wordmark/>
-   <LiquidNavbar tone={tone} active={section} items={navItems} onChange={index=>setSection(index)}/>
+   <LiquidNavbar compact tone={tone} active={section} items={navItems} onChange={index=>setSection(index)}/>
   </header>
 
   <div className="rl-progress" aria-hidden="true"/>
@@ -144,7 +149,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
      <LogoMark size={64}/>
      <h2>Parlons de votre projet.</h2>
      <p>Décrivez vos travaux en quelques minutes et joignez des photos : nous vous rappelons pour organiser la visite.</p>
-     <div className="rl-actions"><button type="button" className="rl-btn white" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button>{phone&&<a className="rl-btn line" href={`tel:${phone}`}><Phone size={17}/>{settings.phone}</a>}{settings.email&&!String(settings.email).endsWith('.example')&&<a className="rl-btn line" href={`mailto:${settings.email}`}><Mail size={17}/>{settings.email}</a>}</div>
+     <div className="rl-actions"><button type="button" className="rl-btn red" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button>{phone&&<a className="rl-btn glass" href={`tel:${phone}`}><Phone size={17}/>{settings.phone}</a>}{settings.email&&!String(settings.email).endsWith('.example')&&<a className="rl-btn glass" href={`mailto:${settings.email}`}><Mail size={17}/>{settings.email}</a>}</div>
     </div></div>
    </section>
   </main>
