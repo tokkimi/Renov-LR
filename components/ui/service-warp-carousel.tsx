@@ -51,7 +51,7 @@ export default function ServiceWarpCarousel({cards, onSelect}: {
       <div className="rl-warp" ref={panel}>
         <div className="rl-warp-stage">
           <WarpCarousel cards={textures} index={index} onIndexChange={select}
-            autoplay={false} warp={1} background="#f3f6f8"
+            autoplay={false} flatDesktop warp={.62} background="#f3f6f8"
             ariaLabel="Carrousel des prestations" style={stageStyle}/>
         </div>
         <div className="rl-warp-controls">

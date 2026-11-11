@@ -16,20 +16,11 @@
   letter-spacing: -.025em;
 }
 .rl-architecture .rl-btn, .rl-architecture .rlr-header .nimbus-nav { font-family: 'Jost Variable', 'Inter', sans-serif; }
-.arch-brand {
-  display: inline-grid;
-  justify-items: center;
-  flex: none;
-  gap: 3px;
-  text-align: center;
-  color: #142634;
-  text-decoration: none;
-}
-.arch-brand .rlr-mark { flex: none; object-fit: contain; filter: none; }
+.arch-brand { display: block; flex: none; width: clamp(120px, 14vw, 156px); }
+.arch-brand img { display: block; width: 100%; height: auto; }
 .arch-brand-type { display: grid; gap: 3px; }
 .arch-brand-type strong { font: 400 clamp(18px, 1.8vw, 26px)/1 'Marcellus', Georgia, serif; text-transform: uppercase; letter-spacing: .035em; }
 .arch-brand-type small { font: 500 clamp(7px, .65vw, 9px)/1.15 'Jost Variable', sans-serif; letter-spacing: .09em; text-transform: uppercase; white-space: nowrap; }
-.rlr-header[data-section=contact] .arch-brand { color: #f5f8fc; }
 .rl-architecture .rl-bubble-btn, .rl-architecture .rl-bubble.open .rl-bubble-btn {
   display: grid;
   place-items: center;
@@ -80,7 +71,7 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
 .rl-architecture .arch-hero {
   min-height: 100svh;
   padding: 140px 0 clamp(55px, 12vh, 140px);
-  align-items: end;
+  align-items: center;
   isolation: isolate;
   background: #293542;
 }
@@ -89,20 +80,19 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
   inset: 0;
   z-index: -1;
 }
-.arch-hero-photo img { object-fit: cover; object-position: 54% 50%; }
+.arch-hero-photo img { object-fit: cover; object-position: 60% 50%; }
 .arch-hero::after {
   content: '';
-  background: linear-gradient(12deg, rgba(15, 13, 12, .67), rgba(15, 13, 12, .24) 39%, transparent 65%);
+  background: linear-gradient(90deg, rgba(248,250,252,.94), rgba(248,250,252,.83) 30%, rgba(248,250,252,.23) 54%, transparent 69%);
 }
-.arch-hero-copy { display: grid; justify-items: start; gap: 24px; }
-.arch-hero-copy h1, .arch-hero-copy > p { text-shadow: 0 2px 22px rgba(0,0,0,.35); }
-.rl-architecture .arch-hero h1 { font-size: clamp(54px, 8vw, 114px); line-height: .98; letter-spacing: -.055em; }
-.arch-hero-copy > p:not(.arch-eyebrow) { max-width: 38ch; color: #f1f4f8; font-size: clamp(16px, 2vw, 20px); }
+.arch-hero-copy { display: grid; justify-items: start; gap: 24px; color: #142634; }
+.rl-architecture .arch-hero h1 { font-size: clamp(48px, 6.2vw, 94px); line-height: .98; letter-spacing: -.055em; }
+.arch-hero-copy > p:not(.arch-eyebrow) { max-width: 38ch; color: #243d52; font-size: clamp(16px, 2vw, 20px); }
 .arch-eyebrow { font-size: 12px; line-height: 1.3; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; color: #426079; }
-.arch-hero .arch-eyebrow { color: #e5ecf4; }
+.arch-hero .arch-eyebrow { color: #314b62; }
 .rl-architecture .arch-primary { background: #314b62; color: #fff; border-color: #314b62; }
-.rl-architecture .arch-hero .arch-primary { background: #fff; color: #1b2d3d; border-color: #fff; }
-.rl-architecture .arch-hero-link { color: #fff; background: rgba(14, 24, 35, .56); border-color: rgba(255, 255, 255, .56); }
+.rl-architecture .arch-hero .arch-primary { background: #202f3d; color: #fff; border-color: #202f3d; }
+.rl-architecture .arch-hero-link { color: #203546; background: rgba(255, 255, 255, .76); border-color: #a8b9c7; }
 .rl-architecture .arch-outline { color: #243d52; background: #fff; border-color: #bccbd8; }
 .rl-architecture .arch-outline:hover { background: #edf3f7; }
 
@@ -114,8 +104,8 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
   gap: clamp(20px, 8vw, 120px);
   padding-block: clamp(76px, 10vw, 152px);
 }
-.arch-intro h2, .arch-heading h2, .arch-contact h2 { margin-top: 12px; }
-.arch-intro > p, .arch-heading > p:not(.arch-eyebrow), .arch-contact-copy > p:not(.arch-eyebrow) {
+.arch-intro h2, .arch-heading h2 { margin-top: 12px; }
+.arch-intro > p, .arch-heading > p:not(.arch-eyebrow) {
   max-width: 48ch;
   color: var(--muted);
   font-size: clamp(17px, 1.7vw, 20px);
@@ -146,10 +136,11 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
 .rl-architecture .rl-warp-controls .rl-btn:is(:hover, :focus-visible)::before { opacity: 1; }
 .rl-architecture .rl-warp-details .rl-btn.red { background: #314b62; box-shadow: none; }
 .rl-architecture .rl-warp-details .rl-btn.red::after { content: none; }
-.arch-compare { display: grid; grid-template-columns: minmax(0, .55fr) minmax(0, 1fr); align-items: center; gap: clamp(22px, 6vw, 80px); }
-.arch-compare-copy { display: grid; gap: 14px; }
+.arch-compare { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); align-items: center; gap: clamp(22px, 6vw, 80px); }
+.arch-compare-frame { grid-column: 1; grid-row: 1; }
+.arch-compare-copy { grid-column: 2; grid-row: 1; display: grid; gap: 14px; }
 .arch-compare-copy p { color: var(--muted); }
-.arch-compare-frame { position: relative; isolation: isolate; aspect-ratio: 3 / 2; overflow: hidden; border-radius: clamp(14px, 3vw, 34px); background: #e4eaf0; cursor: ew-resize; }
+.arch-compare-frame { position: relative; isolation: isolate; aspect-ratio: 5 / 2; overflow: hidden; border-radius: clamp(14px, 3vw, 34px); background: #e4eaf0; cursor: ew-resize; }
 .arch-compare-frame img { object-fit: cover; user-select: none; }
 .arch-compare-layer { position: absolute; inset: 0; }
 .arch-compare-label { position: absolute; top: 16px; padding: 6px 13px; background: #fff; color: #19232d; border-radius: 99px; font-size: 13px; font-weight: 600; pointer-events: none; }
@@ -228,18 +219,20 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
 .arch-steps p, .arch-promises p { color: var(--muted); }
 .arch-promises article { padding-top: 17px; border-top: 1px solid var(--line); }
 
-.arch-contact { background: #202f3d; color: #fff; }
-.arch-contact-layout { display: grid; grid-template-columns: 1.08fr .92fr; align-items: center; gap: clamp(24px, 8vw, 100px); }
-.arch-contact-copy { display: grid; gap: 18px; }
-.arch-contact .arch-eyebrow, .arch-contact-copy > p:not(.arch-eyebrow) { color: #d2dfeb; }
-.arch-contact-actions { display: grid; gap: 13px; padding: clamp(23px, 4vw, 48px); border-radius: 18px; background: #f8fafc; color: #19232d; }
-.arch-contact-actions h3 { margin: 0 0 6px; font-size: 25px; }
-.arch-contact-actions p { color: #4e5d6a; margin-bottom: 8px; }
-.arch-contact-actions .rl-btn { width: 100%; }
-.arch-contact-actions .rl-whatsapp { background: #e2f5ea; color: #07593b; border-color: #b4deca; }
-.arch-contact-actions .rl-whatsapp:hover { background: #effaf4; }
-.arch-direct { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 4px; }
-.arch-direct a { display: inline-flex; gap: 6px; align-items: center; color: #314b62; font-size: 14px; }
+.arch-contact {
+  padding-block: clamp(30px, 5vw, 68px);
+  color: #fff;
+  background: linear-gradient(105deg, #293f50, #152532 72%);
+}
+.arch-contact-layout {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: clamp(18px, 5vw, 64px);
+}
+.arch-contact-copy h2 { margin: 0; font-size: clamp(28px, 4vw, 48px); line-height: 1.06; }
+.arch-contact-copy p { margin: 10px 0 0; color: #e5edf3; }
+.rl-architecture .arch-contact-quote { justify-self: start; background: #fff; color: #182b3a; border-color: #fff; }
 .rl-architecture .rl-footer { background: #fff; }
 .rl-architecture .rl-bubble-panel .main, .rl-architecture .rl-bubble-panel .main:hover { background: #314b62; }
 .rl-architecture .rl-bubble-panel > * > svg:first-child { background: #314b62; }
@@ -250,8 +243,11 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
 }
 @media (max-width: 700px) {
   .arch-intro, .arch-contact-layout, .arch-compare { grid-template-columns: 1fr; }
-  .rl-architecture .arch-hero { min-height: min(780px, 100svh); }
-  .arch-hero::after { background: linear-gradient(0deg, rgba(15, 13, 12, .74), rgba(15, 13, 12, .32) 49%, transparent 78%); }
+  .arch-compare-copy { grid-column: 1; grid-row: 2; }
+  .arch-compare-frame { aspect-ratio: 2 / 1; }
+  .arch-contact-break { display: none; }
+  .rl-architecture .arch-hero { min-height: min(780px, 100svh); align-items: end; }
+  .arch-hero::after { background: linear-gradient(0deg, #f8fafc 3%, rgba(248,250,252,.94) 28%, rgba(248,250,252,.72) 47%, transparent 76%); }
   .rl-architecture .rl-warp-stage { height: clamp(320px, 65svh, 510px); min-height: 0; }
   .arch-hero-copy .rl-actions { width: auto; }
   .arch-steps { grid-template-columns: 1fr; grid-auto-rows: 1fr; }
@@ -268,13 +264,13 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
   .arch-steps p { font-size: 14px; }
 }
 @media (max-width: 520px) {
-  .arch-brand { gap: 2px; }
-  html body .rl-architecture .arch-brand .rlr-mark { width: 32px; height: 32px; }
-  .arch-brand-type strong { font-size: clamp(15px, 4vw, 20px); }
-  .arch-brand-type small { font-size: clamp(6px, 1.55vw, 8px); letter-spacing: .035em; }
+  .arch-brand { width: clamp(102px, 30vw, 114px); }
   .rl-architecture .rlr-header.liquid .nimbus-nav[data-compact=true] .nimbus-item { padding-inline: 7px; }
   .rl-architecture .arch-hero h1 { font-size: clamp(44px, 11.4vw, 64px); }
   .rl-architecture .rl-bubble-btn, .rl-architecture .rl-bubble.open .rl-bubble-btn { width: 48px; height: 48px; }
+}
+@media (max-width: 350px) {
+  .rl-architecture .rlr-header.liquid .nimbus-nav[data-compact=true] .nimbus-item { padding-inline: 5px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html:has(.rl-architecture) { scroll-behavior: auto; }

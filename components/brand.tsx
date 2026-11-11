@@ -16,8 +16,8 @@ export function BrandName() {
 export function BrandLockup() {
   return (
     <Link className="arch-brand" href="/" aria-label="Rénov LR, accueil">
-      <LogoMark size={48}/>
-      <BrandName/>
+      <Image src="/app/renov-lr-header.png" width={1536} height={1024} alt=""
+        sizes="(max-width: 520px) 114px, 156px" />
     </Link>
   );
 }

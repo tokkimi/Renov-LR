@@ -209,7 +209,7 @@ html body .notification-filters .btn[aria-pressed=true]{background:#111;border-c
 /* Mot-symbole : « Rénov » suivi du monogramme LR en verre */
 html body .rlr-wordmark{gap:.26em;font-weight:600}
 html body .rlr-wordmark>span{font-weight:600}
-html body .rlr-wordmark .rlr-mark{width:1.62em;height:1.62em;margin:0;flex:none;filter:drop-shadow(0 6px 10px rgba(229,32,43,.28))}
+html body .rlr-wordmark .rlr-mark{width:1.62em;height:1.62em;margin:0;flex:none}
 
 /* Questionnaire de devis */
 .rq .rq-progress{height:6px;border-radius:99px;background:#ececec;overflow:hidden;margin-bottom:10px}

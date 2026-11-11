@@ -67,7 +67,7 @@ function ContactBubble({settings,onQuote,whatsapp}:{settings:Data;onQuote:()=>vo
  </div>;
 }
 
-/** Page d’accueil Rénov LR : verre dépoli, lumière rouge et animations au défilement. */
+/** Page d’accueil Rénov LR : verre dépoli, lumière bleu ardoise et animations au défilement. */
 export default function HomeSite({settings=defaults}:{settings?:Data}){
  const [quote,setQuote]=useState(false),[section,setSection]=useState(0);
  const root=useRef<HTMLDivElement>(null);
@@ -86,8 +86,6 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
  },[]);
  const tone=tracked[Math.min(section,tracked.length-1)][1];
  const whatsapp=whatsappQuoteUrl(String(settings.phone||''));
- const phone=String(settings.phone||'').replace(/[^+\d]/g,'');
- const email=settings.email&&!String(settings.email).endsWith('.example')?String(settings.email):'';
  useEffect(()=>{
   const el=root.current;if(!el)return;
   const sections=tracked.map(([id])=>document.getElementById(id));
@@ -117,7 +115,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
   <main>
    <section className="rl-hero arch-hero" id="top" ref={hero}>
     <motion.div className="arch-hero-photo" style={{scale: reduced ? 1 : heroScale}} aria-hidden="true">
-     <Image src="/images/prestation-renovation-complete.jpg" alt="" fill preload sizes="100vw" quality={90} />
+     <Image src="/images/accueil-cuisine.webp" alt="" fill preload sizes="100vw" quality={90} />
     </motion.div>
     <div className="rl-wrap arch-hero-copy">
      <p className="arch-eyebrow">Rénovation intérieure</p>
@@ -173,22 +171,13 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
     </div>
    </section>
 
-   <section className="arch-section arch-contact" id="contact">
+   <section className="arch-contact" id="contact" aria-labelledby="arch-contact-title">
     <div className="rl-wrap arch-contact-layout">
      <div className="arch-contact-copy">
-      <p className="arch-eyebrow">Demande de devis</p>
-      <h2>Parlons de<br/>votre projet.</h2>
-      <p>Racontez-nous ce que vous souhaitez transformer. Vous pouvez joindre quelques photos pour préparer notre premier échange.</p>
+      <h2 id="arch-contact-title">Un projet de rénovation<br className="arch-contact-break"/> ou d’aménagement&nbsp;?</h2>
+      <p>Parlons de vos idées et obtenez un devis personnalisé.</p>
      </div>
-     <div className="arch-contact-actions">
-      <div><h3>Décrivez vos travaux</h3><p>Nous vous rappelons pour en discuter et organiser une visite.</p></div>
-      <button type="button" className="rl-btn arch-primary" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button>
-      {whatsapp&&<a className="rl-btn rl-whatsapp" href={whatsapp} target="_blank" rel="noopener noreferrer"><WhatsAppIcon/>Écrire sur WhatsApp<ArrowUpRight size={16}/></a>}
-      {(phone||email)&&<div className="arch-direct">
-       {phone&&<a href={`tel:${phone}`}><Phone size={17}/>{settings.phone}</a>}
-       {email&&<a href={`mailto:${email}`}><Mail size={17}/>{email}</a>}
-      </div>}
-     </div>
+     <button type="button" className="rl-btn arch-contact-quote" onClick={()=>setQuote(true)}>Demander un devis<ArrowRight size={18}/></button>
     </div>
    </section>
   </main>

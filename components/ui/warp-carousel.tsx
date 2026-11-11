@@ -51,6 +51,8 @@ export interface WarpCarouselProps {
   background?: string;
   /** Strength of the wide-lens flare at the left and right edges, 0 to 1. */
   warp?: number;
+  /** Show three front-facing cards across wide stages. */
+  flatDesktop?: boolean;
   /** Font stack for all card copy. */
   font?: string;
   /** Freeze the animation at this many seconds of autoplay time. For stills and tests. */
@@ -118,8 +120,12 @@ export const WARP_CAROUSEL_CARDS: WarpCard[] = [
 const CW = 256;
 const CH = 320;
 const stageWidth = (width: number) => width < 600 ? 420 : 720;
-const stageUnit = (width: number, height: number) =>
-  Math.min(width / stageWidth(width), height / 440) * (width < 600 ? 0.88 : 2 / 3);
+const FLAT_SPACING = 288;
+const isFlat = (enabled: boolean, width: number) => enabled && width >= 960;
+const stageUnit = (width: number, height: number, flat: boolean) =>
+  flat
+    ? Math.min(width / 880, height / 374)
+    : Math.min(width / stageWidth(width), height / 440) * (width < 600 ? 0.88 : 2 / 3);
 const CR = 10;
 const FOCAL = 734.103;
 const G = {
@@ -976,6 +982,7 @@ export function WarpCarousel({
   step = 2,
   background = "#f0f0f0",
   warp = 1,
+  flatDesktop = false,
   font = DEFAULT_FONT,
   seconds,
   ariaLabel = "Stat cards",
@@ -1089,6 +1096,7 @@ export function WarpCarousel({
     let W = 0;
     let H = 0;
     let unit = 1;
+    let flat = false;
     const resize = () => {
       const r = wrap.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -1096,8 +1104,8 @@ export function WarpCarousel({
       H = Math.max(2, Math.round(r.height * dpr));
       if (canvas.width !== W) canvas.width = W;
       if (canvas.height !== H) canvas.height = H;
-      // the 720 unit stage fills the width; short, wide boxes shrink it so the cards always fit the height
-      unit = stageUnit(r.width, r.height) * dpr;
+      flat = isFlat(flatDesktop, r.width);
+      unit = stageUnit(r.width, r.height, flat) * dpr;
       const want = Math.min(1024, Math.max(256, Math.round(CW * unit * 1.25)));
       if (want !== texW) paintAll(want);
     };
@@ -1106,7 +1114,11 @@ export function WarpCarousel({
       const ids = Array.from({ length: N }, (_, c) => ({ c, q: mod(c - P + N / 2, N) - N / 2 }))
         .sort((a, b) => Math.abs(a.q) - Math.abs(b.q))
         .slice(0, 4);
-      return ids.map(({ c, q }) => (Math.abs(q) > 2.05 ? { pose: [0, 0, 0] as Pose, layer: -1 } : { pose: poseAt(q), layer: c }));
+      return ids.map(({ c, q }) => {
+        if (Math.abs(q) > (flat ? 1.98 : 2.05)) return { pose: [0, 0, 0] as Pose, layer: -1 };
+        const pose: Pose = flat ? [q * FLAT_SPACING, 0, 0] : poseAt(q);
+        return { pose, layer: c };
+      });
     };
 
     const L = live.current;
@@ -1179,7 +1191,7 @@ export function WarpCarousel({
         gl.uniform4fv(loc.uPose, poseArr);
         gl.uniform3fv(loc.uShadowShape, shapeArr);
         gl.uniform3f(loc.uBg, bg[0] / 255, bg[1] / 255, bg[2] / 255);
-        gl.uniform1f(loc.uWarp, Math.max(0, Math.min(1, warp)));
+        gl.uniform1f(loc.uWarp, flat ? 0 : Math.max(0, Math.min(1, warp)));
         gl.uniform1f(loc.uMix, mix);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
       } else if (ctx2d) {
@@ -1314,7 +1326,7 @@ export function WarpCarousel({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list, background, warp, font, N]);
+  }, [list, background, warp, flatDesktop, font, N]);
 
   React.useEffect(() => {
     if (seconds !== undefined) handles.current.draw();
@@ -1339,7 +1351,7 @@ export function WarpCarousel({
     const L = live.current;
     if (L.mode !== "drag") return;
     const r = wrapRef.current!.getBoundingClientRect();
-    const unitCss = stageUnit(r.width, r.height);
+    const unitCss = stageUnit(r.width, r.height, isFlat(flatDesktop, r.width));
     const now = performance.now() / 1000;
     const P = L.dragP - (e.clientX - L.dragX) / (unitCss * 300);
     const dt = Math.max(1 / 240, now - L.lastT);
@@ -1357,7 +1369,7 @@ export function WarpCarousel({
     if (!L.moved) {
       L.mode = "rest";
       const r = wrapRef.current!.getBoundingClientRect();
-      const u = (e.clientX - r.left - r.width / 2) / stageUnit(r.width, r.height);
+      const u = (e.clientX - r.left - r.width / 2) / stageUnit(r.width, r.height, isFlat(flatDesktop, r.width));
       if (u > 168) request(lastIndex.current + 1);
       else if (u < -168) request(lastIndex.current - 1);
       return;

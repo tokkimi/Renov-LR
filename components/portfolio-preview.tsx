@@ -7,11 +7,11 @@ export default function PortfolioPreview() {
         <div className="arch-compare">
           <div className="arch-compare-copy">
             <h2 id="arch-compare-title">Avant / après</h2>
-            <p>Faites glisser le curseur pour comparer le salon d’origine et sa version rénovée, avec un nouveau parquet, de nouveaux luminaires et un nouvel aménagement.</p>
-            <small>Vue après travaux simulée.</small>
+            <p>Faites glisser le curseur pour voir la même pièce avant travaux et après la pose du parquet, la remise en état des murs et l’aménagement.</p>
+            <small>Illustration d’une rénovation.</small>
           </div>
-          <SideBySideSlide beforeImage="/images/prestation-renovation-complete.jpg" afterImage="/images/salon-renove.webp"
-            beforeAlt="Salon d’origine avec parquet foncé et canapé blanc" afterAlt="Projection du même salon rénové avec parquet clair et canapé ardoise" />
+          <SideBySideSlide beforeImage="/images/salon-avant-travaux.webp" afterImage="/images/salon-apres-travaux.webp"
+            beforeAlt="Salon avant travaux, avec enduit abîmé et sol brut" afterAlt="Le même salon rénové avec parquet clair et canapé crème" />
         </div>
       </div>
     </section>
