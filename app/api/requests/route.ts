@@ -4,10 +4,10 @@ import sharp from 'sharp';
 import {configured,db} from '@/lib/supabase';
 import {sameOrigin} from '@/lib/access';
 import {createHash,randomUUID} from 'crypto';
-const schema=z.object({name:z.string().min(2).max(150),email:z.email(),phone:z.string().min(7).max(40),address:z.string().min(3).max(500),service:z.string().min(2).max(100),budget:z.string().max(100),timeline:z.string().max(100),description:z.string().min(10).max(10000),consent:z.literal(true),website:z.string().max(0),locale:z.enum(['fr','en']).default('fr')});
+const schema=z.object({name:z.string().min(2).max(150),email:z.email(),phone:z.string().min(7).max(40),address:z.string().min(3).max(500),service:z.string().min(2).max(400),details:z.array(z.object({section:z.string().max(80),label:z.string().max(160),value:z.string().max(1000)})).max(150).default([]),budget:z.string().max(100),timeline:z.string().max(100),description:z.string().min(10).max(10000),consent:z.literal(true),website:z.string().max(0),locale:z.enum(['fr','en']).default('fr')});
 export async function POST(req:Request){
  if(!sameOrigin(req))return NextResponse.json({error:'Origine refusée.'},{status:403});
- if(!configured())return NextResponse.json({error:'Service indisponible. Appelez-nous au 514-317-6305.'},{status:503});
+ if(!configured())return NextResponse.json({error:'Service momentanément indisponible. Réessayez dans quelques instants.'},{status:503});
  if(Number(req.headers.get('content-length'))>4000000)return NextResponse.json({error:'Les photos sont trop volumineuses.'},{status:413});
  let payload:unknown;let files:File[]=[];
  try{if(req.headers.get('content-type')?.includes('multipart/form-data')){const form=await req.formData();payload=JSON.parse(String(form.get('data')));const entries=form.getAll('photos');if(entries.some(f=>!(f instanceof File)))throw Error();files=entries as File[]}else payload=await req.json()}catch{return NextResponse.json({error:'Demande invalide.'},{status:400})}
