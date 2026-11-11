@@ -1,0 +1,118 @@
+/* Identité Rénov LR : fond blanc, texte noir, barres flottantes translucides. */
+:root{--rlr-ink:#111;--rlr-muted:#6b6b6b;--rlr-line:#e6e6e6;--rlr-glass:rgba(255,255,255,.5);--fm-ok:#1f7a45;--fm-ok-soft:#e4f3ea;--fm-warn:#9a6614;--fm-warn-soft:#fbf1df}
+html body{background:#fff;color:var(--rlr-ink)}
+html body .atelier-site{background:#fff;--ink:#111;--forest:#111;--gold:#111;--muted:#6b6b6b}
+
+/* Mot-symbole (en attendant le logo) */
+.rlr-wordmark{display:inline-flex;align-items:baseline;gap:.28em;font-family:'DM Sans',Arial,sans-serif;font-size:22px;line-height:1;letter-spacing:-.03em;color:var(--rlr-ink);text-decoration:none;white-space:nowrap}
+.rlr-wordmark>span{font:inherit;font-weight:500;letter-spacing:inherit;margin:0}
+.rlr-wordmark>b{font-weight:800}
+.rlr-monogram{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#111;color:#fff;font:800 13px/1 'DM Sans',Arial,sans-serif;letter-spacing:-.02em}
+html body .workspace .rlr-wordmark.workspace-logo{display:flex;justify-content:flex-start;padding:4px 12px 18px;font-size:24px}
+html body .workspace .rlr-wordmark.workspace-logo>span{font-family:inherit;font-size:inherit;font-weight:500;letter-spacing:inherit}
+.login-intro .rlr-wordmark{font-size:28px}
+.atelier-footer .rlr-wordmark{font-size:30px}
+.plan-share .rlr-wordmark{font-size:26px;margin-bottom:8px}
+
+/* Barre flottante du site public */
+.rlr-header{position:fixed;top:14px;left:50%;transform:translateX(-50%);width:min(1120px,calc(100% - 28px));z-index:60}
+.rlr-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px;padding:0 9px 0 26px;border-radius:999px;background:var(--rlr-glass);border:1px solid rgba(255,255,255,.65);box-shadow:0 14px 34px -22px rgba(0,0,0,.5);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5)}
+.rlr-burger{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--rlr-ink);cursor:pointer;transition:background .15s}
+.rlr-burger:hover,.rlr-burger[aria-expanded=true]{background:rgba(17,17,17,.08)}
+.rlr-burger:focus-visible,.rlr-menu a:focus-visible,.rlr-menu-cta:focus-visible{outline:2px solid #111;outline-offset:2px}
+.rlr-menu{position:absolute;top:70px;right:0;width:min(360px,100%);display:grid;gap:2px;padding:14px;border-radius:26px;background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.8);box-shadow:0 24px 50px -24px rgba(0,0,0,.5);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);animation:rlr-drop .16s ease-out}
+.rlr-menu>a{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border-radius:14px;font-size:16px;font-weight:500;color:var(--rlr-ink);text-decoration:none}
+.rlr-menu>a:hover{background:rgba(17,17,17,.06)}
+.rlr-menu-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px;padding:12px 6px 2px;border-top:1px solid rgba(17,17,17,.1)}
+.rlr-menu-cta{display:inline-flex;align-items:center;gap:8px;margin-left:auto;padding:12px 18px;border:0;border-radius:999px;background:#111;color:#fff;font:600 14px/1 'DM Sans',Arial,sans-serif;cursor:pointer}
+@keyframes rlr-drop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.rlr-menu{animation:none}}
+html body .atelier-site main:not(:has(>.atelier-hero)){padding-top:92px}
+@media(max-width:600px){.rlr-header{top:10px;width:calc(100% - 20px)}.rlr-bar{height:54px;padding-left:20px}.rlr-wordmark{font-size:20px}.rlr-menu{top:62px}html body .atelier-site main:not(:has(>.atelier-hero)){padding-top:76px}}
+
+/* Barre de navigation mobile de l’espace de gestion : flottante, avec le « + » central pour lancer une visite */
+@media(max-width:900px){
+ html body .mobile-tabbar{left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));align-items:center;padding:6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.75);background:rgba(255,255,255,.72);box-shadow:0 16px 38px -18px rgba(0,0,0,.55);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5)}
+ html body .mobile-tabbar .tab{color:#6b6b6b}
+ html body .mobile-tabbar .tab.active{color:#111}
+ html body .mobile-tabbar .tab.active span{background:rgba(17,17,17,.08)}
+ html body .mobile-tabbar .tab.primary span{background:#111;color:#fff;box-shadow:0 10px 22px -8px rgba(0,0,0,.6)}
+ html body .mobile-tabbar .tab-plus{justify-self:center;display:grid;place-items:center;width:60px;height:60px;margin:-30px 0 0;padding:0;border-radius:50%;border:4px solid #fff;background:#111;color:#fff;box-shadow:0 12px 26px -8px rgba(0,0,0,.65);cursor:pointer;transition:transform .12s}
+ html body .mobile-tabbar .tab-plus:active{transform:scale(.93)}
+ html body .mobile-tabbar .tab-plus:focus-visible{outline:2px solid #111;outline-offset:3px}
+ html body .workspace{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+}
+html body .atelier-hero-topline{display:none}
+
+/* Paramètres › Tarifs */
+.tariff-settings{display:grid;gap:18px}
+.tariff-sim{display:grid;gap:12px;padding:18px;border:1px solid var(--rlr-line);border-radius:18px;background:#fafafa}
+.tariff-sim h3{display:flex;align-items:center;gap:8px;margin:0;font-size:15px}
+.tariff-sim-inputs{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px}
+.tariff-sim-inputs label,.tariff-editor label{display:grid;gap:6px;font-size:13px;color:var(--rlr-muted);min-width:0}
+.tariff-sim-result,.estimate-total{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0}
+.tariff-sim-result>div,.estimate-total>div{padding:12px 14px;border-radius:14px;background:#fff;border:1px solid var(--rlr-line)}
+.tariff-sim-result dt,.estimate-total dt{font-size:12px;color:var(--rlr-muted)}
+.tariff-sim-result dd,.estimate-total dd{margin:4px 0 0;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.tariff-sim-result .total,.estimate-total .grand{background:#111;border-color:#111}
+.tariff-sim-result .total dt,.tariff-sim-result .total dd,.estimate-total .grand dt,.estimate-total .grand dd{color:#fff}
+.tariff-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tariff-filters{display:flex;gap:6px;overflow-x:auto;max-width:100%;padding-bottom:2px;scrollbar-width:none}
+.tariff-filters button{flex:none;padding:8px 14px;border-radius:999px;border:1px solid var(--rlr-line);background:#fff;color:#111;font-size:13px;cursor:pointer}
+.tariff-filters button.active{background:#111;border-color:#111;color:#fff}
+.tariff-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tariff-card{border:1px solid var(--rlr-line);border-radius:16px;background:#fff;overflow:hidden}
+.tariff-card.inactive{opacity:.6}
+.tariff-summary{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:14px;padding:14px 16px 6px;border:0;background:none;text-align:left;color:#111;cursor:pointer}
+.tariff-summary b{display:block;font-size:15px}
+.tariff-summary small{display:block;font-size:12px;color:var(--rlr-muted);margin-top:2px}
+.tariff-unit{text-align:right;font-variant-numeric:tabular-nums}
+.tariff-summary[aria-expanded=true] .tariff-chevron{transform:rotate(180deg)}
+.tariff-samples{display:flex;flex-wrap:wrap;gap:6px 14px;padding:0 16px 14px;font-size:12px;color:var(--rlr-muted);font-variant-numeric:tabular-nums}
+.tariff-samples b{color:#111;margin-left:4px}
+.tariff-editor{display:grid;gap:14px;padding:16px;border-top:1px solid var(--rlr-line);background:#fafafa}
+.tariff-unit-total{display:grid;align-content:end;gap:6px;font-size:13px;color:var(--rlr-muted)}
+.tariff-unit-total b{font-size:20px;color:#111;font-variant-numeric:tabular-nums}
+.tariff-tiers{display:grid;gap:10px;margin:0;padding:14px;border:1px solid var(--rlr-line);border-radius:14px;background:#fff}
+.tariff-tiers legend{padding:0 6px;font-size:13px;font-weight:600}
+.tariff-tier{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto auto;align-items:end;gap:10px}
+.tariff-tier-price{padding-bottom:10px;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tariff-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tariff-settings .tariff-toggle,.estimate-option>label{display:flex;grid-template-columns:none;align-items:center;gap:10px;margin-right:auto;color:#111;cursor:pointer}
+.tariff-toggle input,.estimate-option input[type=checkbox]{width:20px;height:20px;flex:none;accent-color:#111}
+
+/* Chiffrage en fin de visite */
+.visit-estimate{display:grid;gap:14px;margin-bottom:18px}
+.estimate-room{display:grid;gap:10px;padding:14px;border:1px solid var(--rlr-line);border-radius:16px;background:#fff}
+.estimate-room>header{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.estimate-room>header small,.estimate-hint{font-size:12px;color:var(--rlr-muted)}
+.estimate-hint{margin:0}
+.estimate-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.estimate-option{display:grid;gap:8px;padding:10px 12px;border:1px solid var(--rlr-line);border-radius:12px}
+.estimate-option.on{border-color:#111;background:#fafafa}
+.estimate-option>label{margin:0;min-height:36px}
+.estimate-option>label span{display:grid;gap:2px;min-width:0}
+.estimate-option>label b{font-size:14px}
+.estimate-option>label small{font-size:12px;color:var(--rlr-muted)}
+.estimate-amount,.estimate-extra{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.estimate-amount>label,.estimate-extra>label{display:flex;align-items:center;gap:6px;margin:0}
+.estimate-amount input,.estimate-extra input{width:96px}
+.estimate-amount em,.estimate-extra em{font-style:normal;font-size:13px;color:var(--rlr-muted)}
+.estimate-amount strong,.estimate-extra strong{margin-left:auto;font-variant-numeric:tabular-nums}
+.estimate-amount small{font-size:12px;color:var(--fm-ok)}
+.estimate-extra select{flex:1 1 220px;min-width:0}
+.estimate-total{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:640px){.tariff-sim-inputs{grid-template-columns:1fr}.tariff-sim-result{grid-template-columns:1fr}.estimate-total{grid-template-columns:repeat(2,minmax(0,1fr))}.tariff-tier{grid-template-columns:1fr 1fr auto}.tariff-tier-price{grid-column:1/-1;padding:0;order:3}.tariff-summary{gap:10px}}
+html body .visit-estimate .estimate-option>label,html body .tariff-settings .tariff-toggle{display:flex!important;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;text-align:left;margin:0}
+html body .visit-estimate .estimate-option>label>span{display:grid;gap:2px;text-align:left}
+html body .visit-estimate .estimate-amount>label,html body .visit-estimate .estimate-extra>label{display:flex!important;flex-direction:row;align-items:center;gap:6px;margin:0;width:auto}
+html body .visit-estimate .estimate-amount input,html body .visit-estimate .estimate-extra input{width:96px;margin:0}
+html body .visit-estimate input[type=checkbox],html body .tariff-settings .tariff-toggle input{width:22px;height:22px;flex:none;margin:0}
+html body .visit-estimate .estimate-amount{padding-left:34px}
+html body .tariff-settings,html body .tariff-settings>*,html body .tariff-list,html body .tariff-card,html body .tariff-editor,html body .tariff-editor>*,html body .tariff-tiers,html body .tariff-tier>*,html body .visit-estimate,html body .visit-estimate>*{min-width:0;max-width:100%;box-sizing:border-box}
+html body .tariff-settings input,html body .tariff-settings select{width:100%;min-width:0;box-sizing:border-box}
+html body .tariff-settings .tariff-toggle input{width:22px}
+html body .tariff-filters{flex:1 1 0;min-width:0}
+html body .settings-body{min-width:0}
+@media(max-width:640px){html body .tariff-tier{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 40px}html body .tariff-toolbar{flex-direction:column;align-items:stretch}html body .tariff-filters{flex:none}}
+html body .login-intro .rlr-wordmark{color:#fff}
