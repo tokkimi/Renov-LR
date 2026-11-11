@@ -32,7 +32,7 @@ const promises=[
  [Sparkles,'Un chantier soigné','Protection des lieux, nettoyage et finitions vérifiées avec vous.'],
  [CalendarCheck,'Des délais annoncés','Un calendrier posé avant de commencer, et tenu à jour si quelque chose change.']
 ] as const;
-const links=[['#prestations','Prestations'],['#realisations','Galerie'],['#methode','Comment ça se passe'],['#engagements','Nos engagements'],['#contact','Contact']] as const;
+const links=[['#prestations','Prestations'],['#realisations','Avant / après'],['#methode','Comment ça se passe'],['#engagements','Nos engagements'],['#contact','Contact']] as const;
 const navItems:LiquidNavItem[]=[
  {label:'Accueil',href:'#top',icon:<Home size={18}/>,fx:'glow'},
  {label:'Prestations',href:'#prestations',icon:<Hammer size={18}/>,fx:'wave'},
@@ -117,7 +117,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
   <main>
    <section className="rl-hero arch-hero" id="top" ref={hero}>
     <motion.div className="arch-hero-photo" style={{scale: reduced ? 1 : heroScale}} aria-hidden="true">
-     <Image src="/images/prestation-renovation-complete.jpg" alt="" fill preload sizes="100vw" />
+     <Image src="/images/prestation-renovation-complete.jpg" alt="" fill preload sizes="100vw" quality={90} />
     </motion.div>
     <div className="rl-wrap arch-hero-copy">
      <p className="arch-eyebrow">Rénovation intérieure</p>
@@ -139,14 +139,6 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
     <div className="rl-wrap">
      <header className="arch-heading"><p className="arch-eyebrow">Nos prestations</p><h2>Chaque pièce, un projet.</h2></header>
      <ServiceWarpCarousel cards={services} onSelect={()=>setQuote(true)}/>
-     <div className="arch-service-list">
-      {services.map(({title,description,image})=>(
-       <motion.article key={title} className="arch-service-row" initial={reduced ? false : {opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.18}} transition={{duration:.42}}>
-        <div className="arch-service-photo"><Image src={image} alt="" fill sizes="(max-width: 700px) 92vw, 52vw"/></div>
-        <div className="arch-service-copy"><h3>{title}</h3><p>{description}</p><button type="button" className="rl-btn arch-outline" onClick={()=>setQuote(true)}>Parler de ce projet<ArrowUpRight size={17}/></button></div>
-       </motion.article>
-      ))}
-     </div>
     </div>
    </section>
 

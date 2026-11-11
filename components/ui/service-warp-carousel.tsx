@@ -26,7 +26,7 @@ export default function ServiceWarpCarousel({cards, onSelect}: {
     <div className="rl-warp">
       <div className="rl-warp-stage">
         <WarpCarousel cards={textures} index={index} onIndexChange={setIndex}
-          autoplay={false} warp={0.75} background="#e8eef3"
+          autoplay={false} warp={1} background="#f3f6f8"
           ariaLabel="Carrousel des prestations" style={stageStyle}/>
       </div>
       <div className="rl-warp-controls">
@@ -40,7 +40,7 @@ export default function ServiceWarpCarousel({cards, onSelect}: {
         <button type="button" className="rl-btn glass" aria-label="Prestation suivante" onClick={() => move(1)}><ArrowRight size={18}/></button>
       </div>
       <div className="rl-warp-details">
-        <div><h3>{active.title}</h3><p>{active.description}</p></div>
+        <p>{active.description}</p>
         <button type="button" className="rl-btn red" onClick={onSelect}>Demander un devis<ArrowUpRight size={18}/></button>
       </div>
     </div>

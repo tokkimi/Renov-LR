@@ -25,9 +25,9 @@ export function SideBySideSlide({beforeImage, afterImage, beforeAlt, afterAlt}: 
 
   return (
     <div className="arch-compare-frame">
-      <Image src={afterImage} alt={afterAlt} fill sizes={sizes} draggable={false} />
+      <Image src={afterImage} alt={afterAlt} fill sizes={sizes} quality={90} draggable={false} />
       <motion.div className="arch-compare-layer" style={{clipPath}}>
-        <Image src={beforeImage} alt={beforeAlt} fill sizes={sizes} draggable={false} />
+        <Image src={beforeImage} alt={beforeAlt} fill sizes={sizes} quality={90} draggable={false} />
       </motion.div>
       <span className="arch-compare-label before" aria-hidden="true">Avant</span>
       <span className="arch-compare-label after" aria-hidden="true">Après</span>
