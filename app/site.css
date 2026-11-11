@@ -233,3 +233,26 @@ html body .rl-banner h2 em{color:#b9b6b6}
 @keyframes rl-ken{from{scale:1}to{scale:1.1}}
 @media(max-width:980px){.rl-hero .rl-hero-grid{grid-template-columns:1fr;align-items:start}.rl-contact-card{max-width:460px}.rl-tags{display:none}.rl-promises{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.rl-hero{padding:104px 0 60px}.rl-hero-bg::after{background:linear-gradient(180deg,rgba(8,8,9,.78),rgba(8,8,9,.7)),radial-gradient(500px 300px at 0 100%,rgba(229,32,43,.45),transparent 70%)}.rl-promises{grid-template-columns:1fr}.rl-services button{min-height:0}.rl-contact-card{padding:22px;border-radius:24px}}
+
+/* Bulle de contact (accueil uniquement) */
+.rl-bubble{position:fixed;right:22px;bottom:22px;z-index:70;display:grid;justify-items:end;gap:12px}
+.rl-bubble-btn{display:block;padding:0;border:0;border-radius:17px;background:none;line-height:0;cursor:pointer;opacity:.82;filter:drop-shadow(0 14px 22px rgba(229,32,43,.45));transition:opacity .2s,transform .25s cubic-bezier(.2,.7,.2,1);animation:rl-rise .8s 1.6s both,rl-bob 5s 2.4s ease-in-out infinite}
+.rl-bubble-btn:hover,.rl-bubble.open .rl-bubble-btn{opacity:1;transform:scale(1.08) rotate(-4deg)}
+.rl-bubble-btn:focus-visible,.rl-bubble-panel a:focus-visible,.rl-bubble-panel button:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+.rl-bubble-panel{width:min(340px,calc(100vw - 32px));display:grid;gap:6px;padding:14px;border-radius:26px;background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.95);box-shadow:0 30px 60px -26px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);color:var(--ink);animation:rl-pop .25s cubic-bezier(.2,.8,.2,1)}
+.rl-bubble-panel header{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 8px 8px;font:600 17px 'Space Grotesk',sans-serif}
+.rl-bubble-panel header button{display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:50%;background:rgba(13,13,14,.07);color:var(--ink);cursor:pointer}
+.rl-bubble-panel>a,.rl-bubble-panel>button{display:flex;align-items:center;gap:13px;width:100%;padding:12px 13px;border:0;border-radius:16px;background:rgba(255,255,255,.7);color:var(--ink);text-align:left;text-decoration:none;font:inherit;cursor:pointer;transition:background .2s,transform .2s}
+.rl-bubble-panel>a:hover,.rl-bubble-panel>button:hover{background:#fff;transform:translateX(3px)}
+.rl-bubble-panel>*>svg:first-child{flex:none;padding:9px;width:38px;height:38px;border-radius:12px;background:var(--ink);color:#fff}
+.rl-bubble-panel>*>svg:last-child{flex:none;color:#9b9b9f}
+.rl-bubble-panel span{flex:1;min-width:0;display:grid}
+.rl-bubble-panel span b{font:600 14.5px 'Space Grotesk',sans-serif}
+.rl-bubble-panel span small{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rl-bubble-panel .main{background:linear-gradient(120deg,var(--red2),var(--red));color:#fff}
+.rl-bubble-panel .main:hover{background:linear-gradient(120deg,var(--red2),var(--red))}
+.rl-bubble-panel .main>svg:first-child{background:rgba(255,255,255,.22)}
+.rl-bubble-panel .main>svg:last-child,.rl-bubble-panel .main small{color:rgba(255,255,255,.85)}
+@keyframes rl-bob{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes rl-pop{from{opacity:0;transform:translateY(10px) scale(.96)}}
+@media(max-width:600px){.rl-bubble{right:14px;bottom:14px}}

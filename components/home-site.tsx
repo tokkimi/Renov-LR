@@ -2,7 +2,7 @@
 import {useEffect,useRef,useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {ArrowRight,ArrowUpRight,Bath,Brush,CalendarCheck,Check,CookingPot,FileText,Hammer,Layers,Mail,Menu,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
+import {ArrowRight,ArrowUpRight,MessageCircle,MessageSquare,Bath,Brush,CalendarCheck,Check,CookingPot,FileText,Hammer,Layers,Mail,Menu,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
 import {LogoMark,Wordmark} from './brand';
 import QuoteRequest from './request-form';
 import {Data,defaults} from '@/lib/model';
@@ -29,6 +29,32 @@ const promises=[
 ] as const;
 const links=[['#prestations','Prestations'],['#engagements','Nos engagements'],['#methode','Comment ça se passe'],['#contact','Contact']] as const;
 const words=['Cuisine','Salle de bain','Parquet','Carrelage','Peinture','Cloisons','Électricité','Plomberie','Menuiserie'];
+
+/** Bulle de contact de l’accueil : le monogramme LR en transparence, qui ouvre les moyens de joindre l’entreprise. */
+function ContactBubble({settings,onQuote}:{settings:Data;onQuote:()=>void}){
+ const [open,setOpen]=useState(false);const box=useRef<HTMLDivElement>(null);
+ const digits=String(settings.phone||'').replace(/\D/g,''),phone=String(settings.phone||'').replace(/[^+\d]/g,'');
+ const whatsapp=digits?(digits.startsWith('0')?'33'+digits.slice(1):digits):'';
+ const email=settings.email&&!String(settings.email).endsWith('.example')?String(settings.email):'';
+ useEffect(()=>{
+  if(!open)return;
+  const key=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpen(false)};
+  const outside=(e:MouseEvent)=>{if(box.current&&!box.current.contains(e.target as Node))setOpen(false)};
+  window.addEventListener('keydown',key);window.addEventListener('mousedown',outside);
+  return()=>{window.removeEventListener('keydown',key);window.removeEventListener('mousedown',outside)};
+ },[open]);
+ return <div className={`rl-bubble${open?' open':''}`} ref={box}>
+  {open&&<section className="rl-bubble-panel" aria-label="Nous contacter">
+   <header><b>Parlons de votre projet</b><button type="button" aria-label="Fermer" onClick={()=>setOpen(false)}><X size={18}/></button></header>
+   <button type="button" className="main" onClick={()=>{setOpen(false);onQuote()}}><FileText size={19}/><span><b>Faire un devis</b><small>Décrivez vos travaux en 2 minutes</small></span><ArrowUpRight size={16}/></button>
+   {whatsapp&&<a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer"><MessageCircle size={19}/><span><b>WhatsApp</b><small>Écrivez-nous directement</small></span><ArrowUpRight size={16}/></a>}
+   {phone&&<a href={`tel:${phone}`}><Phone size={19}/><span><b>Appeler</b><small>{settings.phone}</small></span><ArrowUpRight size={16}/></a>}
+   {email&&<a href={`mailto:${email}`}><Mail size={19}/><span><b>E-mail</b><small>{email}</small></span><ArrowUpRight size={16}/></a>}
+   <Link href="/connexion"><MessageSquare size={19}/><span><b>Messagerie client</b><small>Déjà client ? Écrivez-nous depuis votre espace</small></span><ArrowUpRight size={16}/></Link>
+  </section>}
+  <button type="button" className="rl-bubble-btn" aria-label={open?'Fermer les contacts':'Nous contacter'} aria-expanded={open} onClick={()=>setOpen(!open)}><LogoMark size={58}/></button>
+ </div>;
+}
 
 /** Page d’accueil Rénov LR : verre dépoli, lumière rouge et animations au défilement. */
 export default function HomeSite({settings=defaults}:{settings?:Data}){
@@ -128,6 +154,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <p>{[settings.address,settings.rbq&&`SIRET ${settings.rbq}`].filter(Boolean).join(' · ')}</p>
    <small>© {new Date().getFullYear()} Rénov LR</small>
   </div></footer>
+  {!quote&&<ContactBubble settings={settings} onQuote={()=>setQuote(true)}/>}
   {quote&&<QuoteRequest close={()=>setQuote(false)}/>}
  </div>;
 }
