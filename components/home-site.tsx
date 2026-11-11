@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {motion, useReducedMotion, useScroll, useTransform, type MotionStyle} from 'motion/react';
 import {ArrowRight,ArrowUpRight,Home,ListChecks,CalendarCheck,FileText,Hammer,Mail,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
 import {WhatsAppIcon,whatsappQuoteUrl} from './whatsapp-contact';
-import {BrandLockup,LogoMark,Wordmark} from './brand';
+import {BrandLockup,BrandName,LogoMark,Wordmark} from './brand';
 import {LiquidNavbar,type LiquidNavItem} from './ui/liquid-glass-navbar';
 import ServiceWarpCarousel from './ui/service-warp-carousel';
 import QuoteRequest from './request-form';
@@ -81,7 +81,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
  const [stage,setStage]=useState<'intro'|'leaving'|'animating'|'done'>('intro');
  useEffect(()=>{
   if(location.hash||window.matchMedia('(prefers-reduced-motion: reduce)').matches){setStage('done');return}
-  const timers=[window.setTimeout(()=>setStage('leaving'),1040),window.setTimeout(()=>setStage('animating'),1100),window.setTimeout(()=>setStage('done'),1720)];
+  const timers=[window.setTimeout(()=>setStage('leaving'),3000),window.setTimeout(()=>setStage('animating'),3060),window.setTimeout(()=>setStage('done'),3680)];
   return()=>timers.forEach(window.clearTimeout);
  },[]);
  const tone=tracked[Math.min(section,tracked.length-1)][1];
@@ -107,7 +107,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
   return()=>{el.removeEventListener('pointermove',onLight);window.removeEventListener('scroll',onScroll)};
  },[]);
  return <div className="rl-site rl-architecture" ref={root} data-stage={stage}>
-  {stage!=='done'&&<div className="rl-intro" aria-hidden="true"><div className="arch-intro-signature"><div className="arch-intro-mark"><LogoMark size={104}/></div><div className="arch-intro-rule"><i/></div></div></div>}
+  {stage!=='done'&&<div className="rl-intro" aria-hidden="true"><div className="arch-intro-signature"><div className="arch-intro-mark"><LogoMark size={170}/></div><BrandName/><div className="arch-intro-rule"><i/></div></div></div>}
   <header className="rlr-header liquid" data-tone={tone} data-section={tracked[section]?.[0]}>
    <BrandLockup/>
    <LiquidNavbar compact tone={tone} active={section} items={navItems} onChange={index=>setSection(index)}/>

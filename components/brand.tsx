@@ -6,14 +6,18 @@ export function LogoMark({size = 34, className = ''}: {size?: number; className?
     width={size} height={size} alt="" unoptimized />;
 }
 
+export function BrandName() {
+  return <span className="arch-brand-type">
+    <strong>Rénov LR</strong>
+    <small>Intérieur · Extérieur · Extension</small>
+  </span>;
+}
+
 export function BrandLockup() {
   return (
     <Link className="arch-brand" href="/" aria-label="Rénov LR, accueil">
       <LogoMark size={48}/>
-      <span className="arch-brand-type">
-        <strong>Rénov LR</strong>
-        <small>Intérieur · Extérieur · Extension</small>
-      </span>
+      <BrandName/>
     </Link>
   );
 }
