@@ -248,3 +248,14 @@ html{touch-action:pan-y}
 @media(max-width:900px){html body input:not([type=checkbox]):not([type=radio]):not([type=range]),html body select,html body textarea{font-size:16px}}
 html body .plan-editor,html body .plan-editor *,html body canvas,html body .photo-measure-stage,html body .table-scroll,html body .tariff-filters,html body .gantt,html body [class*=scroll]{touch-action:auto}
 .draft-tariff{display:block;font-style:normal;font-size:12px;color:#1f7a45;margin-top:2px}
+
+/* Barre du bas de l’espace de gestion : barre liquide, « + » central en relief */
+.rlr-tabbar{display:none}
+@media(max-width:900px){
+ .rlr-tabbar{display:flex;justify-content:center;position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom));z-index:45;pointer-events:none}
+ .rlr-tabbar .nimbus-nav{pointer-events:auto;--n-tint:rgba(255,255,255,.62);gap:4px}
+ .rlr-tabbar .nimbus-item{height:46px;padding:0 15px}
+ .rlr-tabbar .nimbus-item[aria-label="Commencer une visite"]{width:54px;height:54px;margin:-16px 4px 0;padding:0;justify-content:center;border-radius:50%;background:#111;color:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.9),0 14px 26px -8px rgba(0,0,0,.65)}
+ .rlr-tabbar .nimbus-item[aria-label="Commencer une visite"] .nimbus-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+ .rlr-tabbar .nimbus-item:focus-visible{outline-color:#e5202b}
+}

@@ -1,4 +1,5 @@
 'use client';
+import {LiquidNavbar,type NimbusFx} from './ui/liquid-glass-navbar';
 import {useEffect,useRef,useState,type ComponentType} from 'react';
 import {Activity,ArrowLeft,CalendarDays,ClipboardList,FileText,FolderKanban,Hourglass,LayoutDashboard,MapPin,Menu,MessageSquare,Plus,ReceiptText,Search,Users,Wallet,X} from 'lucide-react';
 type Icon=ComponentType<{size?:number}>;
@@ -36,7 +37,14 @@ export default function MobileTabbar({role,view,go,start,items,menuOpen,onMenuCh
   {id:'messages',label:'Messagerie',icon:MessageSquare,run:()=>navigate('messages')},
   {id:'documents',label:'Documents',icon:FileText,run:()=>navigate('documents')}
  ]:[{id:'documents',label:'Documents',icon:FileText,run:()=>navigate('documents')},{id:'accounting',label:'Factures',icon:ReceiptText,run:()=>navigate('accounting')}];
- const tab=(id:string,label:string,Icon:Icon,run:()=>void,primary=false)=><button key={id} type="button" className={`tab${view===id?' active':''}${primary?' primary':''}`} aria-current={view===id?'page':undefined} onClick={run}><span><Icon size={primary?22:20}/></span>{label}</button>;
+ const menuTab={id:'menu',label:'Menu',icon:<Menu size={18}/>,fx:'spin' as NimbusFx,run:()=>{setFull(false);setQuick(true)}};
+ const link=(id:string,label:string,Icon:Icon,fx:NimbusFx)=>({id,label,icon:<Icon size={18}/>,fx,run:()=>navigate(id)});
+ const tabs=role==='admin'?[link('dashboard','Accueil',LayoutDashboard,'glow'),link('messages','Messages',MessageSquare,'wave'),{id:'visit',label:'Commencer une visite',icon:<Plus size={24} strokeWidth={2.4}/>,fx:'pop' as NimbusFx,run:()=>launch('visit')},link('invoices','Factures',ReceiptText,'drop'),menuTab]
+  :role==='worker'?[link('dashboard','Accueil',LayoutDashboard,'glow'),link('projects','Projets',FolderKanban,'pop'),link('tasks','Tâches',ClipboardList,'wave'),link('messages','Messages',MessageSquare,'wave'),menuTab]
+  :[link('dashboard','Accueil',LayoutDashboard,'glow'),link('messages','Messages',MessageSquare,'wave'),link('quotes','Devis',FileText,'pop'),link('accounting','Factures',ReceiptText,'drop'),menuTab];
+ const found=open?tabs.length-1:tabs.findIndex(item=>item.id===view);
+ const lastTab=useRef(0);if(found>=0)lastTab.current=found;
+ const activeTab=found>=0?found:lastTab.current;
  const search=query.trim().toLocaleLowerCase('fr');
  const matches=items.filter(item=>item.name.toLocaleLowerCase('fr').includes(search));
  return <>
@@ -47,12 +55,6 @@ export default function MobileTabbar({role,view,go,start,items,menuOpen,onMenuCh
     {complete?<>{groups.map(group=>{const rows=matches.filter(item=>group.ids.includes(item.id));return rows.length?<section key={group.name} className="tools-group"><h3>{group.name}</h3><div className="tools-grid">{rows.map(item=><button key={item.id} type="button" aria-current={view===item.id?'page':undefined} onClick={()=>navigate(item.id)}><item.icon size={22}/><span>{item.name}</span></button>)}</div></section>:null})}{!matches.length&&<p className="muted" role="status">Aucun outil ne correspond à votre recherche.</p>}<footer className="tools-footer"><a href="/" target="_blank" rel="noreferrer">Voir le site</a><button type="button" onClick={()=>{close();onLogout()}}>Se déconnecter</button></footer></>:<div className="tools-grid">{more.map(a=><button key={a.id} type="button" onClick={a.run}><a.icon size={22}/><span>{a.label}</span></button>)}<button type="button" onClick={()=>setFull(true)}><Menu size={22}/><span>Menu complet</span></button></div>}
    </div>
   </dialog>
-  <nav className="mobile-tabbar" aria-label="Actions principales">
-   {tab('dashboard','Accueil',LayoutDashboard,()=>navigate('dashboard'))}
-   {role==='worker'?tab('projects','Projets',FolderKanban,()=>navigate('projects')):tab('messages','Messages',MessageSquare,()=>navigate('messages'))}
-   {role==='admin'?<button type="button" className="tab-plus" aria-label="Commencer une visite" onClick={()=>launch('visit')}><Plus size={28} strokeWidth={2.4}/></button>:role==='worker'?tab('tasks','Tâches',ClipboardList,()=>navigate('tasks'),true):tab('quotes','Devis',FileText,()=>navigate('quotes'),true)}
-   {role==='admin'?tab('invoices','Factures',ReceiptText,()=>navigate('invoices')):role==='worker'?tab('messages','Messages',MessageSquare,()=>navigate('messages')):tab('accounting','Factures',ReceiptText,()=>navigate('accounting'))}
-   <button type="button" className={`tab${open?' active':''}`} aria-expanded={open} aria-haspopup="dialog" onClick={()=>{setFull(false);setQuick(true)}}><span><Menu size={20}/></span>Menu</button>
-  </nav>
+  <div className="rlr-tabbar"><LiquidNavbar tone="light" items={tabs.map(({label,icon,fx})=>({label,icon,fx}))} active={activeTab} onChange={index=>tabs[index]?.run()}/></div>
  </>;
 }

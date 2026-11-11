@@ -2,8 +2,9 @@
 import {useEffect,useRef,useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {ArrowRight,ArrowUpRight,MessageCircle,MessageSquare,Bath,Brush,CalendarCheck,Check,CookingPot,FileText,Hammer,Layers,Mail,Menu,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
+import {ArrowRight,ArrowUpRight,Home,ListChecks,User,MessageCircle,MessageSquare,Bath,Brush,CalendarCheck,Check,CookingPot,FileText,Hammer,Layers,Mail,Menu,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
 import {LogoMark,Wordmark} from './brand';
+import {LiquidNavbar,type LiquidNavItem} from './ui/liquid-glass-navbar';
 import QuoteRequest from './request-form';
 import {Data,defaults} from '@/lib/model';
 
@@ -28,6 +29,16 @@ const promises=[
  [CalendarCheck,'Des délais annoncés','Un calendrier posé avant de commencer, et tenu à jour si quelque chose change.']
 ] as const;
 const links=[['#prestations','Prestations'],['#engagements','Nos engagements'],['#methode','Comment ça se passe'],['#contact','Contact']] as const;
+const navItems:LiquidNavItem[]=[
+ {label:'Accueil',href:'#top',icon:<Home size={18}/>,fx:'glow'},
+ {label:'Prestations',href:'#prestations',icon:<Hammer size={18}/>,fx:'wave'},
+ {label:'Engagements',href:'#engagements',icon:<ShieldCheck size={18}/>,fx:'pop'},
+ {label:'Méthode',href:'#methode',icon:<ListChecks size={18}/>,fx:'spin'},
+ {label:'Contact',href:'#contact',icon:<Phone size={18}/>,fx:'drop'},
+ {label:'Espace client',href:'/connexion',icon:<User size={18}/>,fx:'wave'}
+];
+/** Sections suivies par la barre : identifiant et ton du fond qu’elles affichent sous la barre. */
+const tracked:[string,'light'|'dark'][]=[['top','dark'],['prestations','light'],['engagements','dark'],['methode','dark'],['contact','light']];
 const words=['Cuisine','Salle de bain','Parquet','Carrelage','Peinture','Cloisons','Électricité','Plomberie','Menuiserie'];
 
 /** Bulle de contact de l’accueil : le monogramme LR en transparence, qui ouvre les moyens de joindre l’entreprise. */
@@ -58,22 +69,16 @@ function ContactBubble({settings,onQuote}:{settings:Data;onQuote:()=>void}){
 
 /** Page d’accueil Rénov LR : verre dépoli, lumière rouge et animations au défilement. */
 export default function HomeSite({settings=defaults}:{settings?:Data}){
- const [quote,setQuote]=useState(false),[menu,setMenu]=useState(false),[scrolled,setScrolled]=useState(false);
- const header=useRef<HTMLElement>(null),root=useRef<HTMLDivElement>(null);
+ const [quote,setQuote]=useState(false),[section,setSection]=useState(0);
+ const root=useRef<HTMLDivElement>(null);
+ const tone=tracked[Math.min(section,tracked.length-1)][1];
  const phone=String(settings.phone||'').replace(/[^+\d]/g,'');
- useEffect(()=>{
-  if(!menu)return;
-  const key=(e:KeyboardEvent)=>{if(e.key==='Escape')setMenu(false)};
-  const outside=(e:MouseEvent)=>{if(header.current&&!header.current.contains(e.target as Node))setMenu(false)};
-  window.addEventListener('keydown',key);window.addEventListener('mousedown',outside);
-  return()=>{window.removeEventListener('keydown',key);window.removeEventListener('mousedown',outside)};
- },[menu]);
  useEffect(()=>{
   const el=root.current;if(!el)return;
   const items=Array.from(el.querySelectorAll<HTMLElement>('[data-reveal]'));
   const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target)}}),{threshold:.14,rootMargin:'0px 0px -6% 0px'});
   items.forEach(item=>observer.observe(item));
-  const onScroll=()=>{setScrolled(window.scrollY>24);const max=document.documentElement.scrollHeight-window.innerHeight;el.style.setProperty('--p',String(max>0?window.scrollY/max:0));el.style.setProperty('--sy',String(Math.min(window.scrollY,1200)))};onScroll();
+  const onScroll=()=>{let index=0;tracked.forEach(([id],i)=>{const node=document.getElementById(id);if(node&&node.getBoundingClientRect().top<=140)index=i});setSection(index);const max=document.documentElement.scrollHeight-window.innerHeight;el.style.setProperty('--p',String(max>0?window.scrollY/max:0));el.style.setProperty('--sy',String(Math.min(window.scrollY,1200)))};onScroll();
   const calm=window.matchMedia('(prefers-reduced-motion: reduce)').matches||!window.matchMedia('(pointer: fine)').matches;
   const onMove=(e:PointerEvent)=>{el.style.setProperty('--mx',String(e.clientX/window.innerWidth-.5));el.style.setProperty('--my',String(e.clientY/window.innerHeight-.5))};
   window.addEventListener('scroll',onScroll,{passive:true});if(!calm)window.addEventListener('pointermove',onMove,{passive:true});
@@ -81,18 +86,14 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
  },[]);
  return <div className="rl-site" ref={root}>
   <div className="rl-orbs" aria-hidden="true"><i/><i/><i/></div>
-  <header className={`rlr-header${scrolled?' scrolled':''}`} ref={header}>
-   <div className="rlr-bar"><Wordmark/><button type="button" className="rlr-burger" aria-label={menu?'Fermer le menu':'Ouvrir le menu'} aria-expanded={menu} aria-controls="rlr-menu" onClick={()=>setMenu(!menu)}>{menu?<X size={22}/>:<Menu size={22}/>}</button></div>
-   {menu&&<nav id="rlr-menu" className="rlr-menu" aria-label="Navigation principale">
-    {links.map(([href,label])=><a key={href} href={href} onClick={()=>setMenu(false)}>{label}</a>)}
-    <Link href="/connexion" onClick={()=>setMenu(false)}>Se connecter<ArrowUpRight size={16}/></Link>
-    <div className="rlr-menu-foot"><button type="button" className="rlr-menu-cta" onClick={()=>{setMenu(false);setQuote(true)}}>Demander un devis<ArrowUpRight size={17}/></button></div>
-   </nav>}
+  <header className="rlr-header liquid" data-tone={tone}>
+   <Wordmark/>
+   <LiquidNavbar tone={tone} active={section} items={navItems} onChange={index=>setSection(index)}/>
   </header>
 
   <div className="rl-progress" aria-hidden="true"/>
   <main>
-   <section className="rl-hero">
+   <section className="rl-hero" id="top">
     <div className="rl-hero-bg" aria-hidden="true"><Image src="/images/interieur.png" alt="" fill priority sizes="100vw"/></div>
     <div className="rl-wrap rl-hero-grid">
      <div className="rl-hero-copy">
