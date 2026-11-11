@@ -9,7 +9,7 @@ import type {Data} from './model';
  */
 export type TariffBasis='floor'|'wall'|'ceiling'|'perimeter'|'manual';
 export type TariffTier={from:number;percent:number};
-export type Tariff={id:string;name:string;category:string;basis:TariffBasis;unit:string;material:number;labour:number;tiers:TariffTier[];active:boolean};
+export type Tariff={id:string;name:string;category:string;basis:TariffBasis;unit:string;material:number;labour:number;tiers:TariffTier[];active:boolean;keywords:string};
 export type Room={name?:string;length?:number;width?:number;height?:number;unit?:string};
 
 export const basisLabels:Record<TariffBasis,string>={floor:'Surface au sol',wall:'Surface des murs',ceiling:'Surface du plafond',perimeter:'Périmètre (linéaire)',manual:'Quantité saisie'};
@@ -21,23 +21,23 @@ const num=(value:unknown,max=1e7)=>{const n=Number(value);return Number.isFinite
 const text=(value:unknown,max:number)=>typeof value==='string'?value.trim().slice(0,max):'';
 const bases=Object.keys(basisLabels) as TariffBasis[];
 
-const t=(id:string,name:string,category:string,basis:TariffBasis,unit:string,material:number,labour:number,tiers:TariffTier[]=[]):Tariff=>({id,name,category,basis,unit,material,labour,tiers,active:true});
+const t=(id:string,name:string,category:string,basis:TariffBasis,unit:string,material:number,labour:number,keywords:string,tiers:TariffTier[]=[]):Tariff=>({id,name,category,basis,unit,material,labour,tiers,active:true,keywords});
 const volume:TariffTier[]=[{from:20,percent:5},{from:50,percent:10}];
 /** Prix de départ indicatifs : à remplacer par ceux de l'entreprise dans les paramètres. */
 export const defaultTariffs:Tariff[]=[
- t('parquet-stratifie','Parquet stratifié','Sols','floor','m²',22,18,volume),
- t('parquet-chene','Parquet chêne massif','Sols','floor','m²',65,35,volume),
- t('sol-vinyle','Sol vinyle (LVT)','Sols','floor','m²',28,16,volume),
- t('carrelage-sol','Carrelage au sol','Sols','floor','m²',35,45,volume),
- t('plinthes','Plinthes','Sols','perimeter','m',6,7),
- t('peinture-murs','Peinture des murs (2 couches)','Murs','wall','m²',4,14,[{from:50,percent:5},{from:120,percent:10}]),
- t('faience','Faïence murale','Murs','wall','m²',30,48),
- t('placo','Cloison ou doublage en plaques de plâtre','Murs','wall','m²',14,26),
- t('peinture-plafond','Peinture du plafond (2 couches)','Plafonds','ceiling','m²',4,17),
- t('porte-interieure','Pose d’une porte intérieure','Menuiserie','manual','unité',180,120),
- t('plan-travail','Plan de travail','Cuisine & salle de bain','manual','m',220,90),
- t('prise-electrique','Prise ou interrupteur','Électricité & plomberie','manual','unité',18,55),
- t('depose','Dépose et évacuation de l’ancien revêtement','Préparation','floor','m²',2,12)
+ t('parquet-stratifie','Parquet stratifié','Sols','floor','m²',22,18,'stratifié, parquet stratifié, sol stratifié',volume),
+ t('parquet-chene','Parquet chêne massif','Sols','floor','m²',65,35,'parquet chêne, parquet massif, chêne massif, parquet',volume),
+ t('sol-vinyle','Sol vinyle (LVT)','Sols','floor','m²',28,16,'vinyle, lvt, lino, pvc',volume),
+ t('carrelage-sol','Carrelage au sol','Sols','floor','m²',35,45,'carrelage, carrelage au sol, carreaux',volume),
+ t('plinthes','Plinthes','Sols','perimeter','m',6,7,'plinthe, plinthes'),
+ t('peinture-murs','Peinture des murs (2 couches)','Murs','wall','m²',4,14,'peinture, peindre les murs, peinture des murs, repeindre',[{from:50,percent:5},{from:120,percent:10}]),
+ t('faience','Faïence murale','Murs','wall','m²',30,48,'faïence, faience, carrelage mural, crédence'),
+ t('placo','Cloison ou doublage en plaques de plâtre','Murs','wall','m²',14,26,'cloison, placo, plaque de plâtre, doublage, ba13'),
+ t('peinture-plafond','Peinture du plafond (2 couches)','Plafonds','ceiling','m²',4,17,'plafond, peinture du plafond, peindre le plafond'),
+ t('porte-interieure','Pose d’une porte intérieure','Menuiserie','manual','unité',180,120,'porte, porte intérieure, bloc-porte'),
+ t('plan-travail','Plan de travail','Cuisine & salle de bain','manual','m',220,90,'plan de travail'),
+ t('prise-electrique','Prise ou interrupteur','Électricité & plomberie','manual','unité',18,55,'prise, prises, interrupteur, interrupteurs'),
+ t('depose','Dépose et évacuation de l’ancien revêtement','Préparation','floor','m²',2,12,'dépose, déposer, arracher, retirer le sol, évacuation')
 ];
 
 /** Lecture tolérante des réglages : une grille absente donne la grille de départ, une grille vide reste vide. */
@@ -46,7 +46,7 @@ export function tariffsFrom(value:unknown):Tariff[]{
  return value.filter(x=>x&&typeof x==='object').slice(0,300).map((x:Data)=>({
   id:text(x.id,80)||crypto.randomUUID(),name:text(x.name,120),category:text(x.category,60)||'Divers',
   basis:bases.includes(x.basis)?x.basis as TariffBasis:'manual',unit:text(x.unit,20)||'unité',
-  material:num(x.material),labour:num(x.labour),active:x.active!==false,
+  material:num(x.material),labour:num(x.labour),active:x.active!==false,keywords:text(x.keywords,300),
   tiers:(Array.isArray(x.tiers)?x.tiers:[]).map((tier:Data)=>({from:num(tier?.from),percent:Math.min(90,num(tier?.percent))})).filter((tier:TariffTier)=>tier.from>0&&tier.percent>0).sort((a:TariffTier,b:TariffTier)=>a.from-b.from).slice(0,6)
  }));
 }
@@ -102,5 +102,40 @@ export function resolveEstimate(items:unknown,rooms:unknown,tariffs:Tariff[]):Es
   if(!item.auto)return item;
   const tariff=tariffs.find(x=>x.id===item.tariffId)!,index=spaces.findIndex((room,i)=>roomLabel(room,i)===item.room);
   return index<0?item:{...item,quantity:roomQuantity(spaces[index],tariff)};
+ });
+}
+
+
+/* ——— Notes vocales : reconnaissance des postes et des unités ——— */
+const plain=(value:string)=>value.toLocaleLowerCase('fr').normalize('NFD').replace(/[̀-ͯ]/g,'');
+/** Mots qui désignent un poste dans une note dictée : ceux saisis dans les paramètres, sinon le nom du poste. */
+export function tariffKeywords(tariff:Pick<Tariff,'name'|'keywords'>){
+ const own=tariff.keywords.split(/[,;\n]/).map(word=>plain(word).trim()).filter(word=>word.length>1);
+ return own.length?own:[plain(tariff.name).trim()].filter(Boolean);
+}
+/** Poste de la grille le mieux désigné par un texte : le mot-clé le plus long l’emporte. */
+export function matchTariff(textValue:string,tariffs:Tariff[]):Tariff|null{
+ const hay=` ${plain(textValue).replace(/[^a-z0-9²³]+/g,' ')} `;let best:Tariff|null=null,score=0;
+ for(const tariff of tariffs){if(!tariff.active)continue;for(const word of tariffKeywords(tariff)){const key=word.replace(/[^a-z0-9²³]+/g,' ').trim();if(key&&hay.includes(` ${key}`)&&key.length>score){best=tariff;score=key.length}}}
+ return best;
+}
+type Dimension='length'|'area'|'volume'|'other';
+const unitScale:Record<string,[Dimension,number]>={mm:['length',.001],cm:['length',.01],m:['length',1],'cm²':['area',.0001],'m²':['area',1],'m³':['volume',1],pi:['length',M_PER_FT],'pi²':['area',M_PER_FT*M_PER_FT]};
+/** Convertit une quantité vers l’unité d’un poste (cm → m, cm² → m²…) ; null si les grandeurs ne sont pas comparables. */
+export function convertQuantity(quantity:number,from:string,to:string){
+ if(from===to)return quantity;
+ const a=unitScale[from],b=unitScale[to];
+ if(!a||!b||a[0]!==b[0])return null;
+ return new Decimal(quantity).times(a[1]).div(b[1]).toDecimalPlaces(2,Decimal.ROUND_HALF_UP).toNumber();
+}
+/** Applique la grille aux lignes proposées par l’analyse : un poste reconnu reçoit son prix, dans l’unité de la grille. */
+export function applyTariffs(lines:Data[],tariffs:Tariff[]):Data[]{
+ return lines.map(line=>{
+  if(Number(line.price)>0)return line;
+  const tariff=matchTariff(String(line.description||''),tariffs);if(!tariff)return line;
+  const quantity=convertQuantity(Number(line.quantity)||0,String(line.unit||''),tariff.unit);
+  if(quantity===null||!(quantity>0))return {...line,tariff_hint:tariff.name};
+  const price=tariffPrice(tariff,quantity);
+  return {...line,quantity,unit:tariff.unit,price:price.unit,pricing_mode:'split',material_cost:price.unitMaterial,labour_cost:price.unitLabour,category:tariff.category,tariff_id:tariff.id,tariff_name:tariff.name};
  });
 }

@@ -12,7 +12,7 @@ const number=(value:string)=>{const n=Number(value.replace(',','.'));return Numb
 /** Paramètres › Tarifs : prix au mètre de chaque poste, paliers dégressifs et simulateur. */
 export default function TariffSettings({settings,demo,onSave}:Props){
  const initial=useMemo(()=>tariffsFrom(settings.tariffs),[settings.tariffs]);
- const units=useMemo(()=>[...new Set(['m²','m','unité','forfait','h',...projectSettingsFrom(settings).units])],[settings]);
+ const units=useMemo(()=>[...new Set(['m²','m','cm','cm²','m³','unité','forfait','h',...projectSettingsFrom(settings).units])],[settings]);
  const [draft,setDraft]=useState<Tariff[]>(initial);
  const [open,setOpen]=useState<string|null>(null);
  const [filter,setFilter]=useState('Tous');
@@ -21,7 +21,7 @@ export default function TariffSettings({settings,demo,onSave}:Props){
  const dirty=JSON.stringify(draft)!==JSON.stringify(initial);
  const categories=[...new Set([...tariffCategories,...draft.map(x=>x.category)])];
  const patch=(id:string,change:Partial<Tariff>)=>{setDraft(list=>list.map(x=>x.id===id?{...x,...change}:x));setState({kind:'idle'})};
- const add=()=>{const item:Tariff={id:crypto.randomUUID(),name:'',category:filter==='Tous'?'Sols':filter,basis:'floor',unit:'m²',material:0,labour:0,tiers:[],active:true};setDraft(list=>[...list,item]);setOpen(item.id);setState({kind:'idle'})};
+ const add=()=>{const item:Tariff={id:crypto.randomUUID(),name:'',category:filter==='Tous'?'Sols':filter,basis:'floor',unit:'m²',material:0,labour:0,tiers:[],active:true,keywords:''};setDraft(list=>[...list,item]);setOpen(item.id);setState({kind:'idle'})};
  async function save(){
   const errors=tariffErrors(draft);if(errors.length){setState({kind:'error',message:errors.join(' ')});return}
   setState({kind:'pending'});
@@ -61,6 +61,7 @@ export default function TariffSettings({settings,demo,onSave}:Props){
    <div className="tariff-samples" aria-label="Exemples de prix">{samples.map(q=><span key={q}>{q} {item.unit} <b>{money(tariffPrice(item,q).total)}</b></span>)}</div>
    {expanded&&<div className="tariff-editor">
     <label>Nom du poste<input maxLength={120} value={item.name} placeholder="Ex. : Parquet stratifié" onChange={e=>patch(item.id,{name:e.target.value})}/></label>
+    <label>Mots reconnus dans les notes vocales<input maxLength={300} value={item.keywords} placeholder="Ex. : parquet, stratifié, sol stratifié" onChange={e=>patch(item.id,{keywords:e.target.value})}/><small className="muted">Séparés par des virgules. Quand l’un d’eux est dicté pendant une visite, ce tarif est appliqué automatiquement à la ligne du devis.</small></label>
     <div className="form-grid three">
      <label>Catégorie<input list="tariff-categories" maxLength={60} value={item.category} onChange={e=>patch(item.id,{category:e.target.value})}/></label>
      <label>Unité<select value={item.unit} onChange={e=>patch(item.id,{unit:e.target.value})}>{[...new Set([item.unit,...units])].map(u=><option key={u}>{u}</option>)}</select></label>
