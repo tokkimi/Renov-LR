@@ -33,4 +33,4 @@ Sans variables d’environnement, le site public et `/demo` (données fictives e
 - Textes des pages (`content/*.json`, `components/atelier-site.tsx`) : ils viennent du site MG Pro et citent encore Laval, Montréal et ses services.
 - Photos (`public/images/`) : ce sont celles de MG Pro, à remplacer par les réalisations de Rénov LR.
 - Taxes : TPS/TVQ et dollars canadiens par défaut, taux modifiables dans les paramètres.
-- Logo : remplacer le mot-symbole dans `components/brand.tsx` et les icônes de `public/app/`.
+- Logo : proposition « vitre dépolie » dans `public/icon.svg` (utilisée par `components/brand.tsx`) ; les icônes de `public/app/` en sont dérivées.

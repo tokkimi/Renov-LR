@@ -116,3 +116,7 @@ html body .tariff-filters{flex:1 1 0;min-width:0}
 html body .settings-body{min-width:0}
 @media(max-width:640px){html body .tariff-tier{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 40px}html body .tariff-toolbar{flex-direction:column;align-items:stretch}html body .tariff-filters{flex:none}}
 html body .login-intro .rlr-wordmark{color:#fff}
+.rlr-wordmark{align-items:center}
+.rlr-mark{flex:none;width:1.55em;height:1.55em;margin-right:.18em;display:block}
+.rlr-monogram-mark{width:40px;height:40px;margin:0}
+html body .workspace .rlr-wordmark.workspace-logo{align-items:center}

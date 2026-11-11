@@ -3,11 +3,11 @@ import {useEffect,useRef,useState} from 'react';
 import Link from 'next/link';
 import {ArrowUpRight,Menu,X} from 'lucide-react';
 
-/** Identité provisoire : pas encore de logo, donc un mot-symbole noir sur blanc. */
+/** Logo : pastille noire et vitre dépolie « LR » (public/icon.svg), suivies du nom. */
 export function Wordmark({href='/',label='Rénov LR, accueil',className=''}:{href?:string;label?:string;className?:string}){
- return <Link className={`rlr-wordmark ${className}`} href={href} aria-label={label}><span>Rénov</span><b>LR</b></Link>;
+ return <Link className={`rlr-wordmark ${className}`} href={href} aria-label={label}><img className="rlr-mark" src="/icon.svg" alt="" width={34} height={34}/><span>Rénov</span><b>LR</b></Link>;
 }
-export function Monogram(){return <span className="rlr-monogram" aria-hidden="true">LR</span>}
+export function Monogram(){return <img className="rlr-mark rlr-monogram-mark" src="/icon.svg" alt="" width={40} height={40}/>}
 
 export type HeaderLink={href:string;label:string;external?:boolean};
 type Props={home?:string;homeLabel?:string;links:HeaderLink[];cta?:string;onCta?:()=>void;children?:React.ReactNode;openLabel?:string;closeLabel?:string;navLabel?:string};

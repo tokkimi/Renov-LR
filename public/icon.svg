@@ -1,1 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#fff"/><rect x="16" y="16" width="480" height="480" rx="100" fill="none" stroke="#111" stroke-width="20"/><text x="256" y="330" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-weight="800" font-size="220" letter-spacing="-10" fill="#111">LR</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<defs>
+<clipPath id="rlr-pane"><rect x="21" y="21" width="40" height="40" rx="12"/></clipPath>
+<filter id="rlr-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2"/></filter>
+<filter id="rlr-shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000" flood-opacity=".22"/></filter>
+<linearGradient id="rlr-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".78"/><stop offset=".5" stop-color="#fff" stop-opacity=".34"/><stop offset="1" stop-color="#fff" stop-opacity=".62"/></linearGradient>
+<linearGradient id="rlr-edge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#111" stop-opacity=".1"/></linearGradient>
+</defs>
+<circle cx="24" cy="24" r="21" fill="#111"/>
+<rect x="21" y="21" width="40" height="40" rx="12" fill="#fff" filter="url(#rlr-shadow)"/>
+<g clip-path="url(#rlr-pane)"><circle cx="24" cy="24" r="21" fill="#111" filter="url(#rlr-blur)"/><rect x="21" y="21" width="40" height="40" fill="url(#rlr-sheen)"/></g>
+<rect x="21.6" y="21.6" width="38.8" height="38.8" rx="11.4" fill="none" stroke="url(#rlr-edge)" stroke-width="1.2"/>
+<text x="41.5" y="47.6" text-anchor="middle" font-family="'DM Sans',Helvetica,Arial,sans-serif" font-weight="800" font-size="17.5" letter-spacing="-.8" fill="#111">LR</text>
+</svg>
