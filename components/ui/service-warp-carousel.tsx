@@ -4,17 +4,19 @@ import {useMemo, useRef, useState} from 'react';
 import {useMotionValueEvent, useScroll} from 'motion/react';
 import {ArrowLeft, ArrowRight, ArrowUpRight} from 'lucide-react';
 import {WarpCarousel} from './warp-carousel';
-
-type Service = {title: string; description: string; image: string};
+import ServiceDetails from '../service-details';
+import type {RenovationService} from '../renovation-services';
 
 const pinTop = 108;
 const stageStyle = {height: '100%', minHeight: 0, aspectRatio: 'auto'};
 
-export default function ServiceWarpCarousel({cards, onSelect}: {
-  cards: readonly Service[];
-  onSelect: (title: string) => void;
+export default function ServiceWarpCarousel({cards, whatsapp, onSelect}: {
+  cards: readonly RenovationService[];
+  whatsapp: string;
+  onSelect: (quoteType: string) => void;
 }) {
   const [index, setIndex] = useState(0);
+  const [detail, setDetail] = useState<RenovationService | null>(null);
   const sequence = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const {scrollYProgress} = useScroll({target: sequence, offset: [`start ${pinTop}px`, 'end end']});
@@ -29,6 +31,7 @@ export default function ServiceWarpCarousel({cards, onSelect}: {
     value: '',
   })), [cards]);
   const active = cards[index];
+  const ActiveIcon = active.icon;
   const select = (position: number) => {
     setIndex(position);
     const region = sequence.current;
@@ -51,7 +54,7 @@ export default function ServiceWarpCarousel({cards, onSelect}: {
       <div className="rl-warp" ref={panel}>
         <div className="rl-warp-stage">
           <WarpCarousel cards={textures} index={index} onIndexChange={select}
-            autoplay={false} flatDesktop onCardActivate={position => onSelect(cards[position].title)} background="#f3f6f8"
+            autoplay={false} flatDesktop onCardActivate={position => onSelect(cards[position].quoteType)} background="#f3f6f8"
             ariaLabel="Carrousel des prestations" style={stageStyle}/>
         </div>
         <div className="rl-warp-controls">
@@ -66,9 +69,15 @@ export default function ServiceWarpCarousel({cards, onSelect}: {
         </div>
         <div className="rl-warp-details">
           <p>{active.description}</p>
-          <button type="button" className="rl-btn red" onClick={() => onSelect(active.title)}>Demander un devis<ArrowUpRight size={18}/></button>
+          <div className="rl-warp-actions">
+            <button type="button" className="rl-btn arch-outline" aria-haspopup="dialog"
+              aria-label={`Voir la fiche ${active.title}`} onClick={() => setDetail(active)}><ActiveIcon size={18} aria-hidden="true"/>Voir la fiche</button>
+            <button type="button" className="rl-btn red" onClick={() => onSelect(active.quoteType)}>Demander un devis<ArrowUpRight size={18}/></button>
+          </div>
         </div>
       </div>
+      {detail && <ServiceDetails service={detail} whatsapp={whatsapp} onClose={() => setDetail(null)}
+        onQuote={() => { setDetail(null); onSelect(detail.quoteType); }}/>}
     </div>
   );
 }

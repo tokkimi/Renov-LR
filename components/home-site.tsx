@@ -12,19 +12,8 @@ import QuoteRequest from './request-form';
 import PortfolioPreview from './portfolio-preview';
 import {Data,defaults} from '@/lib/model';
 
-const services = [
- ['Cuisine','Implantation, plans de travail, crédence, électricité et finitions.','/images/prestation-cuisine.jpg'],
- ['Salle de bain','Douche à l’italienne, faïence, plomberie et étanchéité.','/images/prestation-salle-de-bain.jpg'],
- ['Sols & parquet','Parquet, carrelage, vinyle : dépose, préparation et pose.','/images/prestation-pose-parquet.jpg'],
- ['Peinture & murs','Préparation des supports, enduits, peinture et revêtements.','/images/prestation-peinture.jpg'],
- ['Aménagement','Cloisons, doublages, portes et rangements sur mesure.','/images/prestation-amenagement.jpg'],
- ['Rénovation complète','Un seul interlocuteur pour coordonner tous les corps de métier.','/images/prestation-renovation-complete.jpg'],
-].map(([title, description, image]) => ({title, description, image}));
-const quoteTypes: Record<string, string> = {
- 'Sols & parquet':'Sols et parquet',
- 'Peinture & murs':'Peinture et murs',
- 'Aménagement':'Aménagement et cloisons',
-};
+import {services} from './renovation-services';
+
 const steps=[
  ['Vous nous contactez','Décrivez votre projet en quelques minutes, avec des photos si vous en avez. Nous vous rappelons.'],
  ['Nous venons sur place','Une visite pour comprendre vos envies, prendre les mesures et vous conseiller sur les matériaux.'],
@@ -145,7 +134,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <section className="arch-section arch-services" id="prestations">
     <div className="rl-wrap">
      <header className="arch-heading"><p className="arch-eyebrow">Nos prestations</p><h2>Chaque pièce, un projet.</h2></header>
-     <ServiceWarpCarousel cards={services} onSelect={title=>setQuote(quoteTypes[title] ?? title)}/>
+     <ServiceWarpCarousel cards={services} whatsapp={whatsapp} onSelect={setQuote}/>
     </div>
    </section>
 

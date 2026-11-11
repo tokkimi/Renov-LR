@@ -23,4 +23,4 @@ row(81,'message',{body:'Bonjour, est-ce que nous pouvons voir les échantillons 
 row(82,'message',{body:'Bonjour Camille, oui, nous les apporterons à la visite de mercredi.',sender:'Léo',visibility:'client'},1,11),
 row(91,'settings',defaults)
 ];
-export const demoUser={id:id(100),name:'Léo Renaud',email:'contact@renov-lr.example',role:'admin' as const,client_id:null};
+export const demoUser={id:id(100),name:'Mike',email:'contact@renov-lr.example',role:'admin' as const,client_id:null};

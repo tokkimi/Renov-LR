@@ -70,3 +70,9 @@
 .workspace .btn.danger,.workspace .btn.danger-outline{background:#fff5f2!important;color:#943e32!important;border:1px solid #e4c1b9!important;box-shadow:none}
 @media(max-width:600px){.workspace .plan-viewport svg text{font-size:26px}.workspace .plan-viewport svg g>text:nth-of-type(2){transform:translateY(14px)}.workspace .project-plan-panel>.detail-body{padding:12px}.workspace .plan-editor{padding:12px}}
 @media print{.workspace .plan-viewport{background:#fff;box-shadow:none}.workspace .plan-editor{box-shadow:none}}
+
+.workspace .visit-client-action { margin: -2px 0 6px; }
+.workspace .visit-client-summary { margin: 0 0 8px; color: var(--muted); overflow-wrap: anywhere; }
+.workspace .visit-client-summary:empty { display: none; }
+.workspace .visit-client-dialog { width: min(540px, calc(100% - 24px)); }
+.workspace .visit-client-dialog form > p:first-child { margin: 0; color: var(--muted); }
