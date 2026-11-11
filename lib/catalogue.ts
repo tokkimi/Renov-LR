@@ -1,7 +1,7 @@
 import {scheduleFrom,ScheduleActivity} from './schedule';
 import {Data} from './model';
 
-export const catalogueTabs=['Gabarits de départ','Mes soumissions','Mon catalogue','Mes catégories','Codes de coût','Échéanciers de départ','Mes échéanciers','Tâches','Produits','Sélections'] as const;
+export const catalogueTabs=['Gabarits de départ','Mes devis','Mon catalogue','Mes catégories','Codes de coût','Échéanciers de départ','Mes échéanciers','Tâches','Produits','Sélections'] as const;
 export type CatalogueTab=typeof catalogueTabs[number];
 export type CatalogueEntry={id:string;tab:CatalogueTab;name:string;description:string;category:string;code:string;unit:string;price:number;material:number;labour:number;lines:Data[];steps:Data[];color:string;activities:ScheduleActivity[];brand:string;sku:string;finish:string;markup:number};
 const colors=['#111111','#627c9e','#a47d45','#8b6b92'];

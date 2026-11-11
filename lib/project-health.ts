@@ -44,7 +44,7 @@ export function projectHealth(project:RecordItem,records:RecordItem[],today:stri
  const contract=round(signed.reduce((s,r)=>s+(Number(r.data.amount)||totals(r.data).total),0)+own.filter(r=>r.kind==='quote'&&r.data.status==='Accepté'&&!signed.some(c=>c.data.quote_id===r.id)).reduce((s,r)=>s+totals(r.data).total,0));
  // Financial margins compare revenue and costs before tax. Legacy amount-only contracts
  // use their linked quote when available, otherwise the document's tax rates.
- const netContract=(r:RecordItem)=>{const quote=own.find(q=>q.kind==='quote'&&q.id===r.data.quote_id);if(quote)return totals(quote.data).net;if(r.data.lines?.length)return totals(r.data).net;return Number(r.data.amount||0)/(1+Number(r.data.tps??5)/100+Number(r.data.tvq??9.975)/100)};
+ const netContract=(r:RecordItem)=>{const quote=own.find(q=>q.kind==='quote'&&q.id===r.data.quote_id);if(quote)return totals(quote.data).net;if(r.data.lines?.length)return totals(r.data).net;return Number(r.data.amount||0)/(1+Number(r.data.tps??10)/100+Number(r.data.tvq??0)/100)};
  const contractNet=round(signed.reduce((s,r)=>s+netContract(r),0)+own.filter(r=>r.kind==='quote'&&r.data.status==='Accepté'&&!signed.some(c=>c.data.quote_id===r.id)).reduce((s,r)=>s+totals(r.data).net,0));
  const revenueNet=Math.max(contractNet,round(issued.reduce((s,r)=>s+totals(r.data).net,0)));
  const tasks=own.filter(r=>r.kind==='task');
@@ -52,7 +52,7 @@ export function projectHealth(project:RecordItem,records:RecordItem[],today:stri
  const overdueTasks=openTasks.filter(t=>String(t.data.due||'')&&String(t.data.due)<today).length;
  const age=(r:RecordItem,key='sent_at')=>Math.max(0,daysBetween(String(r.data[key]||r.updated_at),today));
  const clientWaits=[
-  ...own.filter(r=>r.kind==='quote'&&r.data.status==='Envoyé').map(r=>({label:`${r.data.document_type==='change_order'?'Ordre de changement':'Soumission'} ${r.data.number||r.data.title||''} à approuver`,days:age(r),recordId:r.id})),
+  ...own.filter(r=>r.kind==='quote'&&r.data.status==='Envoyé').map(r=>({label:`${r.data.document_type==='change_order'?'Ordre de changement':'Devis'} ${r.data.number||r.data.title||''} à approuver`,days:age(r),recordId:r.id})),
   ...own.filter(r=>r.kind==='contract'&&r.data.status==='Envoyé'&&!r.data.partner_id).map(r=>({label:`Contrat ${r.data.title||''} à signer`,days:age(r),recordId:r.id})),
   ...((Array.isArray(project.data.selections)?project.data.selections:[]) as Data[]).filter(s=>s.published===true&&!s.decision).map(s=>({label:`Choix « ${s.title||'matériau'} »`,days:Math.max(0,daysBetween(String(s.published_at||s.date||project.updated_at),today)),recordId:project.id}))
  ];

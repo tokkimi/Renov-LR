@@ -1,36 +1,18 @@
-'use client';
-import {useEffect,useRef,useState} from 'react';
 import Link from 'next/link';
-import {ArrowUpRight,Menu,X} from 'lucide-react';
 
-/** Logo : pastille noire et vitre dépolie « LR » (public/icon.svg), suivies du nom. */
-export function Wordmark({href='/',label='Rénov LR, accueil',className=''}:{href?:string;label?:string;className?:string}){
- return <Link className={`rlr-wordmark ${className}`} href={href} aria-label={label}><img className="rlr-mark" src="/icon.svg" alt="" width={34} height={34}/><span>Rénov</span><b>LR</b></Link>;
+/**
+ * Logo Rénov LR : un angle de mur vu en plan (le « L ») et l’arc d’ouverture d’une porte.
+ * Il suit la couleur du texte, donc il fonctionne sur fond clair comme sur fond sombre.
+ */
+export function LogoMark({size=34,className=''}:{size?:number;className?:string}){
+ return <svg className={`rlr-mark ${className}`} width={size} height={size} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+  <defs><linearGradient id="rlr-swing" x1="9" y1="39" x2="34" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="currentColor" stopOpacity=".3"/><stop offset="1" stopColor="currentColor" stopOpacity=".04"/></linearGradient></defs>
+  <path d="M9 39V9a30 30 0 0 1 30 30Z" fill="url(#rlr-swing)"/>
+  <path d="M9 9a30 30 0 0 1 30 30" stroke="currentColor" strokeWidth="1.5" strokeDasharray="1 3.2" strokeLinecap="round"/>
+  <path d="M9 39 30.2 17.8" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round"/>
+  <path d="M5 3v40h40" stroke="currentColor" strokeWidth="8"/>
+ </svg>;
 }
-export function Monogram(){return <img className="rlr-mark rlr-monogram-mark" src="/icon.svg" alt="" width={40} height={40}/>}
-
-export type HeaderLink={href:string;label:string;external?:boolean};
-type Props={home?:string;homeLabel?:string;links:HeaderLink[];cta?:string;onCta?:()=>void;children?:React.ReactNode;openLabel?:string;closeLabel?:string;navLabel?:string};
-
-/** Barre flottante arrondie et translucide : logo à gauche, menu hamburger à droite, sur ordinateur comme sur téléphone. */
-export function FloatingHeader({home='/',homeLabel,links,cta,onCta,children,openLabel='Ouvrir le menu',closeLabel='Fermer le menu',navLabel='Navigation principale'}:Props){
- const [open,setOpen]=useState(false);
- const root=useRef<HTMLElement>(null);
- useEffect(()=>{
-  if(!open)return;
-  const key=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpen(false)};
-  const outside=(e:MouseEvent)=>{if(root.current&&!root.current.contains(e.target as Node))setOpen(false)};
-  window.addEventListener('keydown',key);window.addEventListener('mousedown',outside);
-  return()=>{window.removeEventListener('keydown',key);window.removeEventListener('mousedown',outside)};
- },[open]);
- return <header className="rlr-header" ref={root}>
-  <div className="rlr-bar">
-   <Wordmark href={home} label={homeLabel}/>
-   <button type="button" className="rlr-burger" aria-label={open?closeLabel:openLabel} aria-expanded={open} aria-controls="rlr-menu" onClick={()=>setOpen(!open)}>{open?<X size={22}/>:<Menu size={22}/>}</button>
-  </div>
-  {open&&<nav id="rlr-menu" className="rlr-menu" aria-label={navLabel}>
-   {links.map(link=>link.external?<a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(false)}>{link.label}<ArrowUpRight size={16}/></a>:<Link key={link.href} href={link.href} onClick={()=>setOpen(false)}>{link.label}</Link>)}
-   {(cta||children)&&<div className="rlr-menu-foot">{children}{cta&&<button type="button" className="rlr-menu-cta" onClick={()=>{setOpen(false);onCta?.()}}>{cta}<ArrowUpRight size={17}/></button>}</div>}
-  </nav>}
- </header>;
+export function Wordmark({href='/',label='Rénov LR, accueil',className=''}:{href?:string;label?:string;className?:string}){
+ return <Link className={`rlr-wordmark ${className}`} href={href} aria-label={label}><LogoMark/><span>Rénov</span><b>LR</b></Link>;
 }

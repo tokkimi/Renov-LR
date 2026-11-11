@@ -18,7 +18,7 @@ const same=(a:string,b:string)=>a.length===b.length&&timingSafeEqual(Buffer.from
 export async function GET(req:Request){
  const secret=process.env.CRON_SECRET;
  if(!secret||!same(req.headers.get('authorization')||'',`Bearer ${secret}`))return NextResponse.json({error:'Non autorisé.'},{status:401});
- const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Montreal'});
+ const today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Paris'});
  const settingsRow=(await db().from('records').select('*').eq('kind','settings').limit(1).maybeSingle()).data as RecordItem|null;
  const settings:Record<string,any>={...defaults,...(settingsRow?.data||{})};
  const report={reminders:0,reminderFailures:0,emailNotConfigured:false,routines:0};

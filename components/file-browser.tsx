@@ -6,7 +6,7 @@ import type {Data,RecordItem} from '@/lib/model';
 import {folderContent,projectFiles,systemFolders,type FileEntry} from '@/lib/files';
 
 type Props={projects:RecordItem[];records:RecordItem[];clients:RecordItem[];canEdit:boolean;onSave:(document:RecordItem,data:Data)=>Promise<unknown>;onDelete:(document:RecordItem)=>Promise<unknown>;onOpenRecord:(id:string)=>void};
-const date=(v:string)=>v?new Intl.DateTimeFormat('fr-CA',{day:'numeric',month:'short',year:'numeric'}).format(new Date(v)):'—';
+const date=(v:string)=>v?new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'short',year:'numeric'}).format(new Date(v)):'—';
 
 /** Folder tree: All files → My projects → project → nine system folders. Files are identified by id, never by name. */
 export default function FileBrowser({projects,records,clients,canEdit,onSave,onDelete,onOpenRecord}:Props){

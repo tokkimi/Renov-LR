@@ -3,7 +3,7 @@ import type {Data,Kind,Role} from './model';
 /** Twelve event families (Billdr shows twelve; the grouping below is Rénov LR's own — H). */
 export const notificationFamilies=[
  {id:'projects',label:'Projets et phases'},
- {id:'quotes',label:'Soumissions'},
+ {id:'quotes',label:'Devis'},
  {id:'contracts',label:'Contrats et ordres de changement'},
  {id:'invoices',label:'Factures et paiements clients'},
  {id:'expenses',label:'Dépenses'},
@@ -83,7 +83,7 @@ const words:Record<string,string>={user_save:'Dossier enregistré',issue:'Factur
 export function notificationLabel(action:string,details?:{status?:unknown}){
  if(words[action])return words[action];
  const match=/^(quote|change_order|contract|invoice|phase|task|project)_(.+)$/.exec(action);
- if(match){const subject={quote:'Soumission',change_order:'Ordre de changement',contract:'Contrat',invoice:'Facture',phase:'Phase',task:'Tâche',project:'Projet'}[match[1]];const state=typeof details?.status==='string'&&details.status?details.status:match[2].replaceAll('_',' ');return `${subject} : statut « ${state} »${/envoy/.test(match[2])?' (marqué manuellement)':''}`}
+ if(match){const subject={quote:'Devis',change_order:'Ordre de changement',contract:'Contrat',invoice:'Facture',phase:'Phase',task:'Tâche',project:'Projet'}[match[1]];const state=typeof details?.status==='string'&&details.status?details.status:match[2].replaceAll('_',' ');return `${subject} : statut « ${state} »${/envoy/.test(match[2])?' (marqué manuellement)':''}`}
  return 'Action enregistrée';
 }
 export function inAppAllowed(matrix:Matrix,role:Role,family:Family){return matrix[role]?.[family]?.inapp!==false}

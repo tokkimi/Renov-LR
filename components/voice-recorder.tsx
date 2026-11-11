@@ -46,7 +46,7 @@ export default function VoiceRecorder({onSave,busy=false,storageKey}:{storageKey
   if(speechSupported){
    try{
     const SR=(window as any).SpeechRecognition||(window as any).webkitSpeechRecognition;const r=new SR();
-    r.lang='fr-CA';r.continuous=true;r.interimResults=true;
+    r.lang='fr-FR';r.continuous=true;r.interimResults=true;
     r.onresult=(e:any)=>{let fin='',intm='';for(let i=e.resultIndex;i<e.results.length;i++){const tr=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=tr;else intm+=tr;}if(fin)setTranscript(p=>(p?p+' ':'')+fin.trim());setInterim(intm);};
     r.onerror=(e:any)=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')setError('Transcription refusée — saisissez la note manuellement.');};
     r.onend=()=>{setSpeechOn(false);if(!stopping.current){try{r.start();setSpeechOn(true);}catch{}}};

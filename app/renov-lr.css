@@ -199,3 +199,9 @@ html body .notification-filters .btn[aria-pressed=true]{background:#111;border-c
 @media(max-width:640px){html body .workspace-content .notification-history article{grid-template-columns:36px minmax(0,1fr) auto;gap:10px;padding:12px}html body .workspace-content .notification-history article>div:first-of-type{flex-basis:auto}html body .notification-history .notification-symbol{width:36px;height:36px}}
 @media(max-width:900px){html body .notification-popover.notification-unified{z-index:70;max-height:calc(100dvh - 190px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}html body .notification-unified .module-centre{max-height:none;overflow:auto}}
 @media(max-width:900px){html body .notification-popover.notification-unified{max-height:calc(100dvh - 184px - env(safe-area-inset-bottom))!important;overflow-y:auto!important;overscroll-behavior:contain}html body .notification-unified .module-centre{max-height:none;overflow:visible}}
+
+/* Logo en tracé (suit la couleur du texte) */
+.rlr-wordmark{align-items:center;gap:.3em;font-family:'Space Grotesk','DM Sans',Arial,sans-serif;letter-spacing:-.035em}
+.rlr-wordmark .rlr-mark{width:1.5em;height:1.5em;margin-right:.22em;flex:none}
+.rlr-wordmark>b{font-weight:700}
+.rl-footer .rlr-wordmark{font-size:26px}

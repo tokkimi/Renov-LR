@@ -67,8 +67,8 @@ export default function TariffSettings({settings,demo,onSave}:Props){
      <label>Quantité calculée d’après<select value={item.basis} onChange={e=>patch(item.id,{basis:e.target.value as TariffBasis})}>{(Object.keys(basisLabels) as TariffBasis[]).map(b=><option key={b} value={b}>{basisLabels[b]}</option>)}</select></label>
     </div>
     <div className="form-grid three">
-     <label>Matériaux, par {item.unit} ($)<input type="number" inputMode="decimal" min="0" step="0.01" value={item.material} onChange={e=>patch(item.id,{material:number(e.target.value)})}/></label>
-     <label>Main-d’œuvre, par {item.unit} ($)<input type="number" inputMode="decimal" min="0" step="0.01" value={item.labour} onChange={e=>patch(item.id,{labour:number(e.target.value)})}/></label>
+     <label>Matériaux, par {item.unit} (€)<input type="number" inputMode="decimal" min="0" step="0.01" value={item.material} onChange={e=>patch(item.id,{material:number(e.target.value)})}/></label>
+     <label>Main-d’œuvre, par {item.unit} (€)<input type="number" inputMode="decimal" min="0" step="0.01" value={item.labour} onChange={e=>patch(item.id,{labour:number(e.target.value)})}/></label>
      <div className="tariff-unit-total"><small>Prix unitaire</small><b>{money(unit)}</b></div>
     </div>
     <fieldset className="tariff-tiers"><legend>Tarif dégressif selon la quantité</legend>

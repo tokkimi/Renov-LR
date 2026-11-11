@@ -6,7 +6,7 @@ import {totals} from '../lib/model';
 import {operationsFrom,operationTotals,procurementAmount} from '../lib/project-operations';
 
 test('catalogue snapshots preserve quote independence and exclude private notes',()=>{
- const entry=catalogueFrom([{id:'t',tab:'Mes soumissions',name:'Cuisine',lines:[{description:'Armoires',price:200,internal_notes:'Équipe',admin_notes:'Confidentiel'}]}])[0];
+ const entry=catalogueFrom([{id:'t',tab:'Mes devis',name:'Cuisine',lines:[{description:'Armoires',price:200,internal_notes:'Équipe',admin_notes:'Confidentiel'}]}])[0];
  const lines=catalogueLines(entry);lines[0].price=999;
  assert.equal(entry.lines[0].price,200);assert.equal(lines[0].internal_notes,undefined);assert.equal(lines[0].admin_notes,undefined);
  assert.equal(importCatalogue(exportCatalogue([entry]))[0].name,'Cuisine');

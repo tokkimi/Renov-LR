@@ -6,7 +6,7 @@ import type {RecordItem} from '@/lib/model';
 import {fit,project,validPoint,type Point} from '@/lib/geo';
 
 type Props={projects:RecordItem[];clientName:(project:RecordItem)=>string;stage:(project:RecordItem)=>string;onOpen:(id:string)=>void;onLocate?:(project:RecordItem,point:Point&{label:string})=>Promise<unknown>;demo:boolean};
-const colors:Record<string,string>={'À soumissionner':'#a47d45','Soumission envoyée':'#627c9e','Soumission signée':'#8b6b92','En construction':'#2f7a4a','Complété':'#566d5e','Archivés':'#8b8f8c'};
+const colors:Record<string,string>={'À devisner':'#a47d45','Devis envoyée':'#627c9e','Devis signée':'#8b6b92','En construction':'#2f7a4a','Complété':'#566d5e','Archivés':'#8b8f8c'};
 
 /** Geographic map: OpenStreetMap tiles with markers placed from stored coordinates (not a card grid). */
 export default function ProjectMap({projects,clientName,stage,onOpen,onLocate,demo}:Props){

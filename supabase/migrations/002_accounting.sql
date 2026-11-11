@@ -10,7 +10,7 @@ begin
   if r.data->>'status'<>'Brouillon' then raise exception 'Facture déjà émise'; end if;
   amount=(t->>'total')::numeric;
   if amount<=0 then raise exception 'Le total doit être positif'; end if;
-  entry=jsonb_build_array(jsonb_build_object('account','1100 Clients','debit',amount,'credit',0),jsonb_build_object('account','4000 Revenus','debit',0,'credit',(t->>'net')::numeric),jsonb_build_object('account','2100 TPS à remettre','debit',0,'credit',(t->>'tps')::numeric),jsonb_build_object('account','2110 TVQ à remettre','debit',0,'credit',(t->>'tvq')::numeric));
+  entry=jsonb_build_array(jsonb_build_object('account','1100 Clients','debit',amount,'credit',0),jsonb_build_object('account','4000 Revenus','debit',0,'credit',(t->>'net')::numeric),jsonb_build_object('account','2100 TVA collectée','debit',0,'credit',(t->>'tps')::numeric),jsonb_build_object('account','2110 TVA collectée (autre taux)','debit',0,'credit',(t->>'tvq')::numeric));
   result=r.data||jsonb_build_object('status','Émise','paid',0);
  elsif p_action='payment' then
   if r.data->>'status' not in ('Émise','Partiellement payée') then raise exception 'Facture non payable'; end if;

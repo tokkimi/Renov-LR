@@ -2,12 +2,12 @@
 import {useEffect,useState} from 'react';
 import {Bell,Check,ClipboardList,FileCheck,FileText,FolderKanban,Inbox,MapPin,MessageSquare,Paperclip,ReceiptText,RefreshCw,Wallet} from 'lucide-react';
 const kindIcons:Record<string,typeof Bell>={quote:FileText,partner_quote:FileText,contract:FileCheck,invoice:ReceiptText,expense:Wallet,project:FolderKanban,phase:FolderKanban,task:ClipboardList,visit:MapPin,request:Inbox,message:MessageSquare,document:Paperclip};
-const when=(date:string)=>{const d=new Date(date);return Number.isNaN(d.getTime())?'':new Intl.DateTimeFormat('fr-CA',{dateStyle:'medium',timeStyle:'short'}).format(d)};
+const when=(date:string)=>{const d=new Date(date);return Number.isNaN(d.getTime())?'':new Intl.DateTimeFormat('fr-FR',{dateStyle:'medium',timeStyle:'short'}).format(d)};
 import type {RecordItem} from '@/lib/model';
 import {notificationLabel} from '@/lib/notifications';
 const demoSeen=new Set<string>();
 type Event={id:string;recordId:string;kind:string;title:string;action:string;label?:string;family?:string;date:string;read:boolean};
-const kindLabels:Record<string,string>={quote:'Soumission',contract:'Contrat',invoice:'Facture',expense:'Dépense',project:'Projet',phase:'Phase',task:'Tâche',visit:'Visite',client:'Client',request:'Demande',message:'Message',document:'Document',partner_quote:'Prix prestataire',specification:'Cahier des charges',journal:'Journal'};
+const kindLabels:Record<string,string>={quote:'Devis',contract:'Contrat',invoice:'Facture',expense:'Dépense',project:'Projet',phase:'Phase',task:'Tâche',visit:'Visite',client:'Client',request:'Demande',message:'Message',document:'Document',partner_quote:'Prix prestataire',specification:'Cahier des charges',journal:'Journal'};
 const labels:Record<string,string>={user_save:'Dossier enregistré',issue:'Facture émise',payment:'Paiement enregistré',credit:'Avoir enregistré',post:'Dépense comptabilisée',pay:'Dépense réglée',send:'Document envoyé',sent:'Document envoyé'};
 export default function NotificationCentre({demo,records,onOpen,compact=false,onCount}:{demo:boolean;records:RecordItem[];onOpen:(id:string)=>void;compact?:boolean;onCount?:(count:number)=>void}){
  const [rows,setRows]=useState<Event[]>([]),[filter,setFilter]=useState('Toutes'),[error,setError]=useState(''),[busy,setBusy]=useState(false);

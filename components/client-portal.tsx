@@ -12,7 +12,7 @@ import {clientRequestsFrom,type ClientRequest} from '@/lib/client-requests';
  * Everything shown here was already filtered and redacted by the server for this client:
  * drafts, internal notes, costs, unpublished reports, selections, logs and schedules never reach the browser.
  */
-const sections=['Vue d’ensemble','Contrats','Soumissions','Sélections','Factures','Rapports','Fichiers','Échéancier','Journal','Demandes'] as const;
+const sections=['Vue d’ensemble','Contrats','Devis','Sélections','Factures','Rapports','Fichiers','Échéancier','Journal','Demandes'] as const;
 type Section=typeof sections[number];
 type Props={records:RecordItem[];demo:boolean;onOpen:(id:string)=>void;onUpdate:(record:RecordItem)=>void};
 const title=(r:RecordItem)=>String(r.data.title||r.data.number||r.data.name||'Document');
@@ -29,7 +29,7 @@ export default function ClientPortal({records,demo,onOpen,onUpdate}:Props){
  const [projectId,setProjectId]=useState(projects[0]?.id||'');
  const [section,setSection]=useState<Section>('Vue d’ensemble');
  useEffect(()=>{if(!projects.some(p=>p.id===projectId)&&projects[0])setProjectId(projects[0].id)},[projects,projectId]);
- const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Montreal'});
+ const today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Paris'});
  const project=projects.find(p=>p.id===projectId);
  if(!project)return <section className="panel client-portal"><h2>Votre espace client</h2><Empty>Aucun projet n’est encore partagé avec vous.</Empty></section>;
  const own=records.filter(r=>r.project_id===project.id);
@@ -49,9 +49,9 @@ export default function ClientPortal({records,demo,onOpen,onUpdate}:Props){
  const contractValue=signed.reduce((s,r)=>s+(Number(r.data.amount)||totals(r.data).total),0)+quotes.filter(q=>q.data.status==='Accepté'&&!signed.some(c=>c.data.quote_id===q.id)).reduce((s,q)=>s+totals(q.data).total,0)+changes.filter(q=>q.data.status==='Accepté').reduce((s,q)=>s+totals(q.data).total,0);
  const issued=invoices.filter(r=>!['Brouillon','Annulée'].includes(String(r.data.status)));
  const invoiced=issued.reduce((s,r)=>s+totals(r.data).total,0),paid=issued.reduce((s,r)=>s+Number(r.data.paid||0),0);
- const pending=[...quotes.filter(q=>q.data.status==='Envoyé').map(q=>({id:q.id,label:`Soumission à examiner : ${title(q)}`})),...changes.filter(q=>q.data.status==='Envoyé').map(q=>({id:q.id,label:`Ordre de changement à approuver : ${title(q)}`})),...contracts.filter(c=>c.data.status==='Envoyé').map(c=>({id:c.id,label:`Contrat à signer : ${title(c)}`})),...issued.filter(i=>totals(i.data).total-Number(i.data.paid||0)>0.004).map(i=>({id:i.id,label:`Facture avec solde : ${title(i)}`}))];
+ const pending=[...quotes.filter(q=>q.data.status==='Envoyé').map(q=>({id:q.id,label:`Devis à examiner : ${title(q)}`})),...changes.filter(q=>q.data.status==='Envoyé').map(q=>({id:q.id,label:`Ordre de changement à approuver : ${title(q)}`})),...contracts.filter(c=>c.data.status==='Envoyé').map(c=>({id:c.id,label:`Contrat à signer : ${title(c)}`})),...issued.filter(i=>totals(i.data).total-Number(i.data.paid||0)>0.004).map(i=>({id:i.id,label:`Facture avec solde : ${title(i)}`}))];
  const waitingChoices=selections.filter(s=>!s.decision).length;
- const counts:Partial<Record<Section,number>>={'Contrats':contracts.length+changes.length,'Soumissions':quotes.length,'Sélections':selections.length,'Factures':issued.length,'Rapports':reports.length,'Fichiers':files.length,'Échéancier':schedule.length,'Journal':logs.length,'Demandes':requests.filter(r=>r.status==='Nouvelle'||r.status==='En étude').length};
+ const counts:Partial<Record<Section,number>>={'Contrats':contracts.length+changes.length,'Devis':quotes.length,'Sélections':selections.length,'Factures':issued.length,'Rapports':reports.length,'Fichiers':files.length,'Échéancier':schedule.length,'Journal':logs.length,'Demandes':requests.filter(r=>r.status==='Nouvelle'||r.status==='En étude').length};
  const open=(id:string)=><button className="btn ghost" onClick={()=>onOpen(id)}>Ouvrir</button>;
  return <section className="panel client-portal">
   <header className="portal-header"><div><p className="eyebrow">ESPACE CLIENT</p><h2>{String(project.data.title||'Projet')}</h2><p className="muted">{String(project.data.address||'Adresse à confirmer')} · {String(project.data.status||'')}</p></div>{projects.length>1&&<label>Projet<select value={projectId} onChange={e=>setProjectId(e.target.value)}>{projects.map(p=><option key={p.id} value={p.id}>{String(p.data.title||'Projet')}</option>)}</select></label>}</header>
@@ -62,10 +62,10 @@ export default function ClientPortal({records,demo,onOpen,onUpdate}:Props){
     {progress!==null&&<div className="fm-card"><div className="fm-card-head"><div><p className="eyebrow">Avancement du chantier</p><h3>{progress} %</h3></div></div><div className="fm-progress"><span style={{width:progress+'%'}}/></div><ul className="portal-phases">{phases.map(p=><li key={p.id}><span>{String(p.data.title||p.data.name||'Phase')}</span><small>{String(p.data.status||'')} · {Number(p.data.progress||0)} %</small></li>)}</ul></div>}
     <h3>Actions en attente</h3>
     {pending.length||waitingChoices?<ul className="portal-pending">{pending.map(p=><li key={p.id}><span>{p.label}</span>{open(p.id)}</li>)}{waitingChoices>0&&<li><span>{waitingChoices} choix de matériaux à faire</span><button className="btn ghost" onClick={()=>setSection('Sélections')}>Choisir</button></li>}</ul>:<Empty>Aucune action ne vous est demandée pour le moment.</Empty>}
-    <div className="portal-contact"><b>{defaults.name}</b><span>{defaults.phone}</span><a href={`mailto:${defaults.email}`}>{defaults.email}</a>{defaults.rbq&&<small>Licence RBQ {defaults.rbq}</small>}</div>
+    <div className="portal-contact"><b>{defaults.name}</b><span>{defaults.phone}</span><a href={`mailto:${defaults.email}`}>{defaults.email}</a>{defaults.rbq&&<small>SIRET {defaults.rbq}</small>}</div>
    </>}
    {section==='Contrats'&&<><Rows head={['Contrat','Date','Statut','Total','']} rows={contracts.map(c=>[title(c),date(c.data.date||c.created_at),String(c.data.status||''),money(Number(c.data.amount)||totals(c.data).total),open(c.id)])} empty="Aucun contrat n’a encore été partagé."/><h3>Ordres de changement</h3><Rows head={['Ordre de changement','Reçu le','Statut','Total','']} rows={changes.map(c=>[title(c),date(c.data.date||c.created_at),String(c.data.status||''),money(totals(c.data).total),open(c.id)])} empty="Aucun ordre de changement."/></>}
-   {section==='Soumissions'&&<Rows head={['Soumission','Reçue le','Validité','Statut','Total','']} rows={quotes.map(q=>[title(q),date(q.data.date||q.created_at),String(q.data.validity||'—'),String(q.data.status||''),money(totals(q.data).total),open(q.id)])} empty="Aucune soumission n’a encore été partagée."/>}
+   {section==='Devis'&&<Rows head={['Devis','Reçue le','Validité','Statut','Total','']} rows={quotes.map(q=>[title(q),date(q.data.date||q.created_at),String(q.data.validity||'—'),String(q.data.status||''),money(totals(q.data).total),open(q.id)])} empty="Aucun devis n’a encore été partagée."/>}
    {section==='Sélections'&&(selections.length?<><p className="muted">Votre choix est enregistré et horodaté. Il ne modifie jamais un contrat signé : un écart de prix fera l’objet d’un ordre de changement à approuver.</p><SharedProjectTools project={project} demo={demo} onUpdate={onUpdate}/></>:<Empty>Aucune sélection de matériaux n’est encore partagée. Elle apparaîtra ici lorsque l’équipe la publiera.</Empty>)}
    {section==='Factures'&&<Rows head={['Facture','Émise le','Échéance','Description','Total','Solde','Statut','']} rows={issued.map(i=>[String(i.data.number||'—'),date(i.data.date),date(i.data.due),String(i.data.title||''),money(totals(i.data).total),money(Math.max(0,totals(i.data).total-Number(i.data.paid||0))),invoiceState(i.data,today),<div key={i.id} className="module-actions">{open(i.id)}{outstanding(i.data)>0&&safePaymentUrl(i.data.payment_url)&&<a className="btn primary" href={safePaymentUrl(i.data.payment_url)} target="_blank" rel="noopener noreferrer">Payer en ligne</a>}</div>])} empty="Aucune facture émise."/>}
    {section==='Rapports'&&<Rows head={['Rapport','Reçu le','Avancement','Notes']} rows={reports.map(r=>[String(r.title||'Rapport'),date(r.date),`${Number(r.progress||0)} %`,String(r.notes||'')])} empty="Aucun rapport de chantier publié pour le moment."/>}

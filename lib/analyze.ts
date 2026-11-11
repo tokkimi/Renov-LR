@@ -54,8 +54,8 @@ export function analyzeTranscript(transcript:string,context:AnalyzeContext={}):A
 export const ANALYZE_MODEL='claude-sonnet-4-5';
 export function buildAnalysisMessages(transcript:string,context:AnalyzeContext={}){
  const rooms=(context.rooms||[]).map(r=>`${r.name||'Pièce'} : ${r.length||0} × ${r.width||0} × ${r.height||0} ${r.unit||'pi'}`).join(' ; ');
- const system='Tu assistes un entrepreneur en rénovation au Québec (Rénov LR). À partir d’une note vocale dictée pendant une visite, tu extrais des lignes de soumission claires. Réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, au format {"lines":[{"description":string,"quantity":number,"unit":string,"price":number}],"scope":string,"materials":string,"summary":string}. Utilise le français, des unités réalistes (pi², unité, forfait, heure), et laisse "price" à 0 lorsque le prix n’est pas dicté. N’invente pas de prix.';
- const user=`Note vocale de la visite :\n"""${transcript}"""\n${rooms?`Pièces relevées : ${rooms}\n`:''}Génère les lignes de soumission correspondantes.`;
+ const system='Tu assistes un entreprise de rénovation en France (Rénov LR). À partir d’une note vocale dictée pendant une visite, tu extrais des lignes de devis claires. Réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, au format {"lines":[{"description":string,"quantity":number,"unit":string,"price":number}],"scope":string,"materials":string,"summary":string}. Utilise le français, des unités réalistes (pi², unité, forfait, heure), et laisse "price" à 0 lorsque le prix n’est pas dicté. N’invente pas de prix.';
+ const user=`Note vocale de la visite :\n"""${transcript}"""\n${rooms?`Pièces relevées : ${rooms}\n`:''}Génère les lignes de devis correspondantes.`;
  return {system,messages:[{role:'user' as const,content:user}]};
 }
 // Pull the first JSON object out of a model response and coerce it to an Analysis.

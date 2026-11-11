@@ -21,7 +21,7 @@ begin
   amount=round((t->>'total')::numeric,2);
   if p_action='issue' then
    if r.data->>'status'<>'Brouillon' or amount<=0 then raise exception 'Facture déjà émise ou total invalide'; end if;
-   entry=jsonb_build_array(jsonb_build_object('account','1100 Clients','debit',amount,'credit',0),jsonb_build_object('account','4000 Revenus','debit',0,'credit',(t->>'net')::numeric),jsonb_build_object('account','2100 TPS à remettre','debit',0,'credit',(t->>'tps')::numeric),jsonb_build_object('account','2110 TVQ à remettre','debit',0,'credit',(t->>'tvq')::numeric));
+   entry=jsonb_build_array(jsonb_build_object('account','1100 Clients','debit',amount,'credit',0),jsonb_build_object('account','4000 Revenus','debit',0,'credit',(t->>'net')::numeric),jsonb_build_object('account','2100 TVA collectée','debit',0,'credit',(t->>'tps')::numeric),jsonb_build_object('account','2110 TVA collectée (autre taux)','debit',0,'credit',(t->>'tvq')::numeric));
    result=r.data||jsonb_build_object('status','Émise','paid',0,'issued_at',now());label='Émission ';
   elsif p_action='payment' then
    if r.data->>'status' not in ('Émise','Partiellement payée') then raise exception 'Facture non payable'; end if;
@@ -32,7 +32,7 @@ begin
    result=r.data||jsonb_build_object('paid',paid,'status',case when paid>=(t->>'total')::numeric then 'Payée' else 'Partiellement payée' end);label='Paiement ';
   elsif p_action='cancel' then
    if r.data->>'status'<>'Émise' or coalesce((r.data->>'paid')::numeric,0)<>0 or trim(p_reference)='' then raise exception 'Seule une facture émise sans paiement peut être annulée, avec un motif'; end if;
-   entry=jsonb_build_array(jsonb_build_object('account','1100 Clients','debit',0,'credit',amount),jsonb_build_object('account','4000 Revenus','debit',(t->>'net')::numeric,'credit',0),jsonb_build_object('account','2100 TPS à remettre','debit',(t->>'tps')::numeric,'credit',0),jsonb_build_object('account','2110 TVQ à remettre','debit',(t->>'tvq')::numeric,'credit',0));
+   entry=jsonb_build_array(jsonb_build_object('account','1100 Clients','debit',0,'credit',amount),jsonb_build_object('account','4000 Revenus','debit',(t->>'net')::numeric,'credit',0),jsonb_build_object('account','2100 TVA collectée','debit',(t->>'tps')::numeric,'credit',0),jsonb_build_object('account','2110 TVA collectée (autre taux)','debit',(t->>'tvq')::numeric,'credit',0));
    result=r.data||jsonb_build_object('status','Annulée','cancelled_at',now(),'cancellation_reason',p_reference);label='Annulation ';
   else raise exception 'Opération invalide'; end if;
  else
@@ -41,7 +41,7 @@ begin
   if p_action='post_expense' then
    if coalesce((r.data->>'posted')::boolean,false) then raise exception 'Dépense déjà comptabilisée'; end if;
    account=case r.data->>'category' when 'Matériaux' then '5000 Matériaux' when 'Sous-traitance' then '5100 Sous-traitance' when 'Équipement' then '5200 Équipement' when 'Transport' then '5300 Transport' when 'Assurance' then '6000 Assurance' else '6100 Administration et autres charges' end;
-   entry=jsonb_build_array(jsonb_build_object('account',account,'debit',net,'credit',0),jsonb_build_object('account','1200 TPS récupérable','debit',tps,'credit',0),jsonb_build_object('account','1210 TVQ récupérable','debit',tvq,'credit',0),jsonb_build_object('account',case when r.data->>'status'='Payée' then '1000 Banque' else '2000 Fournisseurs' end,'debit',0,'credit',amount));
+   entry=jsonb_build_array(jsonb_build_object('account',account,'debit',net,'credit',0),jsonb_build_object('account','1200 TVA déductible','debit',tps,'credit',0),jsonb_build_object('account','1210 TVA déductible (autre taux)','debit',tvq,'credit',0),jsonb_build_object('account',case when r.data->>'status'='Payée' then '1000 Banque' else '2000 Fournisseurs' end,'debit',0,'credit',amount));
    result=r.data||jsonb_build_object('posted',true,'posted_at',now());label='Dépense ';
   elsif p_action='pay_expense' then
    if not coalesce((r.data->>'posted')::boolean,false) or r.data->>'status'<>'À payer' or trim(p_reference)='' then raise exception 'Dépense non payable ou référence manquante'; end if;

@@ -1,6 +1,6 @@
 # Rénov LR
 
-Site public et espace de gestion de Rénov LR (Next.js, Supabase, PDF, courriel Resend). La base reprend l’application MG Pro, adaptée à l’identité Rénov LR : fond blanc, texte noir, mot-symbole en attendant le logo.
+Site public et espace de gestion de Rénov LR (Next.js, Supabase, PDF, courriel Resend). L’espace de gestion reprend la base de l’application MG Pro, adaptée à la France (euros, TVA, SIRET, adresses de la Base Adresse Nationale). Le site public et le logo sont propres à Rénov LR.
 
 ## Démarrer
 
@@ -29,8 +29,8 @@ Sans variables d’environnement, le site public et `/demo` (données fictives e
 
 ## À personnaliser avant la mise en ligne
 
-- Coordonnées de l’entreprise (téléphone, courriel, adresse, licence, numéros de taxes) : Paramètres de l’espace de gestion. Le courriel par défaut `contact@renov-lr.example` est un exemple.
-- Textes des pages (`content/*.json`, `components/atelier-site.tsx`) : ils viennent du site MG Pro et citent encore Laval, Montréal et ses services.
-- Photos (`public/images/`) : ce sont celles de MG Pro, à remplacer par les réalisations de Rénov LR.
-- Taxes : TPS/TVQ et dollars canadiens par défaut, taux modifiables dans les paramètres.
-- Logo : proposition « vitre dépolie » dans `public/icon.svg` (utilisée par `components/brand.tsx`) ; les icônes de `public/app/` en sont dérivées.
+- Coordonnées de l’entreprise (téléphone, courriel, adresse, SIRET, numéro de TVA) : Paramètres de l’espace de gestion.
+- Tarifs : la grille de départ (Paramètres › Tarifs et prix au mètre) contient des prix indicatifs à remplacer.
+- TVA : 10 % par défaut, modifiable par document (20, 10, 5,5 ou 0 %) et dans les paramètres.
+- Courriels : il faut `MAIL_FROM` avec un domaine vérifié dans Resend.
+- Textes de la page d’accueil : `components/home-site.tsx`. Le logo est dans `components/brand.tsx` et `public/icon.svg`.

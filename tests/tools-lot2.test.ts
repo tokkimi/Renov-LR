@@ -22,7 +22,7 @@ test('task import offers each source line once and skips what is already importe
  const project=rec('p','project',{schedule:[{id:'a',title:'Démolition',days:1},{id:'g',title:'Groupe',kind:'group'}]});
  const quote=rec('q','quote',{title:'Devis',lines:[{description:'Pose céramique',quantity:10,unit:'pi²'},{description:''}]},'p');
  const records=[project,quote];
- const fromQuote=taskCandidates('Soumission',project,records,{});
+ const fromQuote=taskCandidates('Devis',project,records,{});
  assert.deepEqual(fromQuote.map(c=>c.title),['Pose céramique']);
  assert.deepEqual(taskCandidates('Échéancier',project,records,{}).map(c=>c.title),['Démolition']);
  const done=rec('t','task',{title:'Pose céramique',source_ref:fromQuote[0].ref},'p');
@@ -33,9 +33,9 @@ test('task import offers each source line once and skips what is already importe
 test('system folders include contracts; generated documents cannot be moved; shared folder mirrors client visibility',()=>{
  assert.equal(systemFolders.length,10);assert.ok(systemFolders.includes('Contrats'));
  const project=rec('p','project',{title:'X',operations:{dailyLogs:[{id:'l',date:'2026-10-02',summary:'ok',sharedWithClient:true}]}});
- const files=projectFiles(project,[project,rec('d1','document',{name:'plan.pdf',mime:'application/pdf',visibility:'client',folder:'Soumissions'},'p'),rec('d2','document',{name:'plan.pdf',mime:'application/pdf'},'p'),rec('q','quote',{number:'S-1',status:'Envoyé'},'p')]);
+ const files=projectFiles(project,[project,rec('d1','document',{name:'plan.pdf',mime:'application/pdf',visibility:'client',folder:'Devis'},'p'),rec('d2','document',{name:'plan.pdf',mime:'application/pdf'},'p'),rec('q','quote',{number:'S-1',status:'Envoyé'},'p')]);
  assert.equal(files.filter(f=>f.name==='plan.pdf').length,2,'same name, two distinct files');
  assert.equal(files.find(f=>f.id==='doc:q')!.movable,false);
  assert.deepEqual(folderContent(files,'Partagé avec le client').map(f=>f.id).sort(),['d1','doc:q','log:l']);
- assert.deepEqual(folderContent(files,'Soumissions').map(f=>f.id).sort(),['d1','doc:q']);
+ assert.deepEqual(folderContent(files,'Devis').map(f=>f.id).sort(),['d1','doc:q']);
 });

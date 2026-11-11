@@ -2,7 +2,7 @@ import {PDFDocument,StandardFonts,rgb,PDFFont,PDFPage} from 'pdf-lib';
 import {lineSale,unitSale} from './pricing';
 import {brandingFrom} from './settings-model';
 import {Data,defaults,totals,money,paymentRows,defaultPaymentSchedule} from './model';
-// Professional soumission / facture / report layout built on pdf-lib. Keeps the
+// Professional devis / facture / report layout built on pdf-lib. Keeps the
 // original signature so existing callers (quote, invoice, visit, accounting) work.
 const INK=rgb(.11,.15,.13),MUTED=rgb(.42,.46,.42),GOLD=rgb(.67,.52,.28),FOREST=rgb(.13,.25,.2),SOFT=rgb(.96,.965,.94),LINE=rgb(.85,.87,.83);
 export async function makePdf(title:string,data:Data,client:Data={},settings:Data=defaults,photos:{bytes:Uint8Array;mime:string;caption:string}[]=[]){
@@ -34,14 +34,14 @@ export async function makePdf(title:string,data:Data,client:Data={},settings:Dat
 
  if(branding.colorAccent)page.drawRectangle({x:0,y:H-6,width:W,height:6,color:GOLD});
  const num=data.number||'';
- const isInvoice=/facture/i.test(title),isQuote=/soumission|devis|ordre de changement/i.test(title),isAgreement=/contrat/i.test(title),isContract=/contrat|cahier des charges/i.test(title),view=data.client_view||{};
+ const isInvoice=/facture/i.test(title),isQuote=/devis|devis|ordre de changement/i.test(title),isAgreement=/contrat/i.test(title),isContract=/contrat|cahier des charges/i.test(title),view=data.client_view||{};
  const headerStart=y,headerWidth=250;
  para(settings.name||defaults.name,L,branding.header==='compact'?15:20,headerWidth,{f:bold});
  if(branding.showCompanyAddress&&settings.address)para(settings.address,L,9,headerWidth,{color:MUTED});
  const contact=branding.contactOverride||[branding.showContactName?branding.contactName:'',branding.showCompanyPhone?branding.contactPhone||settings.phone:'',branding.showCompanyEmail?branding.contactEmail||settings.email:''].filter(Boolean).join('  •  ');
  if(contact)para(contact,L,9,headerWidth,{color:MUTED});
  if(branding.showWebsite&&branding.website)para(branding.website,L,8.5,headerWidth,{color:MUTED});
- const lic=[branding.showLicence&&settings.rbq?`RBQ ${settings.rbq}`:'',branding.showTaxNumbers&&settings.tps_number?`TPS ${settings.tps_number}`:'',branding.showTaxNumbers&&settings.tvq_number?`TVQ ${settings.tvq_number}`:''].filter(Boolean).join('  •  ');
+ const lic=[branding.showLicence&&settings.rbq?`SIRET ${settings.rbq}`:'',branding.showTaxNumbers&&settings.tps_number?`TVA ${settings.tps_number}`:''].filter(Boolean).join('  •  ');
  if(lic)para(lic,L,8.5,headerWidth,{color:MUTED});
  const companyEnd=y;y=headerStart;
  para(title,325,16,R-325,{f:bold,color:FOREST});
@@ -74,7 +74,7 @@ export async function makePdf(title:string,data:Data,client:Data={},settings:Dat
  // ---- Cost summary box (quotes/invoices) ----
  const summary:[string,string][]=[['Sous-total',money(t.subtotal+Number('markup' in t?t.markup:0))]];
  if(t.discount>0)summary.push(['Remise',`- ${money(t.discount)}`]);
- summary.push([`TPS (${data.tps??5} %)`,money(t.tps)],[`TVQ (${data.tvq??9.975} %)`,money(t.tvq)]);
+ summary.push([`TVA (${data.tps??10} %)`,money(t.tps)]);if(t.tvq>0)summary.push([`Taxe additionnelle (${data.tvq} %)`,money(t.tvq)]);
  const boxH=40+summary.length*18+48;ensure(boxH+20);const boxBottom=y-boxH;
  page.drawRectangle({x:L,y:y-boxH,width:R-L,height:boxH,color:SOFT,borderColor:LINE,borderWidth:1});
  y-=20;draw('Résumé des coûts',L+16,11,{f:bold,color:FOREST});y-=18;

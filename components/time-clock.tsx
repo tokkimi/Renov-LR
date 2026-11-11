@@ -7,8 +7,8 @@ import {shiftHours} from '@/lib/project-operations';
 
 type Running={projectId:string;date:string;start:string};
 const key='renovlr-time-clock';
-const now=()=>new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Montreal'}).replace(' h ',':').slice(0,5);
-const today=()=>new Date().toLocaleDateString('en-CA',{timeZone:'America/Montreal'});
+const now=()=>new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Europe/Paris'}).replace(' h ',':').slice(0,5);
+const today=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Paris'});
 
 /** Field clock-in/clock-out. The running shift is kept on the device until it is submitted; nothing is sent before. */
 export default function TimeClock({projects,demo}:{projects:RecordItem[];demo:boolean}){

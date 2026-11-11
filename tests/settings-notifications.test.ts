@@ -14,7 +14,7 @@ test('thirteen default messages, each valid with its own variables',()=>{
 });
 
 test('unknown tokens are reported and kept visible, never silently emptied',()=>{
- const [quote]=templatesFrom([{id:'quote',subject:'Soumission [ref_number] [secret]',body:'Bonjour [client_name]'}]).filter(t=>t.id==='quote');
+ const [quote]=templatesFrom([{id:'quote',subject:'Devis [ref_number] [secret]',body:'Bonjour [client_name]'}]).filter(t=>t.id==='quote');
  assert.match(templateErrors(quote).join(),/\[secret\]/);
  const rendered=renderTemplate('Bonjour [client_name] [amount] [unknown]',{client_name:'<b>Alex</b>'},['client_name','amount']);
  assert.equal(rendered.text,'Bonjour <b>Alex</b> [amount] [unknown]');
@@ -84,6 +84,6 @@ test('saved branding renders safe email and valid classic/compact PDFs',async()=
  const settings={name:'Rénov LR',branding:{accent:'#7c3aed',signature:'Signature MG',emailLogo:'signature',showClientEmail:false,showLicence:false,header:'compact'}};
  const html=brandedEmail('<script>alert(1)</script>',settings);
  assert.ok(html.includes('#7c3aed'));assert.ok(html.includes('Signature MG'));assert.ok(html.includes('&lt;script&gt;'));assert.ok(!html.includes('<script>'));
- const bytes=await makePdf('Soumission',{lines:[{description:'Travaux',quantity:1,price:100}]},{name:'Client',email:'private@example.com'},settings);
+ const bytes=await makePdf('Devis',{lines:[{description:'Travaux',quantity:1,price:100}]},{name:'Client',email:'private@example.com'},settings);
  assert.ok((await PDFDocument.load(bytes)).getPageCount()>0);
 });

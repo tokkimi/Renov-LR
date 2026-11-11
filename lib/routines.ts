@@ -11,7 +11,7 @@ export const routineKinds=[
  {id:'overdue_invoices',label:'Factures clients en retard'},
  {id:'active_projects',label:'Projets actifs et avancement'},
  {id:'pending_expenses',label:'Dépenses et factures fournisseur à payer'},
- {id:'pipeline',label:'Pipeline commercial (demandes et soumissions)'}
+ {id:'pipeline',label:'Pipeline commercial (demandes et devis)'}
 ] as const;
 export type RoutineKind=typeof routineKinds[number]['id'];
 export type Routine={id:string;title:string;kind:RoutineKind;weekday:number;hour:number;active:boolean;favorite:boolean;tags:string[];lastRun:string;runs:{id:string;at:string;lines:string[]}[]};
@@ -37,7 +37,7 @@ export function runRoutine(kind:RoutineKind,records:RecordItem[],today:string):s
   case 'overdue_invoices':{const late=issued.filter(r=>due(r)>0&&String(r.data.due||'')&&String(r.data.due)<today);return late.length?late.map(r=>`${r.data.number||r.data.title||'Facture'} — échue le ${r.data.due} — solde ${money(due(r))}`):['Aucune facture client en retard.']}
   case 'active_projects':{const active=projects.filter(p=>!p.data.archived&&!/termin|complét|archiv/i.test(String(p.data.status)));return active.length?active.map(p=>{const tasks=records.filter(r=>r.kind==='task'&&r.project_id===p.id);const done=tasks.filter(t=>t.data.status==='Validée').length;return `${p.data.title||'Projet'} — ${p.data.status||''} — ${done}/${tasks.length} tâche(s) validée(s)`}):['Aucun projet actif.']}
   case 'pending_expenses':{const open=ledger.filter(r=>(r.family==='Dépense'||r.family==='Facture fournisseur')&&r.balance>0);return open.length?open.map(r=>`${r.family} ${r.reference||''} — ${r.supplier||'Fournisseur'} — ${money(r.balance)}${r.dueOn?` (échéance ${r.dueOn})`:''}`):['Rien à payer.']}
-  case 'pipeline':{const reqs=by('request');const quotes=by('quote').filter(q=>q.data.document_type!=='change_order');const sum=(rows:RecordItem[])=>money(rows.reduce((s,r)=>s+totals(r.data).total,0));return [`Demandes ouvertes : ${reqs.filter(r=>!['Gagnée','Perdue'].includes(String(r.data.status))).length}.`,`Soumissions en préparation : ${quotes.filter(q=>['Brouillon','Validé'].includes(String(q.data.status))).length} (${sum(quotes.filter(q=>['Brouillon','Validé'].includes(String(q.data.status))))}).`,`Soumissions envoyées : ${quotes.filter(q=>q.data.status==='Envoyé').length} (${sum(quotes.filter(q=>q.data.status==='Envoyé'))}).`,`Soumissions acceptées : ${quotes.filter(q=>q.data.status==='Accepté').length} (${sum(quotes.filter(q=>q.data.status==='Accepté'))}).`]}
+  case 'pipeline':{const reqs=by('request');const quotes=by('quote').filter(q=>q.data.document_type!=='change_order');const sum=(rows:RecordItem[])=>money(rows.reduce((s,r)=>s+totals(r.data).total,0));return [`Demandes ouvertes : ${reqs.filter(r=>!['Gagnée','Perdue'].includes(String(r.data.status))).length}.`,`Devis en préparation : ${quotes.filter(q=>['Brouillon','Validé'].includes(String(q.data.status))).length} (${sum(quotes.filter(q=>['Brouillon','Validé'].includes(String(q.data.status))))}).`,`Devis envoyées : ${quotes.filter(q=>q.data.status==='Envoyé').length} (${sum(quotes.filter(q=>q.data.status==='Envoyé'))}).`,`Devis acceptées : ${quotes.filter(q=>q.data.status==='Accepté').length} (${sum(quotes.filter(q=>q.data.status==='Accepté'))}).`]}
  }
 }
 /** Compact, non-confidential company summary given to the assistant as context (no personal notes). */

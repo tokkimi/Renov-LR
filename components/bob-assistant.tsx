@@ -7,7 +7,7 @@ type Props={records:RecordItem[];demo:boolean;onOpen:(id:string)=>void};
 type Hit={id:string;label:string;detail:string};
 type Message={role:'user'|'assistant';content:string;hits?:Hit[]};
 
-const kinds:[RegExp,RecordItem['kind'],string][]=[[/^(devis|soumissions?)$/,'quote','Devis'],[/^factures?$/,'invoice','Facture'],[/^(projets?|chantiers?)$/,'project','Projet'],[/^(visites?|releves?)$/,'visit','Visite'],[/^(clients?|clientes?)$/,'client','Client'],[/^taches?$/,'task','Tâche'],[/^depenses?$/,'expense','Dépense'],[/^(demandes?)$/,'request','Demande'],[/^contrats?$/,'contract','Contrat']];
+const kinds:[RegExp,RecordItem['kind'],string][]=[[/^(devis|devis?)$/,'quote','Devis'],[/^factures?$/,'invoice','Facture'],[/^(projets?|chantiers?)$/,'project','Projet'],[/^(visites?|releves?)$/,'visit','Visite'],[/^(clients?|clientes?)$/,'client','Client'],[/^taches?$/,'task','Tâche'],[/^depenses?$/,'expense','Dépense'],[/^(demandes?)$/,'request','Demande'],[/^contrats?$/,'contract','Contrat']];
 const ignored=new Set(['le','la','les','l','de','du','des','d','un','une','a','au','aux','et','ou','pour','sur','en','dans','moi','me','mon','ma','mes','son','sa','ses','est','sont','ou','quel','quelle','quels','quelles','madame','mme','monsieur','mr','m','mlle','trouve','trouver','cherche','chercher','montre','montrer','affiche','ouvre','ouvrir','donne','veux','voir','dernier','derniere','derniers','dernieres','svp','stp','bob','qui','que','quoi','avec','chez','il','elle','y','ce','cette','ces','tous','toutes','tout','se','passe','en','cours']);
 const plain=(text:unknown)=>String(text??'').toLocaleLowerCase('fr').normalize('NFD').replace(/[̀-ͯ]/g,'');
 const words=(text:string)=>plain(text).split(/[^a-z0-9]+/).filter(Boolean);

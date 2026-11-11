@@ -6,7 +6,7 @@ import {addDay,depth,groupSpan,resizeActivity,scheduleEnd,shiftActivity,workingD
 
 type Props={items:ScheduleActivity[];onChange:(items:ScheduleActivity[])=>void;rule:WorkWeek;holidays:string[];collapsed:string[];onToggle:(id:string)=>void;onOpenList:()=>void};
 const zooms=[14,22,36,56];
-const today=()=>new Date().toLocaleDateString('en-CA',{timeZone:'America/Montreal'});
+const today=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Paris'});
 const between=(a:string,b:string)=>Math.round((Date.parse(b+'T12:00:00Z')-Date.parse(a+'T12:00:00Z'))/86400000);
 
 /**
@@ -37,7 +37,7 @@ export default function ScheduleGantt({items,onChange,rule,holidays,collapsed,on
    <ul className="gantt-names" style={{paddingTop:ROW}}>{rows.map(item=><li key={item.id} style={{height:ROW,paddingLeft:8+depth(items,item.id)*14}}>{item.kind==='group'?<button type="button" className="gantt-toggle" aria-expanded={!collapsed.includes(item.id)} aria-label={`${collapsed.includes(item.id)?'Déplier':'Replier'} ${item.title}`} onClick={()=>onToggle(item.id)}>{collapsed.includes(item.id)?<ChevronRight size={14}/>:<ChevronDown size={14}/>}</button>:null}<span className={item.kind}>{item.kind==='milestone'?'◆ ':''}{item.title||'Sans titre'}</span></li>)}</ul>
    <div className="gantt-scroll" ref={region} role="region" aria-label="Frise de l’échéancier" tabIndex={0}>
     <div className="gantt-canvas" style={{width:range.days.length*width,height:ROW*(rows.length+1)}}>
-     <div className="gantt-header" style={{height:ROW}}>{range.days.map(d=><span key={d} style={{left:x(d),width}} className={d===today()?'today':''}>{width>=22||d.endsWith('-01')||d.slice(8)==='15'?d.slice(8):''}{d.endsWith('-01')&&<small>{new Date(d+'T12:00:00Z').toLocaleDateString('fr-CA',{month:'short'})}</small>}</span>)}</div>
+     <div className="gantt-header" style={{height:ROW}}>{range.days.map(d=><span key={d} style={{left:x(d),width}} className={d===today()?'today':''}>{width>=22||d.endsWith('-01')||d.slice(8)==='15'?d.slice(8):''}{d.endsWith('-01')&&<small>{new Date(d+'T12:00:00Z').toLocaleDateString('fr-FR',{month:'short'})}</small>}</span>)}</div>
      {showOff&&range.days.filter(d=>!workingDay(d,rule,holidays)).map(d=><i key={d} className="gantt-off" style={{left:x(d),width,top:ROW,height:ROW*rows.length}}/>)}
      <i className="gantt-today" style={{left:x(today())+width/2,top:0,height:ROW*(rows.length+1)}} aria-hidden="true"/>
      {showLinks&&<svg className="gantt-links" width={range.days.length*width} height={ROW*(rows.length+1)} aria-hidden="true">{rows.filter(r=>r.predecessor&&rowIndex.has(r.predecessor)).map(r=>{const a=span(items.find(x=>x.id===r.predecessor)!),b=span(r);if(!a||!b)return null;const x1=x(a.end)+width,y1=ROW*(rowIndex.get(r.predecessor)!+1)+ROW/2,x2=x(b.start),y2=ROW*(rowIndex.get(r.id)!+1)+ROW/2;return <path key={r.id} d={`M${x1} ${y1} H${Math.max(x1+6,x2-6)} V${y2} H${x2}`} className={x2<x1?'late':''}/>})}</svg>}

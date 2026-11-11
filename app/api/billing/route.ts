@@ -25,7 +25,7 @@ export async function POST(req:Request){
  const input=parsed.data;
  const record=(await db().from('records').select('*').eq('id',input.id).maybeSingle()).data as RecordItem|null;
  if(!record||!['invoice','quote','contract'].includes(record.kind))return NextResponse.json({error:'Document introuvable.'},{status:404});
- const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Montreal'});
+ const today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Paris'});
  let patch:Data={};let mailStatus:string|undefined;
  if(input.action==='link'||input.action==='revoke'||input.action==='payment_url'){
   if(record.kind!=='invoice')return NextResponse.json({error:'Réservé aux factures.'},{status:400});
