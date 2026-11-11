@@ -17,7 +17,7 @@ export function banPoint(body:unknown):Point&{label:string}|null{
  const point={lon:Number(coordinates[0]),lat:Number(coordinates[1])};
  return validPoint(point)?{...point,label:String(feature.properties?.label||'')}:null;
 }
-/** Parse a Natural Resources Canada geolocation answer: first street/municipality hit with a point geometry. */
+/** Ancien format de réponse (service canadien), conservé pour les tests: first street/municipality hit with a point geometry. */
 export function geogratisPoint(rows:unknown):Point&{label:string}|null{
  if(!Array.isArray(rows))return null;
  for(const row of rows){const coordinates=(row as any)?.geometry?.coordinates;if(Array.isArray(coordinates)&&coordinates.length>=2){const point={lon:Number(coordinates[0]),lat:Number(coordinates[1])};if(validPoint(point))return {...point,label:String((row as any).title||'')}}}

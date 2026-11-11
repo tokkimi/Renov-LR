@@ -3,7 +3,7 @@ import {useEffect,useRef,useState} from 'react';
 import {mediaStore} from '@/lib/local-media';
 import {Mic,Square,Trash2,Check,Loader2} from 'lucide-react';
 // Records an audio note during a visit and transcribes it live with the browser
-// Web Speech API (fr-CA). When speech recognition or the microphone is not
+// Web Speech API (fr-FR). When speech recognition or the microphone is not
 // available it falls back to a typed note, so a transcript is always produced.
 export type VoiceNote={transcript:string;blob:Blob|null;mime:string;duration:number};
 const pickMime=()=>{if(typeof MediaRecorder==='undefined')return '';for(const m of ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg'])if(MediaRecorder.isTypeSupported?.(m))return m;return '';};

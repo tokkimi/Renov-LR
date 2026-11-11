@@ -1,6 +1,6 @@
 # Rénov LR
 
-Site public et espace de gestion de Rénov LR (Next.js, Supabase, PDF, courriel Resend). L’espace de gestion reprend la base de l’application MG Pro, adaptée à la France (euros, TVA, SIRET, adresses de la Base Adresse Nationale). Le site public et le logo sont propres à Rénov LR.
+Site public et espace de gestion de Rénov LR (Next.js, Supabase, PDF, courriel Resend). L’espace de gestion est adapté à la France (euros, TVA, SIRET, adresses de la Base Adresse Nationale). Le site public et le logo sont propres à Rénov LR.
 
 ## Démarrer
 

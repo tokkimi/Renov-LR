@@ -241,3 +241,9 @@ html body .rq .service-choices button.chosen{background:#111;border-color:#111;c
 html body .rq .rq-chips button.on{background:#111!important;border-color:#111!important;color:#fff!important}
 html body .rq label.rq-ask{display:block}
 html body .rq label.rq-ask input{display:block;width:100%;margin-top:8px;box-sizing:border-box}
+
+/* Téléphone : la page ne glisse pas sur le côté et ne zoome pas au toucher ou à la saisie */
+html,body{max-width:100%;overflow-x:clip;overscroll-behavior-x:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html{touch-action:pan-y}
+@media(max-width:900px){html body input:not([type=checkbox]):not([type=radio]):not([type=range]),html body select,html body textarea{font-size:16px}}
+html body .plan-editor,html body .plan-editor *,html body canvas,html body .photo-measure-stage,html body .table-scroll,html body .tariff-filters,html body .gantt,html body [class*=scroll]{touch-action:auto}

@@ -3,7 +3,7 @@
   "name": "Rénov LR — Gestion",
   "short_name": "Rénov LR",
   "description": "Espace de gestion de Rénov LR : visites, devis, projets et factures.",
-  "lang": "fr-CA",
+  "lang": "fr-FR",
   "start_url": "/admin",
   "scope": "/admin",
   "display": "standalone",
