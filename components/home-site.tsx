@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {ArrowRight,ArrowUpRight,Home,ListChecks,User,MessageCircle,MessageSquare,Bath,Brush,CalendarCheck,Check,CookingPot,FileText,Hammer,Layers,Mail,Menu,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
 import {LogoMark,Wordmark} from './brand';
 import {LiquidNavbar,type LiquidNavItem} from './ui/liquid-glass-navbar';
+import ServiceWarpCarousel from './ui/service-warp-carousel';
 import QuoteRequest from './request-form';
 import {Data,defaults} from '@/lib/model';
 
@@ -12,7 +13,7 @@ const services=[
  [CookingPot,'Cuisine','Implantation, plans de travail, crédence, électricité et finitions.','https://images.unsplash.com/photo-1556912167-f556f1f39fdf?auto=format&fit=crop&w=1100&q=85'],
  [Bath,'Salle de bain','Douche à l’italienne, faïence, plomberie et étanchéité.','https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1100&q=85'],
  [Layers,'Sols & parquet','Parquet, carrelage, vinyle : dépose, préparation et pose.','https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1100&q=85'],
- [Brush,'Peinture & murs','Préparation des supports, enduits, peinture et revêtements.','https://images.unsplash.com/photo-1562259949-a4c93b3f2c1b?auto=format&fit=crop&w=1100&q=85'],
+ [Brush,'Peinture & murs','Préparation des supports, enduits, peinture et revêtements.','https://images.unsplash.com/photo-1562259949-a4c93b3f2c1b?auto=format&fit=crop&w=1400&q=90&fm=jpg'],
  [Hammer,'Aménagement','Cloisons, doublages, portes et rangements sur mesure.','https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1100&q=85'],
  [Sparkles,'Rénovation complète','Un seul interlocuteur pour coordonner tous les corps de métier.','https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1100&q=85']
 ] as const;
@@ -35,7 +36,6 @@ const navItems:LiquidNavItem[]=[
  {label:'Engagements',href:'#engagements',icon:<ShieldCheck size={18}/>,fx:'pop'},
  {label:'Méthode',href:'#methode',icon:<ListChecks size={18}/>,fx:'spin'},
  {label:'Contact',href:'#contact',icon:<Phone size={18}/>,fx:'drop'},
- {label:'Espace client',href:'/connexion',icon:<User size={18}/>,fx:'wave'}
 ];
 /** Sections suivies par la barre : identifiant et ton du fond qu’elles affichent sous la barre. */
 const tracked:[string,'light'|'dark'][]=[['top','dark'],['prestations','light'],['engagements','dark'],['methode','dark'],['contact','light']];
@@ -60,7 +60,6 @@ function ContactBubble({settings,onQuote}:{settings:Data;onQuote:()=>void}){
    {whatsapp&&<a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer"><MessageCircle size={19}/><span><b>WhatsApp</b><small>Écrivez-nous directement</small></span><ArrowUpRight size={16}/></a>}
    {phone&&<a href={`tel:${phone}`}><Phone size={19}/><span><b>Appeler</b><small>{settings.phone}</small></span><ArrowUpRight size={16}/></a>}
    {email&&<a href={`mailto:${email}`}><Mail size={19}/><span><b>E-mail</b><small>{email}</small></span><ArrowUpRight size={16}/></a>}
-   <Link href="/connexion"><MessageSquare size={19}/><span><b>Messagerie client</b><small>Déjà client ? Écrivez-nous depuis votre espace</small></span><ArrowUpRight size={16}/></Link>
   </section>}
   <button type="button" className="rl-bubble-btn" aria-label={open?'Fermer les contacts':'Nous contacter'} aria-expanded={open} onClick={()=>setOpen(!open)}><LogoMark size={58}/></button>
  </div>;
@@ -128,7 +127,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <section className="rl-section" id="prestations">
     <div className="rl-wrap">
      <header className="rl-head" data-reveal><p className="rl-kicker">Nos prestations</p><h2>Chaque pièce<br/><em>mérite mieux.</em></h2><p>De la pièce unique à la rénovation complète, nous prenons en charge les travaux de A à Z.</p></header>
-     <div className="rl-services">{services.map(([Icon,title,text,image],i)=><button type="button" key={title} className={`v${i%3}`} data-reveal style={{'--d':`${i*80}ms`} as React.CSSProperties} onClick={()=>setQuote(true)}><span className="rl-service-photo" style={{backgroundImage:`url(${image})`}} aria-hidden="true"/><span className="ic"><Icon size={22} strokeWidth={1.5}/></span><span className="n">{String(i+1).padStart(2,'0')}</span><h3>{title}</h3><p>{text}</p><span className="go">Demander un devis<ArrowUpRight size={16}/></span></button>)}</div>
+     <ServiceWarpCarousel cards={services.map(([icon,title,description,image])=>({icon,title,description,image}))} onSelect={()=>setQuote(true)}/>
     </div>
    </section>
 
@@ -159,7 +158,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
 
   <footer className="rl-footer"><div className="rl-wrap">
    <Wordmark/>
-   <nav aria-label="Liens du pied de page">{links.map(([href,label])=><a key={href} href={href}>{label}</a>)}<Link href="/confidentialite">Confidentialité</Link><Link href="/connexion">Espace client & équipe</Link></nav>
+   <nav aria-label="Liens du pied de page">{links.map(([href,label])=><a key={href} href={href}>{label}</a>)}<Link href="/confidentialite">Confidentialité</Link></nav>
    <p>{[settings.address,settings.rbq&&`SIRET ${settings.rbq}`].filter(Boolean).join(' · ')}</p>
    <small>© {new Date().getFullYear()} Rénov LR</small>
   </div></footer>

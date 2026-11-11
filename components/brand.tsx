@@ -25,5 +25,5 @@ export function LogoMark({size=34,className=''}:{size?:number;className?:string}
  </svg>;
 }
 export function Wordmark({href='/',label='Rénov LR, accueil',className=''}:{href?:string;label?:string;className?:string}){
- return <Link className={`rlr-wordmark ${className}`} href={href} aria-label={label}><span>Rénov</span><LogoMark/></Link>;
+ return <Link className={`rlr-wordmark ${className}`} href={href} aria-label={label}><span className="rlr-signature"><b>Rénov</b><small>intérieur</small></span><LogoMark/></Link>;
 }
