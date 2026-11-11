@@ -121,10 +121,11 @@ const CW = 256;
 const CH = 320;
 const stageWidth = (width: number) => width < 600 ? 420 : 720;
 const FLAT_SPACING = 288;
+const FLAT_STAGE_WIDTH = 880;
 const isFlat = (enabled: boolean, width: number) => enabled && width >= 960;
 const stageUnit = (width: number, height: number, flat: boolean) =>
   flat
-    ? Math.min(width / 880, height / 374)
+    ? Math.min(width / FLAT_STAGE_WIDTH, height / 374)
     : Math.min(width / stageWidth(width), height / 440) * (width < 600 ? 0.88 : 2 / 3);
 const CR = 10;
 const FOCAL = 734.103;
@@ -1058,14 +1059,15 @@ export function WarpCarousel({
     } else if (L.mode !== "spring") {
       const base = Math.round((L.mode === "spin" ? L.to : L.P) - DRIFT) + delta;
       L.from = L.P;
-      L.to = base + DRIFT;
+      const flat = isFlat(flatDesktop, wrapRef.current?.clientWidth ?? 0);
+      L.to = base + (flat ? 0 : DRIFT);
       L.t0 = now;
-      L.n = fromAuto ? props.current.gap * 30 : STEP_FRAMES;
+      L.n = fromAuto ? props.current.gap * 30 : flat ? 18 : STEP_FRAMES;
       L.mode = "spin";
     }
     if (!fromAuto) L.nextAuto = now + props.current.gap;
     handles.current.kick();
-  }, [current, realCount]);
+  }, [current, realCount, flatDesktop]);
 
   React.useEffect(() => {
     const wrap = wrapRef.current;
@@ -1106,6 +1108,8 @@ export function WarpCarousel({
       if (canvas.height !== H) canvas.height = H;
       flat = isFlat(flatDesktop, r.width);
       unit = stageUnit(r.width, r.height, flat) * dpr;
+      const flatGutter = Math.max(0, (r.width - FLAT_STAGE_WIDTH * unit / dpr) / 2);
+      canvas.style.clipPath = flat ? `inset(0 ${flatGutter}px)` : '';
       const want = Math.min(1024, Math.max(256, Math.round(CW * unit * 1.25)));
       if (want !== texW) paintAll(want);
     };
@@ -1133,7 +1137,9 @@ export function WarpCarousel({
       }
       if (L.mode === "spin") {
         const f = (now - L.t0) * 30;
-        L.P = L.from + (L.to - L.from) * spinN(f, L.n);
+        const t = Math.min(1, f / L.n);
+        const eased = flat ? t * t * (3 - 2 * t) : spinN(f, L.n);
+        L.P = L.from + (L.to - L.from) * eased;
         if (f >= L.n) L.mode = "rest";
       } else if (L.mode === "spring") {
         const dt = Math.min(0.034, Math.max(0, now - L.lastT));

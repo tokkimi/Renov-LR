@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {motion, useReducedMotion, useScroll, useTransform, type MotionStyle} from 'motion/react';
 import {ArrowRight,ArrowUpRight,Home,ListChecks,CalendarCheck,FileText,Hammer,Mail,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
 import {WhatsAppIcon,whatsappQuoteUrl} from './whatsapp-contact';
-import {BrandLockup,BrandName,LogoMark,Wordmark} from './brand';
+import {BrandLockup,BrandName,LogoMark} from './brand';
 import {LiquidNavbar,type LiquidNavItem} from './ui/liquid-glass-navbar';
 import ServiceWarpCarousel from './ui/service-warp-carousel';
 import QuoteRequest from './request-form';
@@ -183,7 +183,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
   </main>
 
   <footer className="rl-footer"><div className="rl-wrap">
-   <Wordmark/>
+   <BrandLockup/>
    <nav aria-label="Liens du pied de page">{links.map(([href,label])=><a key={href} href={href}>{label}</a>)}<Link href="/confidentialite">Confidentialité</Link></nav>
    <p>{[settings.address,settings.rbq&&`SIRET ${settings.rbq}`].filter(Boolean).join(' · ')}</p>
    <small>© {new Date().getFullYear()} Rénov LR</small>
