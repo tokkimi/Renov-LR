@@ -2,21 +2,24 @@
 import {useEffect,useRef,useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {ArrowRight,ArrowUpRight,Home,ListChecks,User,MessageCircle,MessageSquare,Bath,Brush,CalendarCheck,Check,CookingPot,FileText,Hammer,Layers,Mail,Menu,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
+import {motion, useReducedMotion, useScroll, useTransform} from 'motion/react';
+import {ArrowRight,ArrowUpRight,Home,ListChecks,CalendarCheck,FileText,Hammer,Mail,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
+import {WhatsAppIcon,whatsappQuoteUrl} from './whatsapp-contact';
 import {LogoMark,Wordmark} from './brand';
 import {LiquidNavbar,type LiquidNavItem} from './ui/liquid-glass-navbar';
 import ServiceWarpCarousel from './ui/service-warp-carousel';
 import QuoteRequest from './request-form';
+import PortfolioPreview from './portfolio-preview';
 import {Data,defaults} from '@/lib/model';
 
-const services=[
- [CookingPot,'Cuisine','Implantation, plans de travail, crédence, électricité et finitions.','https://images.unsplash.com/photo-1556912167-f556f1f39fdf?auto=format&fit=crop&w=1100&q=85'],
- [Bath,'Salle de bain','Douche à l’italienne, faïence, plomberie et étanchéité.','https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1100&q=85'],
- [Layers,'Sols & parquet','Parquet, carrelage, vinyle : dépose, préparation et pose.','https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1100&q=85'],
- [Brush,'Peinture & murs','Préparation des supports, enduits, peinture et revêtements.','https://images.unsplash.com/photo-1562259949-a4c93b3f2c1b?auto=format&fit=crop&w=1400&q=90&fm=jpg'],
- [Hammer,'Aménagement','Cloisons, doublages, portes et rangements sur mesure.','https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1100&q=85'],
- [Sparkles,'Rénovation complète','Un seul interlocuteur pour coordonner tous les corps de métier.','https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1100&q=85']
-] as const;
+const services = [
+ ['Cuisine','Implantation, plans de travail, crédence, électricité et finitions.','/images/prestation-cuisine.jpg'],
+ ['Salle de bain','Douche à l’italienne, faïence, plomberie et étanchéité.','/images/prestation-salle-de-bain.jpg'],
+ ['Sols & parquet','Parquet, carrelage, vinyle : dépose, préparation et pose.','/images/prestation-pose-parquet.jpg'],
+ ['Peinture & murs','Préparation des supports, enduits, peinture et revêtements.','/images/prestation-peinture.jpg'],
+ ['Aménagement','Cloisons, doublages, portes et rangements sur mesure.','/images/prestation-amenagement.jpg'],
+ ['Rénovation complète','Un seul interlocuteur pour coordonner tous les corps de métier.','/images/prestation-renovation-complete.jpg'],
+].map(([title, description, image]) => ({title, description, image}));
 const steps=[
  ['Vous nous contactez','Décrivez votre projet en quelques minutes, avec des photos si vous en avez. Nous vous rappelons.'],
  ['Nous venons sur place','Une visite pour comprendre vos envies, prendre les mesures et vous conseiller sur les matériaux.'],
@@ -29,22 +32,21 @@ const promises=[
  [Sparkles,'Un chantier soigné','Protection des lieux, nettoyage et finitions vérifiées avec vous.'],
  [CalendarCheck,'Des délais annoncés','Un calendrier posé avant de commencer, et tenu à jour si quelque chose change.']
 ] as const;
-const links=[['#prestations','Prestations'],['#engagements','Nos engagements'],['#methode','Comment ça se passe'],['#contact','Contact']] as const;
+const links=[['#prestations','Prestations'],['#realisations','Galerie'],['#methode','Comment ça se passe'],['#engagements','Nos engagements'],['#contact','Contact']] as const;
 const navItems:LiquidNavItem[]=[
  {label:'Accueil',href:'#top',icon:<Home size={18}/>,fx:'glow'},
  {label:'Prestations',href:'#prestations',icon:<Hammer size={18}/>,fx:'wave'},
- {label:'Engagements',href:'#engagements',icon:<ShieldCheck size={18}/>,fx:'pop'},
  {label:'Méthode',href:'#methode',icon:<ListChecks size={18}/>,fx:'spin'},
+ {label:'Engagements',href:'#engagements',icon:<ShieldCheck size={18}/>,fx:'pop'},
  {label:'Contact',href:'#contact',icon:<Phone size={18}/>,fx:'drop'},
 ];
 /** Sections suivies par la barre : identifiant et ton du fond qu’elles affichent sous la barre. */
-const tracked:[string,'light'|'dark'][]=[['top','dark'],['prestations','light'],['engagements','dark'],['methode','dark'],['contact','light']];
+const tracked:[string,'light'|'dark'][]=[['top','dark'],['prestations','light'],['methode','light'],['engagements','light'],['contact','dark']];
 
 /** Bulle de contact de l’accueil : le monogramme LR en transparence, qui ouvre les moyens de joindre l’entreprise. */
-function ContactBubble({settings,onQuote}:{settings:Data;onQuote:()=>void}){
+function ContactBubble({settings,onQuote,whatsapp}:{settings:Data;onQuote:()=>void;whatsapp:string}){
  const [open,setOpen]=useState(false);const box=useRef<HTMLDivElement>(null);
- const digits=String(settings.phone||'').replace(/\D/g,''),phone=String(settings.phone||'').replace(/[^+\d]/g,'');
- const whatsapp=digits?(digits.startsWith('0')?'33'+digits.slice(1):digits):'';
+ const phone=String(settings.phone||'').replace(/[^+\d]/g,'');
  const email=settings.email&&!String(settings.email).endsWith('.example')?String(settings.email):'';
  useEffect(()=>{
   if(!open)return;
@@ -57,7 +59,7 @@ function ContactBubble({settings,onQuote}:{settings:Data;onQuote:()=>void}){
   {open&&<section className="rl-bubble-panel" aria-label="Nous contacter">
    <header><b>Parlons de votre projet</b><button type="button" aria-label="Fermer" onClick={()=>setOpen(false)}><X size={18}/></button></header>
    <button type="button" className="main" onClick={()=>{setOpen(false);onQuote()}}><FileText size={19}/><span><b>Faire un devis</b><small>Décrivez vos travaux en 2 minutes</small></span><ArrowUpRight size={16}/></button>
-   {whatsapp&&<a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer"><MessageCircle size={19}/><span><b>WhatsApp</b><small>Écrivez-nous directement</small></span><ArrowUpRight size={16}/></a>}
+   {whatsapp&&<a className="rl-whatsapp" href={whatsapp} target="_blank" rel="noopener noreferrer"><WhatsAppIcon/><span><b>Écrire sur WhatsApp</b><small>Demander un devis</small></span><ArrowUpRight size={16}/></a>}
    {phone&&<a href={`tel:${phone}`}><Phone size={19}/><span><b>Appeler</b><small>{settings.phone}</small></span><ArrowUpRight size={16}/></a>}
    {email&&<a href={`mailto:${email}`}><Mail size={19}/><span><b>E-mail</b><small>{email}</small></span><ArrowUpRight size={16}/></a>}
   </section>}
@@ -69,35 +71,43 @@ function ContactBubble({settings,onQuote}:{settings:Data;onQuote:()=>void}){
 export default function HomeSite({settings=defaults}:{settings?:Data}){
  const [quote,setQuote]=useState(false),[section,setSection]=useState(0);
  const root=useRef<HTMLDivElement>(null);
+ const hero=useRef<HTMLElement>(null),method=useRef<HTMLElement>(null);
+ const reduced=useReducedMotion();
+ const {scrollYProgress:heroProgress}=useScroll({target:hero,offset:['start start','end start']});
+ const heroScale=useTransform(heroProgress,[0,1],[1,1.09]);
+ const {scrollYProgress:methodProgress}=useScroll({target:method,offset:['start 90%','center center']});
  // Arrivée sur le site : écran d’accueil avec le seul monogramme LR, puis la bannière monte et se déploie.
  const [stage,setStage]=useState<'intro'|'leaving'|'animating'|'done'>('intro');
  useEffect(()=>{
   let seen=false;try{seen=sessionStorage.getItem('renovlr-intro')==='1'}catch{}
-  if(seen||window.matchMedia('(prefers-reduced-motion: reduce)').matches){setStage('done');return}
-  const timers=[window.setTimeout(()=>setStage('leaving'),1500),window.setTimeout(()=>setStage('animating'),1750),window.setTimeout(()=>{setStage('done');try{sessionStorage.setItem('renovlr-intro','1')}catch{}},3150)];
+  if(seen||location.hash||window.matchMedia('(prefers-reduced-motion: reduce)').matches){setStage('done');return}
+  const timers=[window.setTimeout(()=>setStage('leaving'),380),window.setTimeout(()=>setStage('animating'),480),window.setTimeout(()=>{setStage('done');try{sessionStorage.setItem('renovlr-intro','1')}catch{}},1250)];
   return()=>timers.forEach(window.clearTimeout);
  },[]);
  const tone=tracked[Math.min(section,tracked.length-1)][1];
+ const whatsapp=whatsappQuoteUrl(String(settings.phone||''));
  const phone=String(settings.phone||'').replace(/[^+\d]/g,'');
+ const email=settings.email&&!String(settings.email).endsWith('.example')?String(settings.email):'';
  useEffect(()=>{
   const el=root.current;if(!el)return;
-  const items=Array.from(el.querySelectorAll<HTMLElement>('[data-reveal]'));
-  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target)}}),{threshold:.14,rootMargin:'0px 0px -6% 0px'});
-  items.forEach(item=>observer.observe(item));
-  const onScroll=()=>{let index=0;tracked.forEach(([id],i)=>{const node=document.getElementById(id);if(node&&node.getBoundingClientRect().top<=140)index=i});setSection(index);const max=document.documentElement.scrollHeight-window.innerHeight;el.style.setProperty('--p',String(max>0?window.scrollY/max:0));el.style.setProperty('--sy',String(Math.min(window.scrollY,1200)))};onScroll();
-  const calm=window.matchMedia('(prefers-reduced-motion: reduce)').matches||!window.matchMedia('(pointer: fine)').matches;
-  const onMove=(e:PointerEvent)=>{el.style.setProperty('--mx',String(e.clientX/window.innerWidth-.5));el.style.setProperty('--my',String(e.clientY/window.innerHeight-.5))};
-  // Reflet de verre : une lumière suit le pointeur sur le logo, les boutons et les cartes.
-  const glassy=Array.from(el.querySelectorAll<HTMLElement>('.rlr-header .rlr-wordmark,.rl-btn,.rl-pill,.rl-contact-card,.rl-tags span,.rl-services button,.rl-promises article,.rl-steps li,.rl-cta'));
+  const sections=tracked.map(([id])=>document.getElementById(id));
+  const onScroll=()=>{
+   let index=0;
+   sections.forEach((node,i)=>{if(node&&node.getBoundingClientRect().top<=140)index=i});
+   setSection(index);
+   const max=document.documentElement.scrollHeight-window.innerHeight;
+   el.style.setProperty('--p',String(max>0?window.scrollY/max:0));
+  };
+  onScroll();
+  const glassy=Array.from(el.querySelectorAll<HTMLElement>('.rlr-header .rlr-wordmark,.rl-btn'));
   glassy.forEach(node=>{node.classList.add('lq');if(!node.querySelector(':scope > .lq-light')){const light=document.createElement('span');light.className='lq-light';light.setAttribute('aria-hidden','true');node.appendChild(light)}});
   const onLight=(e:PointerEvent)=>{const node=(e.target as Element|null)?.closest?.('.lq') as HTMLElement|null;if(!node)return;const box=node.getBoundingClientRect();node.style.setProperty('--gx',`${e.clientX-box.left}px`);node.style.setProperty('--gy',`${e.clientY-box.top}px`)};
   el.addEventListener('pointermove',onLight,{passive:true});
-  window.addEventListener('scroll',onScroll,{passive:true});if(!calm)window.addEventListener('pointermove',onMove,{passive:true});
-  return()=>{observer.disconnect();el.removeEventListener('pointermove',onLight);window.removeEventListener('scroll',onScroll);window.removeEventListener('pointermove',onMove)};
+  window.addEventListener('scroll',onScroll,{passive:true});
+  return()=>{el.removeEventListener('pointermove',onLight);window.removeEventListener('scroll',onScroll)};
  },[]);
- return <div className="rl-site" ref={root} data-stage={stage}>
-  {stage!=='done'&&<div className="rl-intro" aria-hidden="true"><LogoMark size={96}/></div>}
-  <div className="rl-orbs" aria-hidden="true"><i/><i/><i/></div>
+ return <div className="rl-site rl-architecture" ref={root} data-stage={stage}>
+  {stage!=='done'&&<div className="rl-intro" aria-hidden="true"><div className="arch-intro-signature"><LogoMark size={58}/><span>Rénov</span><i/></div></div>}
   <header className="rlr-header liquid" data-tone={tone}>
    <Wordmark/>
    <LiquidNavbar compact tone={tone} active={section} items={navItems} onChange={index=>setSection(index)}/>
@@ -105,54 +115,76 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
 
   <div className="rl-progress" aria-hidden="true"/>
   <main>
-   <section className="rl-hero" id="top">
-    <div className="rl-hero-bg" aria-hidden="true"><Image src="/images/hero.jpg" alt="" fill priority sizes="100vw"/></div>
-    <div className="rl-wrap rl-hero-grid">
-     <div className="rl-hero-copy">
-      <p className="rl-pill"><i/>Entreprise de rénovation intérieure</p>
-      <h1>{['Nous','rénovons','votre','intérieur,'].map((word,i)=><span className="wd" key={word} style={{'--i':i} as React.CSSProperties}><span>{word}</span></span>)}<br/>{['de','la'].map((word,i)=><span className="wd" key={word} style={{'--i':i+4} as React.CSSProperties}><span>{word}</span></span>)}<span className="wd" style={{'--i':6} as React.CSSProperties}><span><em>salle de bain</em></span></span><br/>{['au','salon.'].map((word,i)=><span className="wd" key={word} style={{'--i':i+7} as React.CSSProperties}><span>{word}</span></span>)}</h1>
-      <p className="rl-lead">Cuisine, salle de bain, sols, peinture, aménagement : une équipe pour transformer votre logement, avec un devis clair et un chantier soigné.</p>
-      <div className="rl-actions"><button type="button" className="rl-btn red" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button>{phone?<a className="rl-btn line" href={`tel:${phone}`}><Phone size={17}/>{settings.phone}</a>:<a className="rl-btn line" href="#prestations">Nos prestations<ArrowRight size={18}/></a>}</div>
+   <section className="rl-hero arch-hero" id="top" ref={hero}>
+    <motion.div className="arch-hero-photo" style={{scale: reduced ? 1 : heroScale}} aria-hidden="true">
+     <Image src="/images/prestation-renovation-complete.jpg" alt="" fill preload sizes="100vw" />
+    </motion.div>
+    <div className="rl-wrap arch-hero-copy">
+     <p className="arch-eyebrow">Rénovation intérieure</p>
+     <h1>Réinventer<br/>votre intérieur.</h1>
+     <p>De la première visite aux finitions, une équipe pour donner forme à votre projet.</p>
+     <div className="rl-actions">
+      <button type="button" className="rl-btn arch-primary" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button>
+      <a className="rl-btn arch-hero-link" href="#prestations">Découvrir nos prestations<ArrowRight size={18}/></a>
      </div>
-     <aside className="rl-contact-card">
-      <b>Un projet de rénovation ?</b>
-      <p>Dites-nous ce que vous voulez transformer. Nous vous rappelons pour en parler et organiser une visite.</p>
-      <ul><li><Check size={15}/>Réponse rapide</li><li><Check size={15}/>Visite et conseils sur place</li><li><Check size={15}/>Devis détaillé</li></ul>
-      <button type="button" className="rl-btn white" onClick={()=>setQuote(true)}>Décrire mon projet<ArrowUpRight size={18}/></button>
-     </aside>
     </div>
-    <a className="rl-scroll" href="#prestations" aria-label="Découvrir les prestations"><span/></a>
    </section>
 
-   <section className="rl-section" id="prestations">
+   <section className="rl-wrap arch-intro" aria-labelledby="arch-intro-title">
+    <div><p className="arch-eyebrow">Rénov LR</p><h2 id="arch-intro-title">Des intérieurs pensés<br/>pour être vécus.</h2></div>
+    <p>Cuisine, salle de bain, sols ou rénovation complète. Nous prenons en charge les travaux avec un interlocuteur unique, un devis clair et des finitions vérifiées avec vous.</p>
+   </section>
+
+   <section className="arch-section arch-services" id="prestations">
     <div className="rl-wrap">
-     <header className="rl-head" data-reveal><p className="rl-kicker">Nos prestations</p><h2>Chaque pièce<br/><em>mérite mieux.</em></h2><p>De la pièce unique à la rénovation complète, nous prenons en charge les travaux de A à Z.</p></header>
-     <ServiceWarpCarousel cards={services.map(([icon,title,description,image])=>({icon,title,description,image}))} onSelect={()=>setQuote(true)}/>
+     <header className="arch-heading"><p className="arch-eyebrow">Nos prestations</p><h2>Chaque pièce, un projet.</h2></header>
+     <ServiceWarpCarousel cards={services} onSelect={()=>setQuote(true)}/>
+     <div className="arch-service-list">
+      {services.map(({title,description,image})=>(
+       <motion.article key={title} className="arch-service-row" initial={reduced ? false : {opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.18}} transition={{duration:.42}}>
+        <div className="arch-service-photo"><Image src={image} alt="" fill sizes="(max-width: 700px) 92vw, 52vw"/></div>
+        <div className="arch-service-copy"><h3>{title}</h3><p>{description}</p><button type="button" className="rl-btn arch-outline" onClick={()=>setQuote(true)}>Parler de ce projet<ArrowUpRight size={17}/></button></div>
+       </motion.article>
+      ))}
+     </div>
     </div>
    </section>
 
-   <section className="rl-banner" id="engagements">
-    <div className="rl-banner-bg" aria-hidden="true"><Image src="/images/interieur.png" alt="" fill sizes="100vw"/></div>
+   <PortfolioPreview />
+
+   <section className="arch-section arch-method" id="methode" ref={method}>
     <div className="rl-wrap">
-     <header className="rl-head" data-reveal><p className="rl-kicker">Nos engagements</p><h2>Des travaux menés<br/><em>comme chez nous.</em></h2></header>
-     <div className="rl-promises">{promises.map(([Icon,title,text],i)=><article key={title} data-reveal style={{'--d':`${i*110}ms`} as React.CSSProperties}><span className="ic"><Icon size={22} strokeWidth={1.6}/></span><h3>{title}</h3><p>{text}</p></article>)}</div>
+     <header className="arch-heading"><p className="arch-eyebrow">Notre méthode</p><h2>Du premier échange<br/>aux finitions.</h2></header>
+     <div className="arch-method-line" aria-hidden="true"><motion.span style={{scaleX:reduced ? 1 : methodProgress}}/></div>
+     <ol className="arch-steps">{steps.map(([title,description],position)=><li key={title}><span aria-hidden="true">{String(position+1).padStart(2,'0')}</span><h3>{title}</h3><p>{description}</p></li>)}</ol>
+     <button type="button" className="rl-btn arch-outline" onClick={()=>setQuote(true)}>Lancer mon projet<ArrowUpRight size={18}/></button>
     </div>
    </section>
 
-   <section className="rl-section rl-dark" id="methode">
+   <section className="arch-section" id="engagements">
     <div className="rl-wrap">
-     <header className="rl-head" data-reveal><p className="rl-kicker">Comment ça se passe</p><h2>Quatre étapes.<br/><em>Aucune surprise.</em></h2></header>
-     <ol className="rl-steps" data-reveal>{steps.map(([title,text],i)=><li key={title} style={{'--d':`${i*140}ms`} as React.CSSProperties}><span className="dot">{i+1}</span><h3>{title}</h3><p>{text}</p></li>)}</ol>
-     <div className="rl-actions rl-center" data-reveal><button type="button" className="rl-btn red" onClick={()=>setQuote(true)}>Lancer mon projet<ArrowUpRight size={18}/></button></div>
+     <header className="arch-heading"><p className="arch-eyebrow">Nos engagements</p><h2>La clarté, à chaque étape.</h2></header>
+     <div className="arch-promises">{promises.map(([Icon,title,description])=><article key={title}><Icon size={24} strokeWidth={1.5} aria-hidden="true"/><h3>{title}</h3><p>{description}</p></article>)}</div>
     </div>
    </section>
 
-   <section className="rl-section rl-cta-wrap" id="contact">
-    <div className="rl-wrap"><div className="rl-cta" data-reveal>
-     <div className="rl-cta-bg" aria-hidden="true"><Image src="/images/interieur.png" alt="" fill sizes="100vw"/></div>
-     <div className="rl-cta-copy"><LogoMark size={64}/><p className="rl-kicker">Votre projet, simplement</p><h2>Parlons de<br/><em>votre projet.</em></h2><p>Quelques lignes, quelques photos si vous en avez — nous vous rappelons pour organiser une visite.</p><div className="rl-actions"><button type="button" className="rl-btn red" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button></div></div>
-     <aside className="rl-cta-note"><b><Check size={18}/>Réponse sous 24 h ouvrées</b><span>Visite, conseils sur place et devis détaillé, sans engagement.</span>{phone&&<a href={`tel:${phone}`}><Phone size={16}/>{settings.phone}</a>}</aside>
-    </div></div>
+   <section className="arch-section arch-contact" id="contact">
+    <div className="rl-wrap arch-contact-layout">
+     <div className="arch-contact-copy">
+      <p className="arch-eyebrow">Demande de devis</p>
+      <h2>Parlons de<br/>votre projet.</h2>
+      <p>Racontez-nous ce que vous souhaitez transformer. Vous pouvez joindre quelques photos pour préparer notre premier échange.</p>
+     </div>
+     <div className="arch-contact-actions">
+      <div><h3>Décrivez vos travaux</h3><p>Nous vous rappelons pour en discuter et organiser une visite.</p></div>
+      <button type="button" className="rl-btn arch-primary" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button>
+      {whatsapp&&<a className="rl-btn rl-whatsapp" href={whatsapp} target="_blank" rel="noopener noreferrer"><WhatsAppIcon/>Écrire sur WhatsApp<ArrowUpRight size={16}/></a>}
+      {(phone||email)&&<div className="arch-direct">
+       {phone&&<a href={`tel:${phone}`}><Phone size={17}/>{settings.phone}</a>}
+       {email&&<a href={`mailto:${email}`}><Mail size={17}/>{email}</a>}
+      </div>}
+     </div>
+    </div>
    </section>
   </main>
 
@@ -162,7 +194,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <p>{[settings.address,settings.rbq&&`SIRET ${settings.rbq}`].filter(Boolean).join(' · ')}</p>
    <small>© {new Date().getFullYear()} Rénov LR</small>
   </div></footer>
-  {!quote&&<ContactBubble settings={settings} onQuote={()=>setQuote(true)}/>}
+  {!quote&&<ContactBubble settings={settings} whatsapp={whatsapp} onQuote={()=>setQuote(true)}/>}
   {quote&&<QuoteRequest close={()=>setQuote(false)}/>}
  </div>;
 }

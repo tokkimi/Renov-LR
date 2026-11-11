@@ -14,3 +14,4 @@ import './atelier.css';
 
 import './modules.css';
 import './workspace-glass.css';
+import './architecture.css';
