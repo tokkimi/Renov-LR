@@ -20,6 +20,11 @@ const services = [
  ['Aménagement','Cloisons, doublages, portes et rangements sur mesure.','/images/prestation-amenagement.jpg'],
  ['Rénovation complète','Un seul interlocuteur pour coordonner tous les corps de métier.','/images/prestation-renovation-complete.jpg'],
 ].map(([title, description, image]) => ({title, description, image}));
+const quoteTypes: Record<string, string> = {
+ 'Sols & parquet':'Sols et parquet',
+ 'Peinture & murs':'Peinture et murs',
+ 'Aménagement':'Aménagement et cloisons',
+};
 const steps=[
  ['Vous nous contactez','Décrivez votre projet en quelques minutes, avec des photos si vous en avez. Nous vous rappelons.'],
  ['Nous venons sur place','Une visite pour comprendre vos envies, prendre les mesures et vous conseiller sur les matériaux.'],
@@ -69,19 +74,23 @@ function ContactBubble({settings,onQuote,whatsapp}:{settings:Data;onQuote:()=>vo
 
 /** Page d’accueil Rénov LR : verre dépoli, lumière bleu ardoise et animations au défilement. */
 export default function HomeSite({settings=defaults}:{settings?:Data}){
- const [quote,setQuote]=useState(false),[section,setSection]=useState(0);
+ const [quote,setQuote]=useState<string | boolean>(false),[section,setSection]=useState(0);
  const root=useRef<HTMLDivElement>(null);
- const hero=useRef<HTMLElement>(null),method=useRef<HTMLElement>(null);
+ const hero=useRef<HTMLElement>(null),method=useRef<HTMLDivElement>(null);
  const reduced=useReducedMotion();
  const {scrollYProgress:heroProgress}=useScroll({target:hero,offset:['start start','end start']});
  const heroScale=useTransform(heroProgress,[0,1],[1,1.09]);
  // Progress starts at the sticky inset and ends when the panel can scroll away.
- const {scrollYProgress:methodProgress}=useScroll({target:method,offset:['start 80px','end end']});
+ const {scrollYProgress:methodProgress}=useScroll({target:method,offset:['start 110px','end 110px']});
  // Le monogramme tourne pendant le chargement avant de révéler la page.
  const [stage,setStage]=useState<'intro'|'leaving'|'animating'|'done'>('intro');
  useEffect(()=>{
-  if(location.hash||window.matchMedia('(prefers-reduced-motion: reduce)').matches){setStage('done');return}
-  const timers=[window.setTimeout(()=>setStage('leaving'),3000),window.setTimeout(()=>setStage('animating'),3060),window.setTimeout(()=>setStage('done'),3680)];
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){setStage('done');return}
+  const anchor=location.hash;
+  const timers=[window.setTimeout(()=>setStage('leaving'),3000),window.setTimeout(()=>setStage('animating'),3060),window.setTimeout(()=>{
+   setStage('done');
+   if(anchor && location.hash===anchor) requestAnimationFrame(()=>document.getElementById(anchor.slice(1))?.scrollIntoView({behavior:'instant'}));
+  },3680)];
   return()=>timers.forEach(window.clearTimeout);
  },[]);
  const tone=tracked[Math.min(section,tracked.length-1)][1];
@@ -136,13 +145,14 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <section className="arch-section arch-services" id="prestations">
     <div className="rl-wrap">
      <header className="arch-heading"><p className="arch-eyebrow">Nos prestations</p><h2>Chaque pièce, un projet.</h2></header>
-     <ServiceWarpCarousel cards={services} onSelect={()=>setQuote(true)}/>
+     <ServiceWarpCarousel cards={services} onSelect={title=>setQuote(quoteTypes[title] ?? title)}/>
     </div>
    </section>
 
    <PortfolioPreview />
 
-   <section className="arch-method" id="methode" ref={method}>
+   <section className="arch-method" id="methode">
+    <div className="arch-method-timeline" ref={method} aria-hidden="true"/>
     <div className="arch-method-panel">
      <div className="rl-wrap">
      <header className="arch-heading"><p className="arch-eyebrow">Notre méthode</p><h2>Du premier échange<br/>aux finitions.</h2></header>
@@ -189,6 +199,6 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <small>© {new Date().getFullYear()} Rénov LR</small>
   </div></footer>
   {!quote&&<ContactBubble settings={settings} whatsapp={whatsapp} onQuote={()=>setQuote(true)}/>}
-  {quote&&<QuoteRequest close={()=>setQuote(false)}/>}
+  {quote&&<QuoteRequest close={()=>setQuote(false)} initialService={typeof quote==='string' ? quote : undefined}/>}
  </div>;
 }

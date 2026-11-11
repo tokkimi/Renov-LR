@@ -102,10 +102,10 @@ function Ask({q,answers,set}:{q:Question;answers:Answers;set:(key:string,value:s
 }
 
 /** Questionnaire de demande de devis : six étapes, avec des précisions adaptées à chaque type de travaux choisi. */
-export default function RequestForm({close}:{close:()=>void;locale?:'fr'|'en'}){
+export default function RequestForm({close,initialService}:{close:()=>void;locale?:'fr'|'en';initialService?:string}){
  const [step,setStep]=useState(0);
  const [data,setData]=useState<Data>({budget:'À définir',timeline:'Dans les 3 mois',name:'',email:'',phone:'',address:'',description:'',consent:false,website:''});
- const [types,setTypes]=useState<string[]>([]),[answers,setAnswers]=useState<Answers>({});
+ const [types,setTypes]=useState<string[]>(()=>initialService && works.includes(initialService) ? [initialService] : []),[answers,setAnswers]=useState<Answers>({});
  const [photos,setPhotos]=useState<Photo[]>([]);const photoRef=useRef<Photo[]>([]);photoRef.current=photos;
  const [busy,setBusy]=useState(false),[processing,setProcessing]=useState(false),[error,setError]=useState(''),[done,setDone]=useState(false),[drag,setDrag]=useState(false);
  const dialog=useRef<HTMLDialogElement>(null),content=useRef<HTMLDivElement>(null),files=useRef<HTMLInputElement>(null),camera=useRef<HTMLInputElement>(null);

@@ -41,6 +41,8 @@ export interface WarpCarouselProps {
   defaultIndex?: number;
   /** Called when the front card should change: autoplay, drag, click, or arrow keys. */
   onIndexChange?: (index: number) => void;
+  /** Activate a card without dragging or advancing the carousel. */
+  onCardActivate?: (index: number) => void;
   /** Spin to the next card on a timer. */
   autoplay?: boolean;
   /** Seconds between autoplay spins. Longer intervals only stretch the slow tail of the spin; shorter ones compress the whole curve. */
@@ -635,6 +637,7 @@ uniform vec4 uPose[8];
 uniform vec3 uShadowShape[8];
 uniform vec3 uBg;
 uniform float uWarp;
+uniform float uFlat;
 uniform float uMix;
 out vec4 outColor;
 
@@ -732,21 +735,26 @@ vec3 stage(vec2 pu, int base){
 vec3 render(vec2 pu, int base){
   float x = abs(pu.x);
   float halfW = 0.5 * uRes.x / uUnit;
+  float edge = mix(236.0, 404.0, uFlat);
+  float sourceScale = mix(1.0, 0.20, uFlat);
+  if (uFlat > 0.5) halfW = min(halfW, ${(FLAT_STAGE_WIDTH / 2).toFixed(1)});
   float px = 1.0 / uUnit;
   vec3 bg = stage(pu, base);
-  if (x < 236.0 || uWarp <= 0.0) {
+  if (x < edge || uWarp <= 0.0) {
     vec4 c = scene(pu, px, px, base);
     return c.rgb + (1.0 - c.a) * bg;
   }
 
   // Extend the warped strip across the stage, using the photo's luminance
   // for the navy-to-white reflection instead of splitting RGB channels.
-  float spread = 124.0 / max(124.0, halfW - 236.0);
-  float au = min(236.0 + (x - 236.0) * spread, 360.0);
+  float spread = 124.0 / max(1.0, halfW - edge);
+  if (uFlat < 0.5) spread = min(1.0, spread);
+  float au = min(236.0 + (x - edge) * spread, 360.0);
   float scaleY = lensS(au);
-  float dx = (lensH(au + 0.5) - lensH(au - 0.5)) * spread;
+  float dx = (lensH(au + 0.5) - lensH(au - 0.5)) * spread * sourceScale;
   float blur = mix(1.0, 18.0, smoothstep(242.0, 350.0, au) * uWarp);
-  vec4 c = scene(vec2(sign(pu.x) * lensH(au), pu.y / scaleY), px * max(abs(dx), 0.02) * blur, px / scaleY * blur, base);
+  float sourceX = edge + (lensH(au) - 236.0) * sourceScale;
+  vec4 c = scene(vec2(sign(pu.x) * sourceX, pu.y / scaleY), px * max(abs(dx), 0.02) * blur, px / scaleY * blur, base);
   float strength = smoothstep(239.0, 295.0, au);
   float luma = dot(c.rgb / max(c.a, 0.001), vec3(0.2126, 0.7152, 0.0722));
   vec3 reflection = mix(vec3(0.055, 0.10, 0.20), vec3(0.97, 0.98, 1.0), smoothstep(0.12, 0.82, luma));
@@ -803,7 +811,7 @@ function createGL(canvas: HTMLCanvasElement): GLState | null {
   gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
   const tex = gl.createTexture()!;
   const loc: Record<string, WebGLUniformLocation | null> = {};
-  for (const n of ["uTex", "uRes", "uUnit", "uPose", "uShadowShape", "uBg", "uWarp", "uMix"]) loc[n] = gl.getUniformLocation(prog, n);
+  for (const n of ["uTex", "uRes", "uUnit", "uPose", "uShadowShape", "uBg", "uWarp", "uFlat", "uMix"]) loc[n] = gl.getUniformLocation(prog, n);
   const aniso = gl.getExtension("EXT_texture_filter_anisotropic");
   (tex as unknown as { aniso: unknown }).aniso = aniso;
   return { gl, prog, tex, loc, layers: 0, texW: 0 };
@@ -978,6 +986,7 @@ export function WarpCarousel({
   index,
   defaultIndex = 0,
   onIndexChange,
+  onCardActivate,
   autoplay = true,
   interval = 3.6667,
   step = 2,
@@ -1197,7 +1206,8 @@ export function WarpCarousel({
         gl.uniform4fv(loc.uPose, poseArr);
         gl.uniform3fv(loc.uShadowShape, shapeArr);
         gl.uniform3f(loc.uBg, bg[0] / 255, bg[1] / 255, bg[2] / 255);
-        gl.uniform1f(loc.uWarp, flat ? 0 : Math.max(0, Math.min(1, warp)));
+        gl.uniform1f(loc.uWarp, Math.max(0, Math.min(1, warp)));
+        gl.uniform1f(loc.uFlat, flat ? 1 : 0);
         gl.uniform1f(loc.uMix, mix);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
       } else if (ctx2d) {
@@ -1353,9 +1363,39 @@ export function WarpCarousel({
     L.lastT = performance.now() / 1000;
     handles.current.kick();
   };
+  const cardAtPointer = (e: React.PointerEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const flat = isFlat(flatDesktop, r.width);
+    const unit = stageUnit(r.width, r.height, flat);
+    const x = (e.clientX - r.left - r.width / 2) / unit;
+    const y = (r.height / 2 - (e.clientY - r.top)) / unit;
+    if (Math.abs(x) >= (flat ? 404 : 236)) return undefined;
+
+    const center = Math.round(live.current.P);
+    let hit: number | undefined;
+    let nearest = Infinity;
+    for (let card = center - 2; card <= center + 2; card++) {
+      const q = card - live.current.P;
+      if (Math.abs(q) > (flat ? 1.98 : 2.05)) continue;
+      const [cx, z, yaw] = flat ? [q * FLAT_SPACING, 0, 0] : poseAt(q);
+      const sin = Math.sin(yaw);
+      const denominator = Math.cos(yaw) - sin * x / FOCAL;
+      if (Math.abs(denominator) < 1e-5) continue;
+      const localX = (x * (FOCAL + z) / FOCAL - cx) / denominator;
+      const depth = FOCAL + z + localX * sin;
+      if (depth > 4 && depth < nearest && Math.abs(localX) <= CW / 2 && Math.abs(y * depth / FOCAL) <= CH / 2) {
+        hit = mod(card, realCount);
+        nearest = depth;
+      }
+    }
+    return hit;
+  };
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const L = live.current;
-    if (L.mode !== "drag") return;
+    if (L.mode !== "drag") {
+      if (onCardActivate) e.currentTarget.style.cursor = cardAtPointer(e) === undefined ? "grab" : "pointer";
+      return;
+    }
     const r = wrapRef.current!.getBoundingClientRect();
     const unitCss = stageUnit(r.width, r.height, isFlat(flatDesktop, r.width));
     const now = performance.now() / 1000;
@@ -1374,6 +1414,12 @@ export function WarpCarousel({
     L.nextAuto = now + gap;
     if (!L.moved) {
       L.mode = "rest";
+      if (e.type === "pointercancel") return;
+      if (onCardActivate) {
+        const card = cardAtPointer(e);
+        if (card !== undefined) onCardActivate(card);
+        return;
+      }
       const r = wrapRef.current!.getBoundingClientRect();
       const u = (e.clientX - r.left - r.width / 2) / stageUnit(r.width, r.height, isFlat(flatDesktop, r.width));
       if (u > 168) request(lastIndex.current + 1);
@@ -1396,6 +1442,11 @@ export function WarpCarousel({
     handles.current.kick();
   };
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (onCardActivate && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onCardActivate(mod(current, realCount));
+      return;
+    }
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
     e.preventDefault();
     request(lastIndex.current + (e.key === "ArrowRight" ? 1 : -1));
@@ -1409,6 +1460,7 @@ export function WarpCarousel({
       role="region"
       aria-roledescription="carousel"
       aria-label={ariaLabel}
+      aria-description={onCardActivate ? "Appuyez sur Entrée pour demander un devis pour cette prestation." : undefined}
       tabIndex={0}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}

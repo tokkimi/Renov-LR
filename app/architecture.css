@@ -140,8 +140,8 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
 .arch-compare-frame { grid-column: 1; grid-row: 1; }
 .arch-compare-copy { grid-column: 2; grid-row: 1; display: grid; gap: 14px; }
 .arch-compare-copy p { color: var(--muted); }
-.arch-compare-frame { position: relative; isolation: isolate; aspect-ratio: 5 / 2; overflow: hidden; border-radius: clamp(14px, 3vw, 34px); background: #e4eaf0; cursor: ew-resize; }
-.arch-compare-frame img { object-fit: cover; user-select: none; }
+.arch-compare-frame { position: relative; isolation: isolate; aspect-ratio: 2 / 1; overflow: hidden; border-radius: clamp(14px, 3vw, 34px); background: #e4eaf0; cursor: ew-resize; }
+.arch-compare-frame img { object-fit: cover; object-position: 60% center; user-select: none; }
 .arch-compare-layer { position: absolute; inset: 0; }
 .arch-compare-label { position: absolute; top: 16px; padding: 6px 13px; background: #fff; color: #19232d; border-radius: 99px; font-size: 13px; font-weight: 600; pointer-events: none; }
 .arch-compare-label.before { left: 16px; }
@@ -151,19 +151,31 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
 .arch-compare-frame input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y; }
 .arch-compare-frame:focus-within { outline: 3px solid #466883; outline-offset: 4px; }
 
-.arch-method-panel { padding-block: clamp(52px, 8vw, 112px); }
+.arch-method { position: relative; }
+.arch-method-panel { padding-block: clamp(32px, 4vw, 64px); }
+.arch-method-panel .rl-wrap { max-width: 1040px; }
+.arch-method .arch-heading { margin-bottom: clamp(20px, 3vw, 34px); }
+.arch-method .arch-heading h2 { font-size: clamp(30px, 4vw, 49px); }
+.arch-method-timeline { position: absolute; inset: 0; pointer-events: none; }
 @media (prefers-reduced-motion: no-preference) and (min-height: 560px) and (min-width: 701px),
        (prefers-reduced-motion: no-preference) and (min-height: 700px) and (361px <= width <= 700px),
        (prefers-reduced-motion: no-preference) and (min-height: 760px) and (max-width: 360px) {
-  .arch-method::after { content: ''; display: block; height: clamp(300px, 62svh, 560px); }
+  .arch-method {
+    --method-panel-height: calc(100dvh - 110px);
+  }
+  .arch-method::after { content: ''; display: block; height: clamp(240px, 42svh, 380px); }
+  .arch-method-timeline { bottom: var(--method-panel-height); }
   .arch-method-panel {
     position: sticky;
-    top: 80px;
-    height: calc(100dvh - 80px);
+    top: 110px;
+    height: var(--method-panel-height);
     display: grid;
     align-items: center;
     padding-block: 18px;
   }
+}
+@media (prefers-reduced-motion: no-preference) and (min-height: 560px) and (min-width: 701px) {
+  .arch-method { --method-panel-height: clamp(350px, 51svh, 430px); }
 }
 .arch-method-track { position: relative; --step-size: 46px; margin: 12px 0 34px; }
 .arch-method-line {
@@ -222,9 +234,13 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
 .arch-contact {
   padding-block: clamp(30px, 5vw, 68px);
   color: #fff;
-  background: linear-gradient(105deg, #293f50, #152532 72%);
+  background:
+    linear-gradient(90deg, transparent, #203543 290px, #152532 75%),
+    url('/images/bandeau-devis.webp') left center / auto 100% no-repeat,
+    #203543;
 }
 .arch-contact-layout {
+  padding-inline-start: clamp(55px, 8vw, 125px);
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
@@ -244,8 +260,12 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
 @media (max-width: 700px) {
   .arch-intro, .arch-contact-layout, .arch-compare { grid-template-columns: 1fr; }
   .arch-compare-copy { grid-column: 1; grid-row: 2; }
-  .arch-compare-frame { aspect-ratio: 2 / 1; }
+  .arch-compare-frame { aspect-ratio: 1.65; }
   .arch-contact-break { display: none; }
+  .arch-contact-layout { padding-inline-start: 0; }
+  .arch-contact {
+    background-image: linear-gradient(90deg, #182c3adc, #152532 80%), url('/images/bandeau-devis.webp');
+  }
   .rl-architecture .arch-hero { min-height: min(780px, 100svh); align-items: end; }
   .arch-hero::after { background: linear-gradient(0deg, #f8fafc 3%, rgba(248,250,252,.94) 28%, rgba(248,250,252,.72) 47%, transparent 76%); }
   .rl-architecture .rl-warp-stage { height: clamp(320px, 65svh, 510px); min-height: 0; }

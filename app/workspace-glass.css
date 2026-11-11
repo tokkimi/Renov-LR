@@ -1,24 +1,35 @@
 /* Rénov LR workspace only. Public pages and document print styles keep their identity. */
-.workspace .sidebar{background:linear-gradient(145deg,#ffffffed,#ffffffb8)!important;backdrop-filter:blur(28px) saturate(130%);-webkit-backdrop-filter:blur(28px) saturate(130%);border-right:1px solid #f2f2f2;box-shadow:inset -1px 0 0 #fff;padding:22px 16px 18px;scrollbar-width:none}
+.workspace .sidebar{background:linear-gradient(145deg,#ffffffed,#ffffffb8)!important;backdrop-filter:blur(28px) saturate(130%);-webkit-backdrop-filter:blur(28px) saturate(130%);border-right:1px solid var(--line);box-shadow:inset -1px 0 0 #fff;padding:22px 16px 18px;scrollbar-width:none}
 .workspace .sidebar::-webkit-scrollbar{display:none}
-.workspace .workspace-logo{padding:0 16px 20px;flex-shrink:0}
+.workspace .sidebar>.arch-brand{width:146px;margin:0 auto 16px;flex-shrink:0}
 .workspace .workspace-switch{height:auto!important;min-height:68px;flex-shrink:0;padding:13px 12px!important;gap:12px;margin-bottom:18px;border:1px solid #ffffffed;background:linear-gradient(145deg,#ffffffcc,#ffffff66)!important;border-radius:16px;box-shadow:inset 0 1px 0 #fff,0 4px 16px #20202006;align-items:center}
 .workspace .workspace-switch>div{min-width:0}.workspace .workspace-switch b{line-height:1.35;font-size:13px;overflow-wrap:anywhere}.workspace .workspace-switch small{line-height:1.4;color:#747474}
 .workspace .company-avatar{width:36px;height:36px;min-width:36px;flex-shrink:0;border-radius:12px;background:#f9f9f9!important;color:#202020!important;border:1px solid #e4e4e4}
 .workspace .sidebar nav{gap:5px}
 .workspace .sidebar nav>button{min-height:44px;padding:11px 12px;border-radius:14px;background:transparent;color:#343434;font-size:13px;font-weight:500;line-height:1.4}
-.workspace .sidebar nav>button.active{background:linear-gradient(130deg,#f5f5f5e6,#ffffff91)!important;color:#202020!important;box-shadow:inset 3px 0 0 #343434,inset 0 1px 0 #fff,0 4px 12px #20202005;border:1px solid #e3e3e3;font-weight:600}
-.workspace .sidebar nav>button:hover{background:#ffffffb8;color:#202020}.workspace .sidebar .nav-count{background:#f5f5f5!important;color:#202020!important}
+.workspace .sidebar nav>button.active{background:linear-gradient(130deg,#e7eff6,#ffffff91)!important;color:var(--ink)!important;box-shadow:inset 3px 0 0 var(--forest),inset 0 1px 0 #fff,0 4px 12px #20202005;border:1px solid var(--line);font-weight:600}
+.workspace .sidebar nav>button:hover{background:#ffffffb8;color:#202020}.workspace .sidebar .nav-count{background:#e4edf4!important;color:var(--forest)!important}
 .workspace .sidebar .avatar{background:#f9f9f9!important;color:#272727!important}
 .workspace .sidebar .workspace-switch,.workspace .sidebar nav>button{box-sizing:border-box}
-.workspace{--forest:#202020;--ink:#181818;--line:#efefef;background:#fff}
-.workspace .workspace-topbar{background:#ffffffd9;backdrop-filter:blur(22px) saturate(130%);-webkit-backdrop-filter:blur(22px) saturate(130%);border-bottom:1px solid #efefef}
-.workspace :is(.panel,.stat-card,.project-entry-grid>article,.project-finance-summary>article){background:linear-gradient(145deg,#fff,#ffffffdb);border:1px solid #efefef;border-radius:20px;box-shadow:inset 0 1px 0 #fff,0 8px 26px #16161606}
+.workspace{
+  --forest:#314b62;
+  --ink:#142634;
+  --muted:#465a69;
+  --line:#dbe2e8;
+  --bg:#f3f6f8;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Jost Variable',system-ui,sans-serif;
+}
+.workspace :is(h1,h2,h3){font-family:inherit;font-weight:600}
+.workspace .sidebar .nav-count{margin-left:auto}
+.workspace .workspace-topbar{background:#ffffffd9;backdrop-filter:blur(22px) saturate(130%);-webkit-backdrop-filter:blur(22px) saturate(130%);border-bottom:1px solid var(--line)}
+.workspace :is(.panel,.stat-card,.project-entry-grid>article,.project-finance-summary>article){background:linear-gradient(145deg,#fff,#ffffffdb);border:1px solid var(--line);border-radius:20px;box-shadow:inset 0 1px 0 #fff,0 8px 26px #16161606}
 .workspace .page-heading h1{font-size:clamp(26px,3vw,40px);letter-spacing:-.035em;line-height:1.15}
 .workspace .btn{border-radius:13px;min-height:42px;white-space:normal;line-height:1.4;transition:transform .2s ease,box-shadow .2s ease}
-.workspace .btn.primary{background:linear-gradient(145deg,#2f2f2f,#202020);color:#fff;border:1px solid #202020;box-shadow:inset 0 1px 0 #ffffff55,0 5px 14px #20202020}
+.workspace .btn.primary{background:linear-gradient(145deg,#3a5973,#243c50);color:#fff;border:1px solid var(--forest);box-shadow:inset 0 1px 0 #ffffff55,0 5px 14px #243c5024}
 .workspace .btn.secondary{background:linear-gradient(145deg,#fff,#ffffff);border:1px solid #e2e2e2;color:#202020;box-shadow:inset 0 1px 0 #fff,0 3px 9px #20202006}
-.workspace :is(button,a,input,select,textarea):focus-visible{outline:2px solid #2f2f2f;outline-offset:3px}
+.workspace :is(button,a,input,select,textarea):focus-visible{outline:2px solid #466883;outline-offset:3px}
 .workspace :is(input,select,textarea){border-radius:12px;border-color:#e1e1e1;min-width:0}
 .workspace .project-mini-tabs{gap:6px;padding:8px;background:#ffffff;border-radius:16px;flex-wrap:wrap}
 .workspace .project-mini-tabs button{font-size:13px;font-weight:500;border-radius:10px;min-height:40px}
