@@ -11,6 +11,6 @@ async function settings() {
  const saved = data?.data;
  return {...fallback, ...saved, phone: String(saved?.phone || '').trim() || publicContactPhone};
 }
-export async function generateMetadata(){const s=await settings();return {title:s.seo_title,description:s.seo_description,alternates:{canonical:'/'}};}
+export async function generateMetadata(){const s=await settings();return {title:s.seo_title,description:s.seo_description,alternates:{canonical:'/'},manifest:'/renov-lr.webmanifest'};}
 export default async function Home(){const s=await settings();return <><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({'@context':'https://schema.org','@type':'HomeAndConstructionBusiness',name:s.name,telephone:s.phone,email:s.email,url:process.env.NEXT_PUBLIC_SITE_URL||'https://renov-lr.example'}).replace(/</g,'\\u003c')}}/><PublicSite settings={s}/></>}
 

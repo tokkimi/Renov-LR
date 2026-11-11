@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {motion, useReducedMotion, useScroll, useTransform, type MotionStyle} from 'motion/react';
 import {ArrowRight,ArrowUpRight,Home,ListChecks,CalendarCheck,FileText,Hammer,Mail,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
 import {WhatsAppIcon,whatsappQuoteUrl} from './whatsapp-contact';
-import {LogoMark,Wordmark} from './brand';
+import {BrandLockup,LogoMark,Wordmark} from './brand';
 import {LiquidNavbar,type LiquidNavItem} from './ui/liquid-glass-navbar';
 import ServiceWarpCarousel from './ui/service-warp-carousel';
 import QuoteRequest from './request-form';
@@ -75,13 +75,13 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
  const reduced=useReducedMotion();
  const {scrollYProgress:heroProgress}=useScroll({target:hero,offset:['start start','end start']});
  const heroScale=useTransform(heroProgress,[0,1],[1,1.09]);
- const {scrollYProgress:methodProgress}=useScroll({target:method,offset:['start 82%','end 60%']});
- // Arrivée sur le site : écran d’accueil avec le seul monogramme LR, puis la bannière monte et se déploie.
+ // Progress starts at the sticky inset and ends when the panel can scroll away.
+ const {scrollYProgress:methodProgress}=useScroll({target:method,offset:['start 80px','end end']});
+ // Le monogramme tourne pendant le chargement avant de révéler la page.
  const [stage,setStage]=useState<'intro'|'leaving'|'animating'|'done'>('intro');
  useEffect(()=>{
-  let seen=false;try{seen=sessionStorage.getItem('renovlr-intro')==='1'}catch{}
-  if(seen||location.hash||window.matchMedia('(prefers-reduced-motion: reduce)').matches){setStage('done');return}
-  const timers=[window.setTimeout(()=>setStage('leaving'),380),window.setTimeout(()=>setStage('animating'),480),window.setTimeout(()=>{setStage('done');try{sessionStorage.setItem('renovlr-intro','1')}catch{}},1250)];
+  if(location.hash||window.matchMedia('(prefers-reduced-motion: reduce)').matches){setStage('done');return}
+  const timers=[window.setTimeout(()=>setStage('leaving'),1040),window.setTimeout(()=>setStage('animating'),1100),window.setTimeout(()=>setStage('done'),1720)];
   return()=>timers.forEach(window.clearTimeout);
  },[]);
  const tone=tracked[Math.min(section,tracked.length-1)][1];
@@ -107,9 +107,9 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
   return()=>{el.removeEventListener('pointermove',onLight);window.removeEventListener('scroll',onScroll)};
  },[]);
  return <div className="rl-site rl-architecture" ref={root} data-stage={stage}>
-  {stage!=='done'&&<div className="rl-intro" aria-hidden="true"><div className="arch-intro-signature"><LogoMark size={58}/><span>Rénov</span><i/></div></div>}
-  <header className="rlr-header liquid" data-tone={tone}>
-   <Wordmark/>
+  {stage!=='done'&&<div className="rl-intro" aria-hidden="true"><div className="arch-intro-signature"><div className="arch-intro-mark"><LogoMark size={104}/></div><div className="arch-intro-rule"><i/></div></div></div>}
+  <header className="rlr-header liquid" data-tone={tone} data-section={tracked[section]?.[0]}>
+   <BrandLockup/>
    <LiquidNavbar compact tone={tone} active={section} items={navItems} onChange={index=>setSection(index)}/>
   </header>
 
@@ -144,8 +144,9 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
 
    <PortfolioPreview />
 
-   <section className="arch-section arch-method" id="methode" ref={method}>
-    <div className="rl-wrap">
+   <section className="arch-method" id="methode" ref={method}>
+    <div className="arch-method-panel">
+     <div className="rl-wrap">
      <header className="arch-heading"><p className="arch-eyebrow">Notre méthode</p><h2>Du premier échange<br/>aux finitions.</h2></header>
      <motion.div className="arch-method-track" style={{'--method-progress': reduced ? 1 : methodProgress} as MotionStyle}>
       <div className="arch-method-line" aria-hidden="true"><span/></div>
@@ -161,6 +162,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
       ))}</ol>
      </motion.div>
      <button type="button" className="rl-btn arch-outline" onClick={()=>setQuote(true)}>Lancer mon projet<ArrowUpRight size={18}/></button>
+     </div>
     </div>
    </section>
 

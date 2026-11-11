@@ -1,21 +1,53 @@
 .rl-architecture {
-  --ink: #19232d;
-  --muted: #4e5d6a;
+  --ink: #142634;
+  --muted: #465a69;
   --slate: #314b62;
   --line: #dbe2e8;
   --paper: #fff;
   --red: #466883;
   --red2: #557c99;
   background: #fff;
+  font-family: 'Jost Variable', 'Inter', sans-serif;
 }
 
 .rl-architecture h1, .rl-architecture h2, .rl-architecture h3 {
-  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-family: 'Marcellus', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -.025em;
 }
-.rl-architecture .rlr-header.liquid[data-tone] > .rlr-wordmark {
-  color: #19232d;
-  background: rgba(249, 252, 255, .94);
+.rl-architecture .rl-btn, .rl-architecture .rlr-header .nimbus-nav { font-family: 'Jost Variable', 'Inter', sans-serif; }
+.arch-brand {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: 8px;
+  color: #142634;
+  text-decoration: none;
 }
+.arch-brand .rlr-mark { flex: none; object-fit: contain; filter: none; }
+.arch-brand-type { display: grid; gap: 3px; }
+.arch-brand-type strong { font: 400 clamp(18px, 2.25vw, 32px)/1 'Marcellus', Georgia, serif; text-transform: uppercase; letter-spacing: .035em; }
+.arch-brand-type small { font: 500 clamp(6px, .72vw, 10px)/1.15 'Jost Variable', sans-serif; letter-spacing: .09em; text-transform: uppercase; white-space: nowrap; }
+.rlr-header[data-section=contact] .arch-brand { color: #f5f8fc; }
+.rl-architecture .rl-bubble-btn, .rl-architecture .rl-bubble.open .rl-bubble-btn {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  filter: none;
+  opacity: 1;
+  animation: none;
+  transition: none;
+  transform: none;
+}
+.rl-architecture .rl-bubble-btn::before { content: none; }
+html body .rl-architecture .rl-bubble-btn .rlr-mark { width: 100%; height: 100%; margin: 0; object-fit: contain; filter: none; }
 .rl-architecture .rlr-header.liquid .nimbus-nav[data-tone=dark] {
   --n-tint: rgba(255, 255, 255, .16);
   --n-fg: #18232c;
@@ -25,12 +57,19 @@
 .rl-architecture .rlr-header.liquid .nimbus-item:focus-visible { outline-color: #6599c4; }
 .rl-architecture :is(a, button, input):focus-visible { outline: 2px solid #466883; outline-offset: 3px; }
 .rl-architecture .rl-progress { height: 2px; background: #779ab5; }
-.rl-architecture .rl-intro { background: #f5f8fb; transition: opacity .48s ease, visibility .48s; }
-.arch-intro-signature { position: relative; display: flex; align-items: center; gap: 14px; padding: 0 0 22px; color: #19232d; font: 600 40px/1 'Space Grotesk', sans-serif; letter-spacing: -.07em; animation: arch-mark-in .48s ease both; }
-.arch-intro-signature i { position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: #7592aa; transform-origin: left; animation: arch-intro-rule .55s ease both; }
-html body .rl-architecture .rl-intro .rlr-mark { width: 55px; height: 55px; animation: none; transform: none; opacity: 1; filter: none; }
-.rl-architecture[data-stage=animating] .rl-hero { animation: arch-hero-in .78s cubic-bezier(.2,.65,.22,1) both; }
-@keyframes arch-mark-in { from { opacity: 0; transform: translateY(8px); } }
+.rl-architecture .rl-intro { background: #f5f8fb; transition: opacity .42s ease, visibility .42s; }
+.arch-intro-signature { display: grid; justify-items: center; gap: 26px; perspective: 650px; }
+.arch-intro-mark { animation: arch-mark-turn .94s cubic-bezier(.33,.68,.24,1) both; }
+.arch-intro-rule { width: 142px; height: 2px; overflow: hidden; border-radius: 9px; background: #dce5ec; }
+.arch-intro-rule i { display: block; height: 100%; background: linear-gradient(90deg, #243e52, #7898ad, #fff); transform-origin: left; animation: arch-intro-rule 1s ease-out both; }
+html body .rl-architecture .rl-intro .rlr-mark { width: 104px; height: 104px; animation: none; transform: none; opacity: 1; filter: none; }
+.rl-architecture[data-stage=animating] .rl-hero { animation: arch-hero-in .62s cubic-bezier(.2,.65,.22,1) both; }
+@keyframes arch-mark-turn {
+  0% { opacity: 0; transform: rotateY(-36deg) rotateX(10deg) scale(.84); }
+  16% { opacity: 1; }
+  72% { transform: rotateY(330deg) rotateX(-6deg) scale(1.035); }
+  100% { transform: rotateY(360deg) rotateX(0deg) scale(1); }
+}
 @keyframes arch-intro-rule { from { transform: scaleX(0); } }
 @keyframes arch-hero-in { from { opacity: 0; transform: translateY(32px) scale(.985); } to { opacity: 1; transform: none; } }
 
@@ -53,7 +92,7 @@ html body .rl-architecture .rl-intro .rlr-mark { width: 55px; height: 55px; anim
 }
 .arch-hero-copy { display: grid; justify-items: start; gap: 24px; }
 .arch-hero-copy h1, .arch-hero-copy > p { text-shadow: 0 2px 22px rgba(0,0,0,.35); }
-.rl-architecture .arch-hero h1 { font-size: clamp(56px, 9vw, 128px); line-height: .94; letter-spacing: -.072em; }
+.rl-architecture .arch-hero h1 { font-size: clamp(54px, 8vw, 114px); line-height: .98; letter-spacing: -.055em; }
 .arch-hero-copy > p:not(.arch-eyebrow) { max-width: 38ch; color: #f1f4f8; font-size: clamp(16px, 2vw, 20px); }
 .arch-eyebrow { font-size: 12px; line-height: 1.3; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; color: #426079; }
 .arch-hero .arch-eyebrow { color: #e5ecf4; }
@@ -117,6 +156,20 @@ html body .rl-architecture .rl-intro .rlr-mark { width: 55px; height: 55px; anim
 .arch-compare-frame input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y; }
 .arch-compare-frame:focus-within { outline: 3px solid #466883; outline-offset: 4px; }
 
+.arch-method-panel { padding-block: clamp(52px, 8vw, 112px); }
+@media (prefers-reduced-motion: no-preference) and (min-height: 560px) and (min-width: 701px),
+       (prefers-reduced-motion: no-preference) and (min-height: 700px) and (361px <= width <= 700px),
+       (prefers-reduced-motion: no-preference) and (min-height: 760px) and (max-width: 360px) {
+  .arch-method::after { content: ''; display: block; height: clamp(300px, 62svh, 560px); }
+  .arch-method-panel {
+    position: sticky;
+    top: 80px;
+    height: calc(100dvh - 80px);
+    display: grid;
+    align-items: center;
+    padding-block: 18px;
+  }
+}
 .arch-method-track { position: relative; --step-size: 46px; margin: 12px 0 34px; }
 .arch-method-line {
   position: absolute;
@@ -204,11 +257,26 @@ html body .rl-architecture .rl-intro .rlr-mark { width: 55px; height: 55px; anim
   .arch-method-line { inset: calc(var(--step-size) / 2) auto auto calc(var(--step-size) / 2); width: 1px; height: 75%; }
   .arch-method-line span { inset: 0 auto auto -1px; width: 3px; height: calc(var(--method-progress, 0) * 100%); background: linear-gradient(180deg, #314b62, #8aa8c0 85%, #fff); }
   .arch-method-line span::after { inset: auto auto 0 50%; transform: translate(-50%, 50%); }
+  .arch-method .arch-heading { margin-bottom: 20px; }
+  .arch-method-track { margin-bottom: 24px; --step-size: 38px; }
+  .arch-steps li { padding-bottom: 14px; }
+  .arch-steps h3 { font-size: 18px; }
+  .arch-steps p { font-size: 14px; }
 }
 @media (max-width: 520px) {
-  .rl-architecture .rlr-header.liquid > .rlr-wordmark > .rlr-signature { display: block; }
-  .rl-architecture .arch-hero h1 { font-size: clamp(48px, 12vw, 64px); }
+  .arch-brand { gap: 4px; }
+  html body .rl-architecture .arch-brand .rlr-mark { width: 29px; height: 29px; }
+  .arch-brand-type strong { font-size: clamp(13px, 4vw, 20px); }
+  .arch-brand-type small { font-size: clamp(4.8px, 1.4vw, 7px); letter-spacing: .035em; }
+  .rl-architecture .rlr-header.liquid .nimbus-nav[data-compact=true] .nimbus-item { padding-inline: 7px; }
+  .rl-architecture .arch-hero h1 { font-size: clamp(44px, 11.4vw, 64px); }
+  .rl-architecture .rl-bubble-btn, .rl-architecture .rl-bubble.open .rl-bubble-btn { width: 48px; height: 48px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html:has(.rl-architecture) { scroll-behavior: auto; }
+  .arch-method-track { --method-progress: 1 !important; }
+}
+@media (max-height: 559px), (max-width: 700px) and (max-height: 699px),
+       (max-width: 360px) and (max-height: 759px) {
+  .arch-method-track { --method-progress: 1 !important; }
 }
