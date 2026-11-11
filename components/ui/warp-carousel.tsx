@@ -24,8 +24,6 @@ export interface WarpCard {
   mesh?: string[];
   /** Numeral fill, left to right. */
   numeral?: [string, string];
-  /** Colour of the glow this card casts onto the top and bottom edges while it faces the viewer. */
-  glow?: string;
   /** The small graphic under the numeral. */
   detail?: WarpCardDetail;
   /** Detail accent colour: slider knob glow, waveform marker, ring ticks. */
@@ -51,8 +49,6 @@ export interface WarpCarouselProps {
   step?: number;
   /** Stage colour behind the ring. */
   background?: string;
-  /** Overrides every card's own glow colour for the top and bottom glows. */
-  glow?: string;
   /** Strength of the wide-lens flare at the left and right edges, 0 to 1. */
   warp?: number;
   /** Font stack for all card copy. */
@@ -80,7 +76,6 @@ export const WARP_CAROUSEL_CARDS: WarpCard[] = [
     labels: ["Calm", "Lively"],
     numeral: ["#3ad2ff", "#8cf6ff"],
     accent: "#7fe8ff",
-    glow: "#12b0e8",
     mesh: ["#022852", "#031e3f", "#031934", "#021831", "#021b36", "#022246", "#022345", "#020e1e", "#01040f", "#000416", "#020b31", "#021c57", "#01172f", "#01010c", "#03001d", "#0a0f4c", "#112383", "#0b36af", "#021142", "#050b47", "#0c2e8f", "#165bd4", "#1675fd", "#167bff", "#03288e", "#0438af", "#0d66e7", "#107eec", "#30afff", "#71dcff", "#0356e8", "#0259ec", "#0945b0", "#001a49", "#3f7c9d", "#d4ffff", "#0365ff", "#0256ea", "#052a87", "#00001f", "#1f4c7b", "#9ee7ff"],
   },
   {
@@ -92,7 +87,6 @@ export const WARP_CAROUSEL_CARDS: WarpCard[] = [
     labels: ["Preview", "in", "out"],
     numeral: ["#e2a6ff", "#fff6ff"],
     accent: "#d9a8ff",
-    glow: "#62bce8",
     mesh: ["#4c2d5f", "#3b2245", "#3e285b", "#33204f", "#381844", "#572571", "#644096", "#4f3688", "#8358f6", "#8d54f3", "#5e20ac", "#6e24b7", "#482e6d", "#261b48", "#825bf6", "#d48cff", "#d07bff", "#b359ff", "#2d1837", "#140a1b", "#2c1d66", "#3a2383", "#693bca", "#8b42ef", "#411c5b", "#300753", "#3b006e", "#500f79", "#7e31c1", "#9541f3", "#44245a", "#3f0c69", "#6f15b9", "#d17cff", "#e2a3ff", "#a668ff", "#4b2f60", "#4d2172", "#6819aa", "#9b48dc", "#965dc9", "#7745c4"],
   },
   {
@@ -103,7 +97,6 @@ export const WARP_CAROUSEL_CARDS: WarpCard[] = [
     detail: "ring",
     numeral: ["#f4eeb6", "#c4c688"],
     accent: "#f6efc0",
-    glow: "#dacbe9",
     mesh: ["#ff623e", "#f57337", "#e49435", "#fba03f", "#ef6b36", "#f14c36", "#f29a3e", "#a0a92e", "#a2ba36", "#fffe65", "#ffd852", "#f2863b", "#a5b12e", "#46821d", "#6a6127", "#b88b44", "#b6bd41", "#c4b838", "#7e9f27", "#3b5a19", "#412c10", "#0d1700", "#255b0c", "#98ad28", "#a5b232", "#3e7c1e", "#002800", "#00300f", "#5b9745", "#c1b833", "#f3983b", "#b3b431", "#6fa31f", "#9bc976", "#edd896", "#fd8c3d", "#ff5f3b", "#ff7d47", "#ffa880", "#ffc1d8", "#ff8d99", "#ff5438"],
   },
   {
@@ -113,7 +106,6 @@ export const WARP_CAROUSEL_CARDS: WarpCard[] = [
     detail: "wave",
     numeral: ["#fffdf8", "#e8603f"],
     accent: "#ff6a3d",
-    glow: "#6cc0ea",
     mesh: ["#48001c", "#400119", "#41011d", "#4b021e", "#47021a", "#480019", "#7e0036", "#8c0033", "#4b0120", "#10000c", "#1f010b", "#390116", "#e84396", "#ff568c", "#dc433c", "#0e0705", "#090004", "#2f0213", "#ff9fd9", "#ff6f90", "#a53625", "#190d05", "#050002", "#2f0110", "#ff67b5", "#b11348", "#000000", "#11000c", "#3e021b", "#8a0c31", "#e31771", "#5d0027", "#3a0021", "#620030", "#640627", "#dc184a", "#c10b5f", "#920245", "#ab054f", "#910041", "#650226", "#c01240"],
   },
 ];
@@ -126,6 +118,8 @@ export const WARP_CAROUSEL_CARDS: WarpCard[] = [
 const CW = 256;
 const CH = 320;
 const stageWidth = (width: number) => width < 600 ? 420 : 720;
+const stageUnit = (width: number, height: number) =>
+  Math.min(width / stageWidth(width), height / 440) * (width < 600 ? 0.88 : 2 / 3);
 const CR = 10;
 const FOCAL = 734.103;
 const G = {
@@ -575,13 +569,8 @@ function paintCard(cv: HTMLCanvasElement, card: WarpCard, family: string, photo?
   ctx.restore();
 }
 
-/**
- * The glow a card casts above and below the ring, as one whole soft ellipse: [centre u, half width, strength].
- * It is moment-matched to the card's light spread through a fixed window over the stage centre (the card seen
- * from the bands, scaled out 1.8x, brightest along its nearer edge), so it lands where the reference's glow
- * sits but always as a complete ellipse.
- */
-function glowShape(pose: Pose): [number, number, number] {
+/** Projected center, width and strength of the shadow beneath a card. */
+function shadowShape(pose: Pose): [number, number, number] {
   const [px, pz, ps] = pose;
   const c = Math.cos(ps);
   const sn = Math.sin(ps);
@@ -636,8 +625,7 @@ uniform sampler2DArray uTex;
 uniform vec2 uRes;
 uniform float uUnit;
 uniform vec4 uPose[8];
-uniform vec3 uGlowCol[8];
-uniform vec3 uGlowShape[8];
+uniform vec3 uShadowShape[8];
 uniform vec3 uBg;
 uniform float uWarp;
 uniform float uMix;
@@ -721,76 +709,49 @@ vec4 scene(vec2 ps, float fx, float fy, int base){
   return acc;
 }
 
-// the top and bottom glows: every card that faces the viewer lays one whole soft ellipse of its glow
-// colour (centre, half width and strength come from glowShape on the CPU), so during a turn the bands
-// slide, narrow and cross-fade colour but are never cut off
-vec4 glowAt(vec2 pu, float halfH, int base){
-  vec4 sum = vec4(0.0);
-  // the bands sit just inside the top and bottom of a 5:4 stage; taller stages keep them near the cards
-  float gH = min(halfH, 288.0);
-  float dy = min(abs((gH - 11.0) - pu.y), abs(pu.y + (gH - 12.0)));
-  if (dy > 40.0) return sum;
+// A compact contact shadow under each visible card, with a neutral falloff.
+vec3 stage(vec2 pu, int base){
+  float dy = (pu.y + CH * 0.5 + 26.0) / 13.0;
+  if (abs(dy) > 2.8) return uBg;
+  float shade = 0.0;
   for (int i = 0; i < 4; i++){
-    vec3 sh = uGlowShape[base + i];
-    if (sh.z <= 0.0) continue;
-    float E = exp(-pow(abs(pu.x - sh.x) / sh.y, 4.0));
-    if (E < 0.002) continue;
-    float v = exp(-pow(dy / (18.5 * (0.45 + 0.55 * sqrt(E))), 3.0));
-    float w = sh.z * E * v;
-    sum += vec4(uGlowCol[base + i] * w, w);
+    vec3 sh = uShadowShape[base + i];
+    float dx = (pu.x - sh.x) / (sh.y * 0.64);
+    shade += sh.z * exp(-2.0 * (dx * dx + dy * dy));
   }
-  return sum;
+  return mix(uBg, vec3(0.075), clamp(shade * 0.24, 0.0, 0.18));
 }
 
-vec3 stage(vec2 pu, float halfH, int base){
-  vec4 g = glowAt(pu, halfH, base);
-  if (g.a <= 0.0) return uBg;
-  float I = clamp(g.a, 0.0, 1.0);
-  vec3 drop = uBg - g.rgb / g.a;
-  return uBg - drop * pow(vec3(I), vec3(0.8, 1.6, 1.0)); // ls:keep (per-channel falloff exponents, not a colour)
-}
-
-vec3 render(vec2 pu, float halfH, int base){
-  // stages wider than 5:4 simply run the outermost flare column on to the edge
-  float au = min(abs(pu.x), 360.0);
+vec3 render(vec2 pu, int base){
+  float x = abs(pu.x);
+  float halfW = 0.5 * uRes.x / uUnit;
   float px = 1.0 / uUnit;
-  vec3 bg = stage(pu, halfH, base);
-  if (au < 236.0 || uWarp <= 0.0) {
+  vec3 bg = stage(pu, base);
+  if (x < 236.0 || uWarp <= 0.0) {
     vec4 c = scene(pu, px, px, base);
     return c.rgb + (1.0 - c.a) * bg;
   }
-  // flare zone: one lens sample per channel. The smear is a widened texture footprint, so it stays smooth
-  // with no tap banding; vertically red is spread furthest and blue least, which gives the cyan then blue rim
-  float e = 0.064 * uWarp * smoothstep(275.0, 360.0, au);
-  float S0 = lensS(au);
-  float sg = pu.x < 0.0 ? -1.0 : 1.0;
-  float blur = 1.0 + 30.0 * pow(smoothstep(240.0, 340.0, au), 1.5) * uWarp;
-  float fyb = 1.0 + 15.0 * smoothstep(280.0, 352.0, au) * uWarp;
-  // the stretched outer flare reads a touch brighter, as if lit through the lens
-  float gain = 1.0 + 0.17 * smoothstep(285.0, 350.0, au) * uWarp;
-  vec3 acc;
-  for (int ch = 0; ch < 3; ch++){
-    // each channel reads a slightly different strip at the outer edge: red nearest the centre, blue furthest,
-    // so cards entering or leaving the flare split into cyan, blue and amber ghosts
-    float off = uWarp * (ch == 0 ? -20.92 : (ch == 1 ? 0.0 : 11.91));
-    float h = lensH(au) + off * smoothstep(289.8, 344.9, au);
-    float h0 = lensH(au - 0.5) + off * smoothstep(289.8, 344.9, au - 0.5);
-    float h1 = lensH(au + 0.5) + off * smoothstep(289.8, 344.9, au + 0.5);
-    float fx = px * max(abs(h1 - h0), 0.02) * blur;
-    float S = S0 * (ch == 0 ? 1.0 + e : (ch == 1 ? 1.0 : 1.0 - e));
-    vec4 c = scene(vec2(sg * h, pu.y / S), fx, px / S * fyb, base);
-    c.rgb = min(c.rgb * gain, vec3(c.a));
-    acc[ch] = (c.rgb + (1.0 - c.a) * bg)[ch];
-  }
-  return acc;
-}
 
+  // Extend the warped strip across the stage, using the photo's luminance
+  // for the navy-to-white reflection instead of splitting RGB channels.
+  float spread = 124.0 / max(124.0, halfW - 236.0);
+  float au = min(236.0 + (x - 236.0) * spread, 360.0);
+  float scaleY = lensS(au);
+  float dx = (lensH(au + 0.5) - lensH(au - 0.5)) * spread;
+  float blur = mix(1.0, 18.0, smoothstep(242.0, 350.0, au) * uWarp);
+  vec4 c = scene(vec2(sign(pu.x) * lensH(au), pu.y / scaleY), px * max(abs(dx), 0.02) * blur, px / scaleY * blur, base);
+  float strength = smoothstep(239.0, 295.0, au);
+  float luma = dot(c.rgb / max(c.a, 0.001), vec3(0.2126, 0.7152, 0.0722));
+  vec3 reflection = mix(vec3(0.055, 0.10, 0.20), vec3(0.97, 0.98, 1.0), smoothstep(0.12, 0.82, luma));
+  float opacity = mix(1.0, 0.62 * (1.0 - smoothstep(0.88, 1.0, x / halfW)), strength);
+  c.rgb = mix(c.rgb, reflection * c.a, strength) * opacity;
+  return c.rgb + (1.0 - c.a * opacity) * bg;
+}
 void main(){
   vec2 fc = gl_FragCoord.xy;
   vec2 pu = (fc - 0.5 * uRes) / uUnit;
-  float halfH = 0.5 * uRes.y / uUnit;
-  vec3 col = render(pu, halfH, 0);
-  if (uMix > 0.0) col = mix(col, render(pu, halfH, 4), uMix);
+  vec3 col = render(pu, 0);
+  if (uMix > 0.0) col = mix(col, render(pu, 4), uMix);
   outColor = vec4(col, 1.0);
 }`;
 
@@ -835,7 +796,7 @@ function createGL(canvas: HTMLCanvasElement): GLState | null {
   gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
   const tex = gl.createTexture()!;
   const loc: Record<string, WebGLUniformLocation | null> = {};
-  for (const n of ["uTex", "uRes", "uUnit", "uPose", "uGlowCol", "uGlowShape", "uBg", "uWarp", "uMix"]) loc[n] = gl.getUniformLocation(prog, n);
+  for (const n of ["uTex", "uRes", "uUnit", "uPose", "uShadowShape", "uBg", "uWarp", "uMix"]) loc[n] = gl.getUniformLocation(prog, n);
   const aniso = gl.getExtension("EXT_texture_filter_anisotropic");
   (tex as unknown as { aniso: unknown }).aniso = aniso;
   return { gl, prog, tex, loc, layers: 0, texW: 0 };
@@ -873,33 +834,24 @@ function drawFallback(
   poses: { pose: Pose; layer: number }[],
   canvases: HTMLCanvasElement[],
   bg: string,
-  glows: [number, number, number][],
 ) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, w, h);
-  // top and bottom glow bands: one whole soft ellipse per card that faces the viewer, as in the WebGL path
-  const gH = Math.min(h / 2 / unit, 288);
-  for (const p of poses) {
-    if (p.layer < 0) continue;
-    const [mu, r, amp] = glowShape(p.pose);
-    const a = Math.min(1, amp) * 0.9;
-    if (a < 0.01) continue;
-    const rx = r * 1.35 * unit;
-    const col = glows[p.layer] || [127, 208, 240];
-    const rgb = `${col[0]}, ${col[1]}, ${col[2]}`;
-    for (const yy of [h / 2 - (gH - 11) * unit, h / 2 + (gH - 12) * unit]) {
-      ctx.save();
-      ctx.translate(w / 2 + mu * unit, yy);
-      ctx.scale(1, (20 * unit) / rx);
-      const rg = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
-      rg.addColorStop(0, `rgba(${rgb}, ${a})`);
-      rg.addColorStop(0.55, `rgba(${rgb}, ${a * 0.55})`);
-      rg.addColorStop(1, `rgba(${rgb}, 0)`);
-      ctx.fillStyle = rg;
-      ctx.fillRect(-rx, -rx, rx * 2, rx * 2);
-      ctx.restore();
-    }
+  for (const card of poses) {
+    if (card.layer < 0) continue;
+    const [center, radius, strength] = shadowShape(card.pose);
+    if (strength < 0.01) continue;
+    const rx = radius * 0.64 * unit;
+    ctx.save();
+    ctx.translate(w / 2 + center * unit, h / 2 + (CH * 0.5 + 26) * unit);
+    ctx.scale(1, 13 * unit / rx);
+    const shadow = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+    shadow.addColorStop(0, `rgba(19,19,19,${Math.min(0.18, strength * 0.24)})`);
+    shadow.addColorStop(1, "rgba(19,19,19,0)");
+    ctx.fillStyle = shadow;
+    ctx.fillRect(-rx, -rx, rx * 2, rx * 2);
+    ctx.restore();
   }
   const proj = (X: number, Zb: number, Y: number) => {
     const D = FOCAL + Zb;
@@ -1023,7 +975,6 @@ export function WarpCarousel({
   interval = 3.6667,
   step = 2,
   background = "#f0f0f0",
-  glow,
   warp = 1,
   font = DEFAULT_FONT,
   seconds,
@@ -1121,8 +1072,6 @@ export function WarpCarousel({
     let raf = 0;
     let disposed = false;
     const bg = parseColor(background, [240, 240, 240]);
-    const glowOverride = glow ? parseColor(glow) : null;
-    const glowCols = list.map((c) => (glowOverride ? glowOverride : parseColor(c.glow || "#7fd0f0")));
 
     const photos = new Map<string, HTMLImageElement>();
     const paintAll = (w: number) => {
@@ -1148,7 +1097,7 @@ export function WarpCarousel({
       if (canvas.width !== W) canvas.width = W;
       if (canvas.height !== H) canvas.height = H;
       // the 720 unit stage fills the width; short, wide boxes shrink it so the cards always fit the height
-      unit = Math.min(W / stageWidth(r.width), H / 440);
+      unit = stageUnit(r.width, r.height) * dpr;
       const want = Math.min(1024, Math.max(256, Math.round(CW * unit * 1.25)));
       if (want !== texW) paintAll(want);
     };
@@ -1197,7 +1146,6 @@ export function WarpCarousel({
     };
 
     const poseArr = new Float32Array(32);
-    const glowArr = new Float32Array(24);
     const shapeArr = new Float32Array(24);
     const fill = (set: { pose: Pose; layer: number }[], off: number) => {
       set.forEach((s, i) => {
@@ -1206,11 +1154,7 @@ export function WarpCarousel({
         poseArr[j * 4 + 1] = s.pose[1];
         poseArr[j * 4 + 2] = s.pose[2];
         poseArr[j * 4 + 3] = s.layer;
-        const gc = s.layer >= 0 ? glowCols[s.layer] : [255, 255, 255]; // ls:keep (unused slot)
-        glowArr[j * 3] = gc[0] / 255;
-        glowArr[j * 3 + 1] = gc[1] / 255;
-        glowArr[j * 3 + 2] = gc[2] / 255;
-        const gs = s.layer >= 0 ? glowShape(s.pose) : [0, 1, 0];
+        const gs = s.layer >= 0 ? shadowShape(s.pose) : [0, 1, 0];
         shapeArr[j * 3] = gs[0];
         shapeArr[j * 3 + 1] = gs[1];
         shapeArr[j * 3 + 2] = gs[2];
@@ -1233,18 +1177,17 @@ export function WarpCarousel({
         gl.uniform2f(loc.uRes, W, H);
         gl.uniform1f(loc.uUnit, unit);
         gl.uniform4fv(loc.uPose, poseArr);
-        gl.uniform3fv(loc.uGlowCol, glowArr);
-        gl.uniform3fv(loc.uGlowShape, shapeArr);
+        gl.uniform3fv(loc.uShadowShape, shapeArr);
         gl.uniform3f(loc.uBg, bg[0] / 255, bg[1] / 255, bg[2] / 255);
         gl.uniform1f(loc.uWarp, Math.max(0, Math.min(1, warp)));
         gl.uniform1f(loc.uMix, mix);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
       } else if (ctx2d) {
         const css = `rgb(${bg[0]}, ${bg[1]}, ${bg[2]})`;
-        drawFallback(ctx2d, W, H, unit, setA, cardCanvases, css, glowCols);
+        drawFallback(ctx2d, W, H, unit, setA, cardCanvases, css);
         if (mix > 0) {
           ctx2d.globalAlpha = mix;
-          drawFallback(ctx2d, W, H, unit, poseSet(Pb), cardCanvases, css, glowCols);
+          drawFallback(ctx2d, W, H, unit, poseSet(Pb), cardCanvases, css);
           ctx2d.globalAlpha = 1;
         }
       }
@@ -1371,7 +1314,7 @@ export function WarpCarousel({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list, background, glow, warp, font, N]);
+  }, [list, background, warp, font, N]);
 
   React.useEffect(() => {
     if (seconds !== undefined) handles.current.draw();
@@ -1396,7 +1339,7 @@ export function WarpCarousel({
     const L = live.current;
     if (L.mode !== "drag") return;
     const r = wrapRef.current!.getBoundingClientRect();
-    const unitCss = Math.min(r.width / stageWidth(r.width), r.height / 440);
+    const unitCss = stageUnit(r.width, r.height);
     const now = performance.now() / 1000;
     const P = L.dragP - (e.clientX - L.dragX) / (unitCss * 300);
     const dt = Math.max(1 / 240, now - L.lastT);
@@ -1414,7 +1357,7 @@ export function WarpCarousel({
     if (!L.moved) {
       L.mode = "rest";
       const r = wrapRef.current!.getBoundingClientRect();
-      const u = (e.clientX - r.left - r.width / 2) / Math.min(r.width / stageWidth(r.width), r.height / 440);
+      const u = (e.clientX - r.left - r.width / 2) / stageUnit(r.width, r.height);
       if (u > 168) request(lastIndex.current + 1);
       else if (u < -168) request(lastIndex.current - 1);
       return;

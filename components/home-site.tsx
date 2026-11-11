@@ -2,7 +2,7 @@
 import {useEffect,useRef,useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {motion, useReducedMotion, useScroll, useTransform} from 'motion/react';
+import {motion, useReducedMotion, useScroll, useTransform, type MotionStyle} from 'motion/react';
 import {ArrowRight,ArrowUpRight,Home,ListChecks,CalendarCheck,FileText,Hammer,Mail,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
 import {WhatsAppIcon,whatsappQuoteUrl} from './whatsapp-contact';
 import {LogoMark,Wordmark} from './brand';
@@ -75,7 +75,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
  const reduced=useReducedMotion();
  const {scrollYProgress:heroProgress}=useScroll({target:hero,offset:['start start','end start']});
  const heroScale=useTransform(heroProgress,[0,1],[1,1.09]);
- const {scrollYProgress:methodProgress}=useScroll({target:method,offset:['start 90%','center center']});
+ const {scrollYProgress:methodProgress}=useScroll({target:method,offset:['start 82%','end 60%']});
  // Arrivée sur le site : écran d’accueil avec le seul monogramme LR, puis la bannière monte et se déploie.
  const [stage,setStage]=useState<'intro'|'leaving'|'animating'|'done'>('intro');
  useEffect(()=>{
@@ -147,8 +147,19 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <section className="arch-section arch-method" id="methode" ref={method}>
     <div className="rl-wrap">
      <header className="arch-heading"><p className="arch-eyebrow">Notre méthode</p><h2>Du premier échange<br/>aux finitions.</h2></header>
-     <div className="arch-method-line" aria-hidden="true"><motion.span style={{scaleX:reduced ? 1 : methodProgress}}/></div>
-     <ol className="arch-steps">{steps.map(([title,description],position)=><li key={title}><span aria-hidden="true">{String(position+1).padStart(2,'0')}</span><h3>{title}</h3><p>{description}</p></li>)}</ol>
+     <motion.div className="arch-method-track" style={{'--method-progress': reduced ? 1 : methodProgress} as MotionStyle}>
+      <div className="arch-method-line" aria-hidden="true"><span/></div>
+      <ol className="arch-steps">{steps.map(([title,description],position)=>(
+       <li key={title}>
+        <span className="arch-step-number" aria-hidden="true">{String(position+1).padStart(2,'0')}</span>
+        <motion.div className="arch-step-copy"
+         initial={false} whileInView={reduced ? undefined : {y:[6,0]}}
+         viewport={{once:true,amount:.4}} transition={{duration:.38,delay:position*.035}}>
+         <h3>{title}</h3><p>{description}</p>
+        </motion.div>
+       </li>
+      ))}</ol>
+     </motion.div>
      <button type="button" className="rl-btn arch-outline" onClick={()=>setQuote(true)}>Lancer mon projet<ArrowUpRight size={18}/></button>
     </div>
    </section>

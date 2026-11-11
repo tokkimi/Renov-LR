@@ -17,7 +17,6 @@ export default function ServiceWarpCarousel({cards, onSelect}: {
     title: card.title,
     image: card.image,
     value: '',
-    glow: '#7d99b3',
   })), [cards]);
   const active = cards[index];
   const move = (step: number) => setIndex(current => (current + step + cards.length) % cards.length);
