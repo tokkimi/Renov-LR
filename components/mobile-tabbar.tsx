@@ -7,10 +7,10 @@ type Action={id:string;label:string;icon:Icon;run:()=>void};
 type Props={role:'admin'|'worker'|'client';view:string;go:(view:string)=>void;start:(kind:string)=>void;items:MenuItem[];menuOpen:boolean;onMenuChange:(open:boolean)=>void;onLogout:()=>void};
 const groups=[
  {name:'Vue d’ensemble',ids:['dashboard','messages','notifications']},
- {name:'Clients & projets',ids:['requests','clients','projects','health','decisions','tasks','agenda']},
- {name:'Terrain',ids:['visits','timesheets','dailyLogs']},
- {name:'Documents & finances',ids:['quotes','catalogue','priceRequests','purchaseOrders','invoices','expenses','suppliers','accounting','documents']},
- {name:'Équipe & échanges',ids:['contacts','partners','team','assistant']},
+ {name:'Clients & projets',ids:['requests','agenda','clients','projects','tasks']},
+ {name:'Terrain',ids:['visits']},
+ {name:'Documents & finances',ids:['quotes','catalogue','invoices','expenses','accounting','documents']},
+ {name:'Équipe & échanges',ids:['contacts','partners','team']},
  {name:'Administration',ids:['settings','seo']}
 ];
 /** The same dialog serves quick actions and the complete menu, on desktop and phone. */
@@ -31,8 +31,6 @@ export default function MobileTabbar({role,view,go,start,items,menuOpen,onMenuCh
   {id:'task',label:'Nouvelle tâche',icon:ClipboardList,run:()=>launch('task')},
   {id:'client',label:'Nouveau client',icon:Users,run:()=>launch('client')},
   {id:'agenda',label:'Calendrier',icon:CalendarDays,run:()=>navigate('agenda')},
-  {id:'health',label:'Santé des projets',icon:Activity,run:()=>navigate('health')},
-  {id:'decisions',label:'Décisions clients',icon:Hourglass,run:()=>navigate('decisions')},
   {id:'invoices',label:'Factures',icon:ReceiptText,run:()=>navigate('invoices')}
  ]:role==='worker'?[
   {id:'messages',label:'Messagerie',icon:MessageSquare,run:()=>navigate('messages')},
