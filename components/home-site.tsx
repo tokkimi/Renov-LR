@@ -2,7 +2,7 @@
 import {useEffect,useRef,useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {ArrowRight,ArrowUpRight,Bath,Box,Brush,Camera,Check,CookingPot,FileText,Hammer,Layers,Mail,Menu,MessageSquare,Mic,Phone,ReceiptText,Ruler,ScanLine,Sparkles,X} from 'lucide-react';
+import {ArrowRight,ArrowUpRight,Bath,Brush,CalendarCheck,Check,CookingPot,FileText,Hammer,Layers,Mail,Menu,Phone,ShieldCheck,Sparkles,X} from 'lucide-react';
 import {LogoMark,Wordmark} from './brand';
 import QuoteRequest from './request-form';
 import {Data,defaults} from '@/lib/model';
@@ -16,22 +16,19 @@ const services=[
  [Sparkles,'Rénovation complète','Un seul interlocuteur pour coordonner tous les corps de métier.']
 ] as const;
 const steps=[
- [Ruler,'La visite','Nous relevons chaque pièce sur place : mesures, photos et notes, pendant que vous nous expliquez votre projet.'],
- [ScanLine,'Le plan','Vos pièces sont tracées en plan 2D, puis projetées en 3D pour visualiser volumes et finitions.'],
- [FileText,'Le devis','Un devis détaillé pièce par pièce, matériaux et main-d’œuvre séparés. Rien de flou.'],
- [MessageSquare,'Le chantier','Vous suivez l’avancement et échangez avec nous depuis votre espace client.']
+ ['Vous nous contactez','Décrivez votre projet en quelques minutes, avec des photos si vous en avez. Nous vous rappelons.'],
+ ['Nous venons sur place','Une visite pour comprendre vos envies, prendre les mesures et vous conseiller sur les matériaux.'],
+ ['Vous recevez le devis','Un devis clair, pièce par pièce, avec les matériaux et la main-d’œuvre détaillés.'],
+ ['Nous réalisons les travaux','Une équipe suivie du début à la fin, un chantier tenu propre et un interlocuteur unique.']
 ] as const;
-const links=[['#prestations','Prestations'],['#methode','Notre méthode'],['#espace','Espace client'],['#contact','Contact']] as const;
+const promises=[
+ [ShieldCheck,'Un seul interlocuteur','Vous savez toujours à qui parler, du premier appel à la remise des clés.'],
+ [FileText,'Un devis lisible','Chaque poste est détaillé. Pas de ligne floue, pas de surprise en fin de chantier.'],
+ [Sparkles,'Un chantier soigné','Protection des lieux, nettoyage et finitions vérifiées avec vous.'],
+ [CalendarCheck,'Des délais annoncés','Un calendrier posé avant de commencer, et tenu à jour si quelque chose change.']
+] as const;
+const links=[['#prestations','Prestations'],['#engagements','Nos engagements'],['#methode','Comment ça se passe'],['#contact','Contact']] as const;
 const words=['Cuisine','Salle de bain','Parquet','Carrelage','Peinture','Cloisons','Électricité','Plomberie','Menuiserie'];
-
-function Plan(){
- return <svg className="rl-plan" viewBox="0 0 320 220" fill="none" aria-hidden="true">
-  <path className="w" d="M14 14H306V206H14Z"/>
-  <path className="w t" d="M176 14V104M176 138V206M14 124H84M116 124H176M176 104H236M268 104H306"/>
-  <g className="d"><path d="M84 124a32 32 0 0 1 32 32"/><path d="M84 124l23 23"/><path d="M236 104a32 32 0 0 0 32 32"/><path d="M268 104l-23 23"/></g>
-  <g className="l"><text x="95" y="74">Séjour</text><text x="241" y="64">Cuisine</text><text x="95" y="172">Chambre</text><text x="241" y="164">Salle de bain</text></g>
- </svg>;
-}
 
 /** Page d’accueil Rénov LR : verre dépoli, lumière rouge et animations au défilement. */
 export default function HomeSite({settings=defaults}:{settings?:Data}){
@@ -50,7 +47,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
   const items=Array.from(el.querySelectorAll<HTMLElement>('[data-reveal]'));
   const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target)}}),{threshold:.14,rootMargin:'0px 0px -6% 0px'});
   items.forEach(item=>observer.observe(item));
-  const onScroll=()=>setScrolled(window.scrollY>24);onScroll();
+  const onScroll=()=>{setScrolled(window.scrollY>24);const max=document.documentElement.scrollHeight-window.innerHeight;el.style.setProperty('--p',String(max>0?window.scrollY/max:0));el.style.setProperty('--sy',String(Math.min(window.scrollY,1200)))};onScroll();
   const calm=window.matchMedia('(prefers-reduced-motion: reduce)').matches||!window.matchMedia('(pointer: fine)').matches;
   const onMove=(e:PointerEvent)=>{el.style.setProperty('--mx',String(e.clientX/window.innerWidth-.5));el.style.setProperty('--my',String(e.clientY/window.innerHeight-.5))};
   window.addEventListener('scroll',onScroll,{passive:true});if(!calm)window.addEventListener('pointermove',onMove,{passive:true});
@@ -67,23 +64,25 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    </nav>}
   </header>
 
+  <div className="rl-progress" aria-hidden="true"/>
   <main>
    <section className="rl-hero">
+    <div className="rl-hero-bg" aria-hidden="true"><Image src="/images/interieur.png" alt="" fill priority sizes="100vw"/></div>
     <div className="rl-wrap rl-hero-grid">
      <div className="rl-hero-copy">
-      <p className="rl-pill"><i/>Rénovation intérieure</p>
-      <h1><span className="ln"><span>Votre intérieur,</span></span><span className="ln"><span>repensé au</span></span><span className="ln"><span><em>millimètre.</em></span></span></h1>
-      <p className="rl-lead">Nous mesurons, nous traçons le plan de vos pièces, puis nous chiffrons. Vous savez ce qui sera fait, où, et pour combien, avant le premier coup de marteau.</p>
-      <div className="rl-actions"><button type="button" className="rl-btn red" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button><a className="rl-btn glass" href="#methode">Notre méthode<ArrowRight size={18}/></a></div>
-      <ul className="rl-points"><li><Check size={15}/>Relevé sur place</li><li><Check size={15}/>Plan 2D et vue 3D</li><li><Check size={15}/>Devis détaillé</li></ul>
+      <p className="rl-pill"><i/>Entreprise de rénovation intérieure</p>
+      <h1>{['Nous','rénovons','votre','intérieur,'].map((word,i)=><span className="wd" key={word} style={{'--i':i} as React.CSSProperties}><span>{word}</span></span>)}<br/>{['de','la'].map((word,i)=><span className="wd" key={word} style={{'--i':i+4} as React.CSSProperties}><span>{word}</span></span>)}<span className="wd" style={{'--i':6} as React.CSSProperties}><span><em>salle de bain</em></span></span><br/>{['au','salon.'].map((word,i)=><span className="wd" key={word} style={{'--i':i+7} as React.CSSProperties}><span>{word}</span></span>)}</h1>
+      <p className="rl-lead">Cuisine, salle de bain, sols, peinture, aménagement : une équipe pour transformer votre logement, avec un devis clair et un chantier soigné.</p>
+      <div className="rl-actions"><button type="button" className="rl-btn red" onClick={()=>setQuote(true)}>Demander un devis<ArrowUpRight size={18}/></button>{phone?<a className="rl-btn line" href={`tel:${phone}`}><Phone size={17}/>{settings.phone}</a>:<a className="rl-btn line" href="#prestations">Nos prestations<ArrowRight size={18}/></a>}</div>
      </div>
-     <div className="rl-stage" aria-hidden="true">
-      <div className="rl-photo"><Image src="/images/interieur.png" alt="" fill priority sizes="(max-width: 980px) 92vw, 560px"/><span className="rl-shine"/></div>
-      <div className="rl-card plan"><header><ScanLine size={15}/>Plan 2D<b>T3 · 51 m²</b></header><Plan/></div>
-      <div className="rl-card quote"><header><FileText size={15}/>Devis · Séjour</header><div className="bar"><span>Matériaux</span><i style={{'--v':'62%'} as React.CSSProperties}/></div><div className="bar"><span>Main-d’œuvre</span><i style={{'--v':'84%'} as React.CSSProperties}/></div><footer><Check size={14}/>Prêt à signer</footer></div>
-      <div className="rl-card cube"><Box size={18}/>Vue 3D</div>
-     </div>
+     <aside className="rl-contact-card">
+      <b>Un projet de rénovation ?</b>
+      <p>Dites-nous ce que vous voulez transformer. Nous vous rappelons pour en parler et organiser une visite.</p>
+      <ul><li><Check size={15}/>Réponse rapide</li><li><Check size={15}/>Visite et conseils sur place</li><li><Check size={15}/>Devis détaillé</li></ul>
+      <button type="button" className="rl-btn white" onClick={()=>setQuote(true)}>Décrire mon projet<ArrowUpRight size={18}/></button>
+     </aside>
     </div>
+    <div className="rl-tags" aria-hidden="true">{['Salle de bain','Cuisine','Parquet','Peinture'].map((tag,i)=><span key={tag} style={{'--i':i} as React.CSSProperties}>{tag}</span>)}</div>
     <a className="rl-scroll" href="#prestations" aria-label="Découvrir les prestations"><span/></a>
    </section>
 
@@ -91,33 +90,30 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
 
    <section className="rl-section" id="prestations">
     <div className="rl-wrap">
-     <header className="rl-head" data-reveal><p className="rl-kicker">Prestations</p><h2>Tout l’intérieur,<br/><em>un seul interlocuteur.</em></h2><p>De la pièce unique à la rénovation complète, nous organisons les travaux et vous tenons informé à chaque étape.</p></header>
-     <div className="rl-services">{services.map(([Icon,title,text],i)=><button type="button" key={title} data-reveal style={{'--d':`${i*70}ms`} as React.CSSProperties} onClick={()=>setQuote(true)}><span className="ic"><Icon size={24} strokeWidth={1.5}/></span><span className="n">{String(i+1).padStart(2,'0')}</span><h3>{title}</h3><p>{text}</p><span className="go">Demander un devis<ArrowUpRight size={16}/></span></button>)}</div>
+     <header className="rl-head" data-reveal><p className="rl-kicker">Nos prestations</p><h2>Chaque pièce<br/><em>mérite mieux.</em></h2><p>De la pièce unique à la rénovation complète, nous prenons en charge les travaux de A à Z.</p></header>
+     <div className="rl-services">{services.map(([Icon,title,text],i)=><button type="button" key={title} className={`v${i%3}`} data-reveal style={{'--d':`${i*80}ms`} as React.CSSProperties} onClick={()=>setQuote(true)}><Icon className="bg" size={170} strokeWidth={.7} aria-hidden="true"/><span className="ic"><Icon size={24} strokeWidth={1.5}/></span><span className="n">{String(i+1).padStart(2,'0')}</span><h3>{title}</h3><p>{text}</p><span className="go">Demander un devis<ArrowUpRight size={16}/></span></button>)}</div>
+    </div>
+   </section>
+
+   <section className="rl-banner" id="engagements">
+    <div className="rl-banner-bg" aria-hidden="true"><Image src="/images/interieur.png" alt="" fill sizes="100vw"/></div>
+    <div className="rl-wrap">
+     <header className="rl-head" data-reveal><p className="rl-kicker">Nos engagements</p><h2>Des travaux menés<br/><em>comme chez nous.</em></h2></header>
+     <div className="rl-promises">{promises.map(([Icon,title,text],i)=><article key={title} data-reveal style={{'--d':`${i*110}ms`} as React.CSSProperties}><span className="ic"><Icon size={22} strokeWidth={1.6}/></span><h3>{title}</h3><p>{text}</p></article>)}</div>
     </div>
    </section>
 
    <section className="rl-section rl-dark" id="methode">
     <div className="rl-wrap">
-     <header className="rl-head" data-reveal><p className="rl-kicker">Notre méthode</p><h2>Quatre étapes.<br/><em>Aucune surprise.</em></h2></header>
-     <ol className="rl-steps" data-reveal>{steps.map(([Icon,title,text],i)=><li key={title} style={{'--d':`${i*140}ms`} as React.CSSProperties}><span className="dot"><Icon size={20} strokeWidth={1.6}/></span><span className="n">0{i+1}</span><h3>{title}</h3><p>{text}</p></li>)}</ol>
-    </div>
-   </section>
-
-   <section className="rl-section" id="espace">
-    <div className="rl-wrap rl-space">
-     <div className="rl-space-copy" data-reveal><p className="rl-kicker">Espace client</p><h2>Votre chantier<br/><em>dans la poche.</em></h2><p>Chaque client dispose d’un espace sécurisé : la messagerie avec notre équipe, les devis à signer, les factures et les photos du chantier, au même endroit.</p><div className="rl-actions"><Link className="rl-btn dark" href="/connexion">Accéder à mon espace<ArrowUpRight size={18}/></Link></div></div>
-     <div className="rl-phone" data-reveal aria-hidden="true">
-      <div className="rl-phone-top"><LogoMark size={26}/><b>Mon chantier</b><span>En cours</span></div>
-      <div className="rl-glass" style={{'--d':'150ms'} as React.CSSProperties}><MessageSquare size={17}/><div><b>Messagerie</b><p>« Le parquet du séjour est posé, voici les photos. »</p></div></div>
-      <div className="rl-glass" style={{'--d':'330ms'} as React.CSSProperties}><FileText size={17}/><div><b>Devis · Séjour et cuisine</b><p>À signer en ligne</p></div><span>PDF</span></div>
-      <div className="rl-glass" style={{'--d':'510ms'} as React.CSSProperties}><ReceiptText size={17}/><div><b>Facture d’acompte</b><p>Réglée</p></div><span className="ok"><Check size={13}/></span></div>
-      <div className="rl-tools" style={{'--d':'690ms'} as React.CSSProperties}><span><Camera size={16}/>Photos</span><span><Mic size={16}/>Notes</span><span><Ruler size={16}/>Mesures</span></div>
-     </div>
+     <header className="rl-head" data-reveal><p className="rl-kicker">Comment ça se passe</p><h2>Quatre étapes.<br/><em>Aucune surprise.</em></h2></header>
+     <ol className="rl-steps" data-reveal>{steps.map(([title,text],i)=><li key={title} style={{'--d':`${i*140}ms`} as React.CSSProperties}><span className="dot">{i+1}</span><h3>{title}</h3><p>{text}</p></li>)}</ol>
+     <div className="rl-actions rl-center" data-reveal><button type="button" className="rl-btn red" onClick={()=>setQuote(true)}>Lancer mon projet<ArrowUpRight size={18}/></button></div>
     </div>
    </section>
 
    <section className="rl-section rl-cta-wrap" id="contact">
     <div className="rl-wrap"><div className="rl-cta" data-reveal>
+     <div className="rl-cta-bg" aria-hidden="true"><Image src="/images/interieur.png" alt="" fill sizes="100vw"/></div>
      <LogoMark size={64}/>
      <h2>Parlons de votre projet.</h2>
      <p>Décrivez vos travaux en quelques minutes et joignez des photos : nous vous rappelons pour organiser la visite.</p>
