@@ -6,18 +6,17 @@ export function LogoMark({size = 34, className = ''}: {size?: number; className?
     width={size} height={size} alt="" unoptimized />;
 }
 
+/** Nom et signature du logo officiel, en image, pour l’écran de chargement. */
 export function BrandName() {
-  return <span className="arch-brand-type">
-    <strong>LR Réseaux</strong>
-    <small>Intérieur · Extérieur · Extension</small>
-  </span>;
+  return <Image className="arch-brand-wordmark" src="/app/lr-reseaux-wordmark.png"
+    width={1100} height={237} alt="LR Réseaux — Intérieur · Extérieur · Extension" unoptimized />;
 }
 
 export function BrandLockup() {
   return (
     <Link className="arch-brand" href="/" aria-label="LR Réseaux, accueil">
-      <Image src="/app/renov-lr-header.png" width={1536} height={1024} alt=""
-        sizes="(max-width: 520px) 114px, 156px" />
+      <Image src="/app/lr-reseaux-logo.png" width={1100} height={634} alt=""
+        sizes="(max-width: 520px) 300px, 400px" />
     </Link>
   );
 }

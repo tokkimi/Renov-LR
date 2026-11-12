@@ -398,3 +398,8 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
   .service-sheet-columns { grid-template-columns: 1fr; gap: 16px; }
   .service-photo-description { display: none; }
 }
+
+/* Logo officiel LR Réseaux : image complète dans l’en-tête et le pied de page, nom en image sur l’écran de chargement */
+.arch-brand { width: clamp(150px, 15vw, 196px); }
+.arch-intro-signature .arch-brand-wordmark { display: block; width: clamp(230px, 58vw, 360px); height: auto; }
+@media (max-width: 760px) { .arch-brand { width: clamp(124px, 34vw, 146px); } }
