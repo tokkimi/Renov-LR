@@ -272,22 +272,35 @@ html:has(.rl-site){scroll-behavior:smooth}
 .rlr-header.liquid[data-tone=light]>.rlr-wordmark{background:rgba(255,255,255,.58)}
 
 /* ——— Reflet de verre commun : la même lumière que la barre du haut, sur tout le site ——— */
+@property --la{syntax:'<number>';inherits:true;initial-value:0}
 :where(.lq){position:relative}
-.lq{--gx:50%;--gy:50%}
-.lq-light{position:absolute;inset:0;z-index:3;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;
- background:radial-gradient(150px circle at var(--gx) var(--gy),rgba(255,255,255,.5),rgba(255,255,255,.14) 38%,rgba(255,255,255,0) 68%)}
-.lq-light::after{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.5px;
- background:radial-gradient(190px circle at var(--gx) var(--gy),#fff,rgba(112,156,191,.75) 30%,rgba(120,210,255,.45) 52%,rgba(255,255,255,0) 72%);
+.lq{--gx:50%;--gy:50%;--la:0;transition:--la .3s ease-out}
+.lq:hover,.lq:focus-visible{--la:1}
+/* repos : un liseré d’un pixel, à peine irisé — rien d’autre */
+.lq-light{position:absolute;inset:0;z-index:3;border-radius:inherit;pointer-events:none;
+ background:radial-gradient(130px circle at var(--gx) var(--gy),rgba(255,255,255,calc(.16*var(--la))),rgba(255,255,255,0) 70%);transition:box-shadow .18s ease-out}
+.lq-light::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;opacity:.6;
+ background:conic-gradient(from 215deg,rgba(255,255,255,.95),rgba(255,255,255,.1) 17%,rgba(112,156,191,.55) 29%,rgba(255,255,255,.08) 43%,rgba(255,255,255,.85) 57%,rgba(130,210,255,.5) 70%,rgba(255,255,255,.1) 85%,rgba(255,255,255,.95));
  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
-.lq:hover>.lq-light{opacity:1}
-.rl-services button>.lq-light,.rl-cta>.lq-light{background:radial-gradient(260px circle at var(--gx) var(--gy),rgba(255,255,255,.55),rgba(255,255,255,.12) 40%,rgba(255,255,255,0) 70%)}
+/* survol : le contour s’allume en reflets irisés autour du pointeur */
+.lq-hot{position:absolute;inset:-1px;border-radius:inherit;opacity:var(--la);
+ -webkit-mask-image:radial-gradient(210px circle at var(--gx) var(--gy),#000 18%,rgba(0,0,0,.35) 55%,transparent 100%);mask-image:radial-gradient(210px circle at var(--gx) var(--gy),#000 18%,rgba(0,0,0,.35) 55%,transparent 100%);
+ filter:drop-shadow(0 0 4px rgba(255,255,255,.85)) drop-shadow(0 0 10px rgba(112,170,220,.5))}
+.lq-hot>i{position:absolute;inset:0;border-radius:inherit;padding:2px;
+ background:radial-gradient(70px circle at var(--gx) var(--gy),#fff,rgba(255,255,255,0) 100%),conic-gradient(from 0deg at var(--gx) var(--gy),#5cc8ff,#7df0c8,#fff27a,#ffd08a,#9fb4ff,#5b8fd6,#5cc8ff);
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+/* clic : tout le contour s’éclaire nettement */
+.lq:active{--la:1}
+.lq:active>.lq-light{box-shadow:0 0 0 1.5px rgba(255,255,255,.95),0 0 16px 3px rgba(255,255,255,.75),0 0 32px 8px rgba(112,170,220,.55),inset 0 0 14px rgba(255,255,255,.45)}
+.lq:active>.lq-light .lq-hot{-webkit-mask-image:none;mask-image:none}
+@media(hover:none){.lq:hover{--la:0}.lq:active{--la:1}}
+@media(prefers-reduced-motion:reduce){.lq{transition:none}}
 /* Verre homogène : même transparence, même liseré et même ombre que la barre */
 .rl-btn.glass,.rl-btn.line,.rl-pill,.rl-contact-card,.rl-tags span,.rlr-header.liquid>.rlr-wordmark{box-shadow:inset 0 1px 1px rgba(255,255,255,.7),inset 0 0 0 1px rgba(255,255,255,.2),0 12px 32px -14px rgba(0,0,0,.5);backdrop-filter:blur(10px) saturate(1.2) brightness(1.08);-webkit-backdrop-filter:blur(10px) saturate(1.2) brightness(1.08)}
 .rl-btn.line,.rl-hero .rl-pill,.rl-contact-card,.rl-tags span{background:rgba(255,255,255,.14);border-color:transparent}
 .rl-btn.glass{background:rgba(255,255,255,.58);border-color:transparent}
 .rlr-header.liquid>.rlr-wordmark{overflow:hidden;transition:color .3s,transform .25s cubic-bezier(.2,.7,.2,1)}
 .rlr-header.liquid>.rlr-wordmark:hover{transform:scale(1.03)}
-@media(hover:none){.lq-light{display:none}}
 
 /* « Parlons de votre projet » : version claire, en verre */
 .rl-cta{background:linear-gradient(140deg,rgba(255,255,255,.86),rgba(233,241,248,.82) 55%,rgba(255,255,255,.9));color:var(--ink);border:1px solid rgba(255,255,255,.95);box-shadow:0 40px 90px -50px rgba(0,0,0,.45),inset 0 1px 0 #fff;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4)}
@@ -295,7 +308,6 @@ html:has(.rl-site){scroll-behavior:smooth}
 .rl-cta>p{color:#4a4a4e}
 .rl-cta-bg{opacity:.14;-webkit-mask-image:linear-gradient(90deg,transparent,#000 35%,#000 65%,transparent);mask-image:linear-gradient(90deg,transparent,#000 35%,#000 65%,transparent)}
 .rl-cta>.rl-mark{filter:drop-shadow(0 14px 22px rgba(70,104,131,.35))}
-.rl-cta>.lq-light{z-index:0;background:radial-gradient(280px circle at var(--gx) var(--gy),rgba(255,255,255,.7),rgba(255,255,255,0) 70%)}
 
 /* ——— Arrivée sur le site : monogramme seul, puis la bannière monte et se déploie ——— */
 .rl-intro{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:#fff;transition:opacity .9s cubic-bezier(.65,0,.35,1),visibility .9s}

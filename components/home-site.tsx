@@ -95,12 +95,15 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    el.style.setProperty('--p',String(max>0?window.scrollY/max:0));
   };
   onScroll();
-  const glassy=Array.from(el.querySelectorAll<HTMLElement>('.rlr-header .rlr-wordmark,.rl-btn'));
-  glassy.forEach(node=>{node.classList.add('lq');if(!node.querySelector(':scope > .lq-light')){const light=document.createElement('span');light.className='lq-light';light.setAttribute('aria-hidden','true');node.appendChild(light)}});
+  // Reflet de verre : posé sur tous les boutons et liens d’action, y compris ceux qui apparaissent plus tard (formulaire, bulle, fiches).
+  const glassSelector='.rl-btn,.rl-bubble-panel>a,.rl-bubble-panel>button,.rq .btn,.rq .service-choices button,.rq .rq-chips button';
+  const decorate=()=>el.querySelectorAll<HTMLElement>(glassSelector).forEach(node=>{if(node.querySelector(':scope > .lq-light'))return;node.classList.add('lq');const light=document.createElement('span');light.className='lq-light';light.setAttribute('aria-hidden','true');light.innerHTML='<i class="lq-hot"><i></i></i>';node.appendChild(light)});
+  decorate();
+  const watcher=new MutationObserver(()=>decorate());watcher.observe(el,{childList:true,subtree:true});
   const onLight=(e:PointerEvent)=>{const node=(e.target as Element|null)?.closest?.('.lq') as HTMLElement|null;if(!node)return;const box=node.getBoundingClientRect();node.style.setProperty('--gx',`${e.clientX-box.left}px`);node.style.setProperty('--gy',`${e.clientY-box.top}px`)};
   el.addEventListener('pointermove',onLight,{passive:true});
   window.addEventListener('scroll',onScroll,{passive:true});
-  return()=>{el.removeEventListener('pointermove',onLight);window.removeEventListener('scroll',onScroll)};
+  return()=>{watcher.disconnect();el.removeEventListener('pointermove',onLight);window.removeEventListener('scroll',onScroll)};
  },[]);
  return <div className="rl-site rl-architecture" ref={root} data-stage={stage}>
   {stage!=='done'&&<div className="rl-intro" aria-hidden="true"><div className="arch-intro-signature"><div className="arch-intro-mark"><LogoMark size={170}/></div><BrandName/><div className="arch-intro-rule"><i/></div></div></div>}
