@@ -5,10 +5,10 @@ import {renderTemplate,templatesFrom,variablesFor,type TemplateId} from './email
 export function documentMail(record:{kind:string;data:Data},recipient:Data,settings:Data){
  const id:TemplateId|null=record.kind==='quote'?(record.data.document_type==='change_order'?'change_order':'quote'):record.kind==='invoice'?'invoice':null;
  const contact=`Pour toute question : ${settings.phone||''} · ${settings.email||''}`;
- if(!id){const label=record.kind==='contract'?'Votre contrat':record.kind==='specification'?'Votre cahier des charges':'Votre document';return {subject:`${settings.name||'Rénov LR'} — ${label} ${record.data.number||''}`.trim(),text:`Bonjour ${recipient.name||''},\n\nVeuillez trouver votre document en pièce jointe.\n\n${contact}\n\n${settings.name||'Rénov LR'}`}}
+ if(!id){const label=record.kind==='contract'?'Votre contrat':record.kind==='specification'?'Votre cahier des charges':'Votre document';return {subject:`${settings.name||'LR Réseaux'} — ${label} ${record.data.number||''}`.trim(),text:`Bonjour ${recipient.name||''},\n\nVeuillez trouver votre document en pièce jointe.\n\n${contact}\n\n${settings.name||'LR Réseaux'}`}}
  const template=templatesFrom(settings.email_templates).find(x=>x.id===id)!;
  const total=totals(record.data).total;
- const values:Record<string,string>={client_name:String(recipient.name||''),project_address:String(record.data.address||recipient.address||''),company_name:String(settings.name||'Rénov LR'),name:String(settings.name||''),phone_number:String(settings.phone||''),ref_number:String(record.data.number||''),signature:`${settings.name||'Rénov LR'}\n${contact}`,amount:money(total),total_amount:money(total),invoice_description:String(record.data.title||''),due_date:String(record.data.due||'')};
+ const values:Record<string,string>={client_name:String(recipient.name||''),project_address:String(record.data.address||recipient.address||''),company_name:String(settings.name||'LR Réseaux'),name:String(settings.name||''),phone_number:String(settings.phone||''),ref_number:String(record.data.number||''),signature:`${settings.name||'LR Réseaux'}\n${contact}`,amount:money(total),total_amount:money(total),invoice_description:String(record.data.title||''),due_date:String(record.data.due||'')};
  const allowed=variablesFor(template);
  return {subject:renderTemplate(template.subject,values,allowed).text,text:renderTemplate(template.body,values,allowed).text};
 }

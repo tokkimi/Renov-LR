@@ -1,5 +1,5 @@
 const quoteMessage = [
-  'Bonjour Rénov LR, je souhaiterais un devis pour des travaux de rénovation.',
+  'Bonjour LR Réseaux, je souhaiterais un devis pour des travaux de rénovation.',
   '',
   'Travaux envisagés :',
   'Ville :',

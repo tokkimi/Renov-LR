@@ -1,6 +1,6 @@
 import type {Data,Kind,Role} from './model';
 
-/** Twelve event families (Billdr shows twelve; the grouping below is Rénov LR's own — H). */
+/** Twelve event families (Billdr shows twelve; the grouping below is LR Réseaux's own — H). */
 export const notificationFamilies=[
  {id:'projects',label:'Projets et phases'},
  {id:'quotes',label:'Devis'},

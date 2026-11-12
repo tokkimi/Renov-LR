@@ -1,8 +1,8 @@
 {
   "id": "/admin",
-  "name": "Rénov LR — Gestion",
-  "short_name": "Rénov LR",
-  "description": "Espace de gestion de Rénov LR : visites, devis, projets et factures.",
+  "name": "LR Réseaux — Gestion",
+  "short_name": "LR Réseaux",
+  "description": "Espace de gestion de LR Réseaux : visites, devis, projets et factures.",
   "lang": "fr-FR",
   "start_url": "/admin",
   "scope": "/admin",

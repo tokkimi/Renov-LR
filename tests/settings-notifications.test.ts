@@ -23,7 +23,7 @@ test('unknown tokens are reported and kept visible, never silently emptied',()=>
 });
 
 test('document e-mail uses the saved message with real totals',()=>{
- const mail=documentMail({kind:'quote',data:{number:'S-12',lines:[{quantity:1,price:450}],tps:5,tvq:9.975}},{name:'Client Fictif'},{name:'Rénov LR',phone:'514',email:'a@b.c',email_templates:[{id:'quote',subject:'Devis [ref_number] pour [client_name]',body:'Total [total_amount]'}]});
+ const mail=documentMail({kind:'quote',data:{number:'S-12',lines:[{quantity:1,price:450}],tps:5,tvq:9.975}},{name:'Client Fictif'},{name:'LR Réseaux',phone:'514',email:'a@b.c',email_templates:[{id:'quote',subject:'Devis [ref_number] pour [client_name]',body:'Total [total_amount]'}]});
  assert.equal(mail.subject,'Devis S-12 pour Client Fictif');
  assert.match(mail.text,/517,39/);
 });
@@ -81,7 +81,7 @@ import {brandedEmail} from '../lib/email-branding';
 import {makePdf} from '../lib/pdf';
 import {PDFDocument} from 'pdf-lib';
 test('saved branding renders safe email and valid classic/compact PDFs',async()=>{
- const settings={name:'Rénov LR',branding:{accent:'#7c3aed',signature:'Signature MG',emailLogo:'signature',showClientEmail:false,showLicence:false,header:'compact'}};
+ const settings={name:'LR Réseaux',branding:{accent:'#7c3aed',signature:'Signature MG',emailLogo:'signature',showClientEmail:false,showLicence:false,header:'compact'}};
  const html=brandedEmail('<script>alert(1)</script>',settings);
  assert.ok(html.includes('#7c3aed'));assert.ok(html.includes('Signature MG'));assert.ok(html.includes('&lt;script&gt;'));assert.ok(!html.includes('<script>'));
  const bytes=await makePdf('Devis',{lines:[{description:'Travaux',quantity:1,price:100}]},{name:'Client',email:'private@example.com'},settings);

@@ -287,7 +287,7 @@
 @media (max-width:520px){.gantt-body{grid-template-columns:110px minmax(0,1fr)}}
 .gantt-tools .note-visibility,.schedule-editor .module-toolbar .note-visibility{display:inline-flex;flex-direction:row;align-items:center;gap:6px;width:auto}
 
-/* ===== Follow My Future structure, Rénov LR colours (white surfaces, forest/sage greens) ===== */
+/* ===== Follow My Future structure, LR Réseaux colours (white surfaces, forest/sage greens) ===== */
 :root{--fm-bg:#fdfdfd;--fm-surface:#fff;--fm-line:#e5e5e5;--fm-line-strong:#d3d3d3;--fm-fg:#171717;--fm-muted:#3f3f3f;--fm-accent:#2a2a2a;--fm-accent-soft:#f2f2f2;--fm-ok:#2e2e2e;--fm-ok-soft:#f3f3f3;--fm-warn:#303030;--fm-warn-soft:#f5f5f5;--fm-danger:#a8402f;--fm-danger-soft:#fbe9e5}
 .fm-page{display:grid;gap:18px;min-width:0;color:var(--fm-fg)}
 .fm-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap}

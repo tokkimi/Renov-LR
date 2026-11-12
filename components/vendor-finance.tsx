@@ -146,7 +146,7 @@ function Payments({operations,commit}:Shared){
    <label>Montant (€)<input required type="number" min="0.01" step="0.01" value={draft.amount||''} onChange={e=>setDraft({...draft,amount:Number(e.target.value)})}/></label>
    <label>Référence (n° chèque, virement)<input value={draft.reference} onChange={e=>setDraft({...draft,reference:e.target.value})}/></label>
    <label>Statut<select value={draft.status} onChange={e=>setDraft({...draft,status:e.target.value as VendorPayment['status']})}><option>Émis</option><option>Annulé</option></select></label>
-   <p className="wide muted">Paiement consigné manuellement : aucun virement ni paiement réel n’est déclenché par Rénov LR.</p>
+   <p className="wide muted">Paiement consigné manuellement : aucun virement ni paiement réel n’est déclenché par LR Réseaux.</p>
    <Errors errors={errors}/>
    <div className="module-actions wide"><button className="btn primary"><Check size={16}/>Enregistrer</button><button type="button" className="btn ghost" onClick={()=>{setDraft(null);setErrors([])}}>Annuler</button></div>
   </form>:<button className="btn primary" disabled={!bills.length} onClick={()=>{setDraft({id:uid(),reference:'',supplier:'',billId:'',paidOn:today(),method:'Virement',amount:0,status:'Émis',reconciled:false,reconciledOn:'',notes:''});setErrors([])}}><Plus size={16}/>Consigner un paiement</button>}

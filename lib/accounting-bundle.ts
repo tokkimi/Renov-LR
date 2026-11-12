@@ -24,11 +24,11 @@ export async function accountingBundle(records:RecordItem[],filter:BundleFilter,
  if(selected.documents.length>150)throw new Error('Trop de justificatifs pour un seul export. Choisissez une période plus courte.');
  const zip=new JSZip();
  const report=accountingReport(selected.journals,filter.from,filter.to);
- const title=filter.scope==='partner'?`Prestataire ${partner?.name||''}`:filter.scope==='client'?`Client ${records.find(record=>record.id===filter.client_id)?.data.name||''}`:'Entreprise Rénov LR';
+ const title=filter.scope==='partner'?`Prestataire ${partner?.name||''}`:filter.scope==='client'?`Client ${records.find(record=>record.id===filter.client_id)?.data.name||''}`:'Entreprise LR Réseaux';
  const lines=[title,`Période : ${filter.from} au ${filter.to}`,`Factures : ${selected.invoices.length}`,`Dépenses : ${selected.expenses.length}`,`Justificatifs : ${selected.documents.length}`,...report.reportLines];
  zip.file('01-rapport/rapport-comptable.pdf',await makePdf('Rapport comptable',{reportLines:lines},{},settings));
  zip.file('01-rapport/journal.csv',journalCsv(report.journals));
- zip.file('01-rapport/index.txt',`Rénov LR — ${title}\nPériode : ${filter.from} au ${filter.to}\nFactures : ${selected.invoices.length}\nDépenses : ${selected.expenses.length}\nÉcritures : ${report.journals.length}\nJustificatifs originaux : ${selected.documents.length}\n`);
+ zip.file('01-rapport/index.txt',`LR Réseaux — ${title}\nPériode : ${filter.from} au ${filter.to}\nFactures : ${selected.invoices.length}\nDépenses : ${selected.expenses.length}\nÉcritures : ${report.journals.length}\nJustificatifs originaux : ${selected.documents.length}\n`);
  for(const invoice of selected.invoices){const client=records.find(record=>record.id===invoice.client_id)?.data||{};const name=safe(String(invoice.data.number||invoice.id));zip.file(`02-factures/${name}-${invoice.id.slice(0,8)}.pdf`,await makePdf('Facture',invoice.data,client,settings));}
  for(const expense of selected.expenses){const data=expense.data;const lines=[`Dépense : ${data.title||expense.id}`,`Date : ${dateOf(expense)}`,`Fournisseur : ${data.supplier||'Non renseigné'}`,`Catégorie : ${data.category||'Autre'}`,`Montant hors taxes : ${money(Number(data.net||0))}`,`TVA : ${money(Number(data.tps||0)+Number(data.tvq||0))}`,`Total : ${money(expenseTotal(data))}`,`Statut : ${data.status||'À payer'}`,`Référence : ${data.reference||''}`];zip.file(`03-depenses/${safe(String(data.title||expense.id))}-${expense.id.slice(0,8)}.pdf`,await makePdf('Justificatif de dépense',{reportLines:lines},{},settings));}
  let totalBytes=0;

@@ -14,7 +14,7 @@ const tone={on_track:'ok',at_risk:'warn',off_track:'danger',done:'neutral'} as c
 const progressLabel=(p:ProjectHealth)=>`Avancement ${p.progress} %`+(p.expected!==null?`, attendu ${p.expected} %`:'');
 function Stat({label,value,hint,toneName}:{label:string;value:string|number;hint?:string;toneName?:string}){return <div className="fm-stat"><span>{label}</span><strong className={toneName}>{value}</strong>{hint&&<small>{hint}</small>}</div>}
 
-/** Portfolio steering (Follow My Future "Project health"), in Rénov LR colours. */
+/** Portfolio steering (Follow My Future "Project health"), in LR Réseaux colours. */
 export function HealthCentre({records,clients,onOpen}:{records:RecordItem[];clients:RecordItem[];onOpen:(id:string)=>void}){
  const [show,setShow]=useState<'live'|'risk'|'done'>('live'),[group,setGroup]=useState<'none'|'client'|'manager'>('none');
  const all=useMemo(()=>records.filter(r=>r.kind==='project'&&!r.data.archived).map(p=>projectHealth(p,records,today())),[records]);

@@ -72,7 +72,7 @@ export function analyzeTranscript(transcript:string,context:AnalyzeContext={}):A
 export const ANALYZE_MODEL='claude-sonnet-4-5';
 export function buildAnalysisMessages(transcript:string,context:AnalyzeContext={}){
  const rooms=(context.rooms||[]).map(r=>`${r.name||'Pièce'} : ${r.length||0} × ${r.width||0} × ${r.height||0} ${r.unit||'m'}`).join(' ; ');
- const system='Tu assistes une entreprise de rénovation en France (Rénov LR). À partir d’une note vocale dictée pendant une visite, tu extrais des lignes de devis claires. Réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, au format {"lines":[{"description":string,"quantity":number,"unit":string,"price":number}],"scope":string,"materials":string,"summary":string}. Utilise le français, les unités dictées (m², m, cm, cm², m³, unité, heure, jour, forfait), et laisse "price" à 0 lorsque le prix n’est pas dicté. N’invente pas de prix.';
+ const system='Tu assistes une entreprise de rénovation en France (LR Réseaux). À partir d’une note vocale dictée pendant une visite, tu extrais des lignes de devis claires. Réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, au format {"lines":[{"description":string,"quantity":number,"unit":string,"price":number}],"scope":string,"materials":string,"summary":string}. Utilise le français, les unités dictées (m², m, cm, cm², m³, unité, heure, jour, forfait), et laisse "price" à 0 lorsque le prix n’est pas dicté. N’invente pas de prix.';
  const user=`Note vocale de la visite :\n"""${transcript}"""\n${rooms?`Pièces relevées : ${rooms}\n`:''}Génère les lignes de devis correspondantes.`;
  return {system,messages:[{role:'user' as const,content:user}]};
 }

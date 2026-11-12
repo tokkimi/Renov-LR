@@ -13,7 +13,7 @@ test('a signature requires consent and a bounded PNG image',()=>{
  assert.equal(signatureInput({...input,signature_image:image+'A'.repeat(300000)}),null);
  assert.ok(signatureInput(input));
 });
-test('a client signature preserves the agreed terms and awaits Rénov LR',()=>{
+test('a client signature preserves the agreed terms and awaits LR Réseaux',()=>{
  const signed=applyContractSignature(contract,{id:'client-user',name:'Camille',role:'client'},input);
  assert.equal(signed?.terms,'Travaux convenus');assert.equal(signed?.status,'Envoyé');
  assert.equal(applyContractSignature({...contract,data:signed!},{id:'client-user',name:'Camille',role:'client'},input),null);

@@ -3,7 +3,7 @@ import {operationsFrom} from './project-operations';
 import {ledgerCost,supplierLedger} from './vendor-finance';
 
 /*
- * Routines = saved reports computed from Rénov LR's own data (no AI needed, no invented figures).
+ * Routines = saved reports computed from LR Réseaux's own data (no AI needed, no invented figures).
  * They run when someone clicks "Exécuter" or opens a due routine; there is no background scheduler yet.
  */
 export const routineKinds=[
@@ -42,5 +42,5 @@ export function runRoutine(kind:RoutineKind,records:RecordItem[],today:string):s
 }
 /** Compact, non-confidential company summary given to the assistant as context (no personal notes). */
 export function assistantContext(records:RecordItem[],today:string,settings:Data){
- return [`Date : ${today}. Entreprise : ${settings.name||'Rénov LR'}.`,...routineKinds.flatMap(k=>[`## ${k.label}`,...runRoutine(k.id,records,today).slice(0,25)])].join('\n');
+ return [`Date : ${today}. Entreprise : ${settings.name||'LR Réseaux'}.`,...routineKinds.flatMap(k=>[`## ${k.label}`,...runRoutine(k.id,records,today).slice(0,25)])].join('\n');
 }

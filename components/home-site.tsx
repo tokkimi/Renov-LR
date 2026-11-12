@@ -61,7 +61,7 @@ function ContactBubble({settings,onQuote,whatsapp}:{settings:Data;onQuote:()=>vo
  </div>;
 }
 
-/** Page d’accueil Rénov LR : verre dépoli, lumière bleu ardoise et animations au défilement. */
+/** Page d’accueil LR Réseaux : verre dépoli, lumière bleu ardoise et animations au défilement. */
 export default function HomeSite({settings=defaults}:{settings?:Data}){
  const [quote,setQuote]=useState<string | boolean>(false),[section,setSection]=useState(0);
  const root=useRef<HTMLDivElement>(null);
@@ -130,7 +130,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    </section>
 
    <section className="rl-wrap arch-intro" aria-labelledby="arch-intro-title">
-    <div><p className="arch-eyebrow">Rénov LR</p><h2 id="arch-intro-title">Des intérieurs pensés<br/>pour être vécus.</h2></div>
+    <div><p className="arch-eyebrow">LR Réseaux</p><h2 id="arch-intro-title">Des intérieurs pensés<br/>pour être vécus.</h2></div>
     <p>Cuisine, salle de bain, sols ou rénovation complète. Nous prenons en charge les travaux avec un interlocuteur unique, un devis clair et des finitions vérifiées avec vous.</p>
    </section>
 
@@ -188,7 +188,7 @@ export default function HomeSite({settings=defaults}:{settings?:Data}){
    <BrandLockup/>
    <nav aria-label="Liens du pied de page">{links.map(([href,label])=><a key={href} href={href}>{label}</a>)}<Link href="/confidentialite">Confidentialité</Link></nav>
    <p>{[settings.address,settings.rbq&&`SIRET ${settings.rbq}`].filter(Boolean).join(' · ')}</p>
-   <small>© {new Date().getFullYear()} Rénov LR</small>
+   <small>© {new Date().getFullYear()} LR Réseaux</small>
   </div></footer>
   {!quote&&<ContactBubble settings={settings} whatsapp={whatsapp} onQuote={()=>setQuote(true)}/>}
   {quote&&<QuoteRequest close={()=>setQuote(false)} initialService={typeof quote==='string' ? quote : undefined} booking={typeof quote==='string'}/>}

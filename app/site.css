@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
-/* Site public Rénov LR : verre dépoli, lumière bleu ardoise, animations au défilement. Tout s’aligne sur .rl-wrap. */
+/* Site public LR Réseaux : verre dépoli, lumière bleu ardoise, animations au défilement. Tout s’aligne sur .rl-wrap. */
 .rl-site{--ink:#0d0d0e;--muted:#5f5f63;--line:rgba(13,13,14,.1);--red:#466883;--red2:#557c99;--paper:#f6f5f3;--w:min(1180px,calc(100% - 40px));position:relative;color:var(--ink);background:var(--paper);font-family:'Inter',system-ui,Arial,sans-serif;font-size:16px;line-height:1.55;overflow-x:clip;isolation:isolate}
 .rl-wrap{width:var(--w);margin-inline:auto}
 .rl-site h1,.rl-site h2,.rl-site h3,.rlr-wordmark{font-family:'Space Grotesk','Inter',system-ui,sans-serif}

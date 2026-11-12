@@ -8,7 +8,7 @@ import {SharedProjectTools} from './project-client-tools';
 import {clientRequestsFrom,type ClientRequest} from '@/lib/client-requests';
 
 /*
- * Client space organised in nine sections (Billdr portal map, Rénov LR wording).
+ * Client space organised in nine sections (Billdr portal map, LR Réseaux wording).
  * Everything shown here was already filtered and redacted by the server for this client:
  * drafts, internal notes, costs, unpublished reports, selections, logs and schedules never reach the browser.
  */

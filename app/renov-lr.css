@@ -1,4 +1,4 @@
-/* Identité Rénov LR : fond blanc, texte noir, barres flottantes translucides. */
+/* Identité LR Réseaux : fond blanc, texte noir, barres flottantes translucides. */
 :root{--rlr-ink:#111;--rlr-muted:#6b6b6b;--rlr-line:#e6e6e6;--rlr-glass:rgba(255,255,255,.5);--fm-ok:#1f7a45;--fm-ok-soft:#e4f3ea;--fm-warn:#9a6614;--fm-warn-soft:#fbf1df}
 html body{background:#fff;color:var(--rlr-ink)}
 html body .atelier-site{background:#fff;--ink:#111;--forest:#111;--gold:#111;--muted:#6b6b6b}

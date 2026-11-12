@@ -4,9 +4,9 @@ import {vendorBudget} from './vendor-finance';
 import {scheduleFrom} from './schedule';
 
 /*
- * Project health (adapted from Follow My Future's engine to Rénov LR's records).
+ * Project health (adapted from Follow My Future's engine to LR Réseaux's records).
  * Pure: turns a project's figures into a 0–100 score, a status and concrete alerts.
- * The rules are Rénov LR choices (H), tuned for renovation work.
+ * The rules are LR Réseaux choices (H), tuned for renovation work.
  */
 export type HealthAlert={level:'danger'|'warning'|'info';kind:'schedule'|'budget'|'client'|'tasks'|'cash';text:string};
 export type HealthStatus='on_track'|'at_risk'|'off_track'|'done';

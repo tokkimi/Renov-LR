@@ -8,22 +8,22 @@ export function LogoMark({size = 34, className = ''}: {size?: number; className?
 
 export function BrandName() {
   return <span className="arch-brand-type">
-    <strong>Rénov LR</strong>
+    <strong>LR Réseaux</strong>
     <small>Intérieur · Extérieur · Extension</small>
   </span>;
 }
 
 export function BrandLockup() {
   return (
-    <Link className="arch-brand" href="/" aria-label="Rénov LR, accueil">
+    <Link className="arch-brand" href="/" aria-label="LR Réseaux, accueil">
       <Image src="/app/renov-lr-header.png" width={1536} height={1024} alt=""
         sizes="(max-width: 520px) 114px, 156px" />
     </Link>
   );
 }
 
-export function Wordmark({href = '/', label = 'Rénov LR, accueil', className = ''}: {href?: string; label?: string; className?: string}) {
+export function Wordmark({href = '/', label = 'LR Réseaux, accueil', className = ''}: {href?: string; label?: string; className?: string}) {
   return <Link className={`rlr-wordmark ${className}`} href={href} aria-label={label}>
-    <LogoMark/><span className="rlr-signature">Rénov LR</span>
+    <LogoMark/><span className="rlr-signature">LR Réseaux</span>
   </Link>;
 }

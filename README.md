@@ -1,6 +1,6 @@
-# Rénov LR
+# LR Réseaux
 
-Site public et espace de gestion de Rénov LR (Next.js, Supabase, PDF, courriel Resend). L’espace de gestion est adapté à la France (euros, TVA, SIRET, adresses de la Base Adresse Nationale). Le site public et le logo sont propres à Rénov LR.
+Site public et espace de gestion de LR Réseaux (Next.js, Supabase, PDF, courriel Resend). L’espace de gestion est adapté à la France (euros, TVA, SIRET, adresses de la Base Adresse Nationale). Le site public et le logo sont propres à LR Réseaux.
 
 ## Démarrer
 
@@ -20,7 +20,7 @@ Sans variables d’environnement, le site public et `/demo` (données fictives e
 - `RESEND_API_KEY`, `MAIL_FROM` : envoi des courriels (facultatif).
 - `ANTHROPIC_API_KEY` : analyse des notes de visite par IA (facultatif ; une analyse locale prend le relais).
 
-## Ce qui est propre à Rénov LR
+## Ce qui est propre à LR Réseaux
 
 - **En-tête du site** : barre flottante arrondie, translucide à 50 %, logo à gauche et menu hamburger à droite sur tous les écrans (`components/brand.tsx`, `app/renov-lr.css`).
 - **Espace de gestion sur téléphone** : barre flottante en bas avec Accueil, Messages, le bouton « + » central qui lance une visite, Factures et Menu (`components/mobile-tabbar.tsx`).

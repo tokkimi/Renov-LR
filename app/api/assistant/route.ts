@@ -26,7 +26,7 @@ export async function POST(req:Request){
  const records=activeRecords((data||[]) as RecordItem[]);
  const settings=records.find(r=>r.kind==='settings')?.data||{};
  const today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Paris'});
- const system=`Tu es l’assistant de gestion de ${settings.name||'Rénov LR'}, entreprise de rénovation en France. Réponds en français, brièvement, uniquement à partir des données ci-dessous. Si une information n’y figure pas, dis-le. Tu ne peux rien modifier, envoyer ni créer : propose seulement des actions que l’utilisateur fera lui-même dans Rénov LR. ${aiInstructions(settings.ai_preferences)}\n\nDonnées calculées :\n${assistantContext(records,today,settings)}`;
+ const system=`Tu es l’assistant de gestion de ${settings.name||'LR Réseaux'}, entreprise de rénovation en France. Réponds en français, brièvement, uniquement à partir des données ci-dessous. Si une information n’y figure pas, dis-le. Tu ne peux rien modifier, envoyer ni créer : propose seulement des actions que l’utilisateur fera lui-même dans LR Réseaux. ${aiInstructions(settings.ai_preferences)}\n\nDonnées calculées :\n${assistantContext(records,today,settings)}`;
  try{
   const client=new Anthropic();
   const response=await client.beta.messages.create({model:MODEL,max_tokens:4000,output_config:{effort:'low'},betas:['server-side-fallback-2026-07-01'],fallbacks:'default',system,messages:parsed.data.messages});

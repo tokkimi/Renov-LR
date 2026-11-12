@@ -1,5 +1,5 @@
 /*
- * Thirteen default messages (same list as the Billdr settings screen, wording is Rénov LR's own).
+ * Thirteen default messages (same list as the Billdr settings screen, wording is LR Réseaux's own).
  * Variables use [variable] tokens. Rendering only substitutes known tokens from a safe dictionary;
  * an unknown token stays visible and is reported instead of silently becoming an empty string.
  */
@@ -44,4 +44,4 @@ export function renderTemplate(text:string,values:Partial<Record<string,string>>
  return {text:output,missing:[...missing],unknown:[...unknown]};
 }
 export const escapeHtml=(text:string)=>text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
-export const sampleValues:Record<string,string>={client_name:'Client Exemple',project_address:'12 rue Exemple, 33000 Bordeaux',company_name:'Rénov LR',name:'Votre nom',phone_number:'514-000-0000',ref_number:'S-0001',signature:'L’équipe Rénov LR',amount:'1 234,56 $',total_amount:'12 345,67 $',invoice_description:'Acompte de démarrage',vendor_name:'Fournisseur Exemple',purchase_order_reference:'BC-0001',due_date:'2026-11-01',visit_date:'2026-10-20',visit_time:'9 h 00'};
+export const sampleValues:Record<string,string>={client_name:'Client Exemple',project_address:'12 rue Exemple, 33000 Bordeaux',company_name:'LR Réseaux',name:'Votre nom',phone_number:'514-000-0000',ref_number:'S-0001',signature:'L’équipe LR Réseaux',amount:'1 234,56 $',total_amount:'12 345,67 $',invoice_description:'Acompte de démarrage',vendor_name:'Fournisseur Exemple',purchase_order_reference:'BC-0001',due_date:'2026-11-01',visit_date:'2026-10-20',visit_time:'9 h 00'};

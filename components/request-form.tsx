@@ -162,7 +162,7 @@ export default function RequestForm({close,initialService,booking=false}:{close:
      <div className="rq-grid">{contact.filter(q=>!booking||q.key==='visit_slots').map(q=><Ask key={q.key} q={q} answers={answers} set={answer}/>)}</div>
      <input className="honeypot" tabIndex={-1} autoComplete="off" aria-hidden="true" value={data.website} onChange={e=>field('website',e.target.value)}/>
      {!booking&&<div className="request-summary"><p><b>{types.join(' · ')}</b></p><p>{data.address}</p><p>{details().length} précision(s) · {photos.length} photo(s) jointe(s)</p></div>}
-     <label className="request-consent"><input type="checkbox" required checked={data.consent} onChange={e=>field('consent',e.target.checked)}/><span>J’accepte que Rénov LR utilise ces informations et photos pour répondre à ma demande. <Link href="/confidentialite" target="_blank">Confidentialité</Link></span></label>
+     <label className="request-consent"><input type="checkbox" required checked={data.consent} onChange={e=>field('consent',e.target.checked)}/><span>J’accepte que LR Réseaux utilise ces informations et photos pour répondre à ma demande. <Link href="/confidentialite" target="_blank">Confidentialité</Link></span></label>
     </>}
     {error&&<p role="alert" className="error">{error}</p>}
     <div className="form-actions">{step>0?<button type="button" className="btn ghost" disabled={busy||processing} onClick={()=>{setError('');setStep(step-1)}}><ChevronLeft size={17}/>Retour</button>:<span className="muted">Sans engagement</span>}<button className="btn primary" disabled={busy||processing}>{busy?'Envoi…':booking||step===5?'Envoyer ma demande':'Continuer'}<ArrowRight size={17}/></button></div>
