@@ -403,3 +403,7 @@ html body .rl-architecture .rl-intro .rlr-mark { width: clamp(128px, 26vw, 170px
 .arch-brand { width: clamp(150px, 15vw, 196px); }
 .arch-intro-signature .arch-brand-wordmark { display: block; width: clamp(230px, 58vw, 360px); height: auto; }
 @media (max-width: 760px) { .arch-brand { width: clamp(124px, 34vw, 146px); } }
+
+/* Le logo de l’en-tête n’a pas de fond : il s’efface dès qu’on quitte la bannière, pour ne pas passer sur le contenu. */
+.rlr-header .arch-brand { transition: opacity .3s ease, transform .3s ease; }
+.rlr-header[data-section]:not([data-section=top]) .arch-brand { opacity: 0; transform: translateY(-10px); pointer-events: none; }
